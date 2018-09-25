@@ -14,15 +14,15 @@ I am not really looking for development contributions to core features as this t
 
 The list below shows all current micro-services in development.
 
-| Service | Repository | Live URL | Notes |
-| --- | --- | --- | --- |
-| Game Data Builder | https://github.com/xivapi/xivapi-data | - | Build the game data automatically using SaintCoinach Schema |
-| Game Search | - | - | This will split out the ElasticSearch logic from XIVAPI.com into its own dedicated microservice. |
-| Mog (DiscordBot) | https://github.com/xivapi/xivapi-mog | - | A PHP Discord bot, a bot that will message a channel either via running CLI command or can even be done via REST, I use this to announce deployment info. I may use it for other interacts, it was more of a concept that turned out quite good |
-| Mappy | https://github.com/xivapi/xivapi-mappy | http://xivapi.com/docs/MapData | A C# App that provides various memory information of NPCs, Enemies and Objects to XIVAPI. Good for building FFXIV Maps! |
-| Tooltips | https://github.com/xivapi/xivapi-tooltips | - | A concept for getting information for FFXIV tooltips. Very early stages |
-| Custom Launcher | https://github.com/xivapi/ffxiv-launcher | - | This is not XIVAPI specific however I do want to include features that talk to XIVAPI such as dev posts, lodestone news, character and friend information, etc. |
-| Lodestone Parser | https://github.com/xivapi/lodestone-parser | - | A HTML parser written in PHP, parses Lodestone, simple! |
+| Service | Repository | Notes |
+| --- | --- | --- |
+| Game Data Builder | https://github.com/xivapi/xivapi-data | Build the game data automatically using SaintCoinach Schema |
+| Game Search | - | This will split out the ElasticSearch logic from XIVAPI.com into its own dedicated microservice. |
+| Mog (DiscordBot) | https://github.com/xivapi/xivapi-mog | A PHP Discord bot, a bot that will message a channel either via running CLI command or can even be done via REST, I use this to announce deployment info. I may use it for other interacts, it was more of a concept that turned out quite good |
+| Mappy | https://github.com/xivapi/xivapi-mappy - http://xivapi.com/docs/MapData | A C# App that provides various memory information of NPCs, Enemies and Objects to XIVAPI. Good for building FFXIV Maps! |
+| Tooltips | https://github.com/xivapi/xivapi-tooltips | A concept for getting information for FFXIV tooltips. Very early stages |
+| Custom Launcher | https://github.com/xivapi/ffxiv-launcher | This is not XIVAPI specific however I do want to include features that talk to XIVAPI such as dev posts, lodestone news, character and friend information, etc. |
+| Lodestone Parser | https://github.com/xivapi/lodestone-parser | A HTML parser written in PHP, parses Lodestone, simple! |
 
 If you are interested in building a service using the API, there are some libraries:
 
