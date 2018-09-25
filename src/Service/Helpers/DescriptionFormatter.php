@@ -96,7 +96,7 @@ class DescriptionFormatter
     public function formatSimpleDescription()
     {
         $simple = $this->formSimpleDescriptionRecursive($this->description, []);
-        $simple = implode("", $simple);
+        $simple = implode(" ", $simple);
         $this->descriptionSimple = $simple;
     }
     
