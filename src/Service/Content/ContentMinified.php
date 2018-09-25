@@ -12,25 +12,22 @@ class ContentMinified
         if (!$content) {
             return $content;
         }
-        
+
+        unset($content['GameContentLinks']);
         foreach ($content as $field => $value) {
-            if (is_object($value)) {
-                $content->{$field} = isset($value->ID) ? $value->ID : $value;
+            if (is_array($value)) {
+                $value = $value['ID'] ?? $value;
             }
 
             if (is_array($value)) {
                 foreach ($value as $i => $val) {
-                    if (is_object($val)) {
-                        $content->{$field}[$i] = $val->ID ?? $val;
-                    }
+                    $value[$i] = $val['ID'] ?? null;
                 }
-    
-                // remove any duplicates
-                $content->{$field} = array_unique($content->{$field});
             }
+
+            $content[$field] = $value;
         }
-    
-        unset($content->GameContentLinks);
+
         return $content;
     }
 }

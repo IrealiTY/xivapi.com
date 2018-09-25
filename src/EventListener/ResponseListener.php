@@ -147,7 +147,7 @@ class ResponseListener
     public function handleMini(Request $request, $data)
     {
         if ($request->get('minify')) {
-            $data = ContentMinified::mini($data);
+            return ContentMinified::mini($data);
         }
         
         return $data;
