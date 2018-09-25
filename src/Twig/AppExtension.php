@@ -42,6 +42,7 @@ class AppExtension extends AbstractExtension
     public function getApiVersion()
     {
         [$version, $hash] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
+        $version = $version + 600; // due to the move to GitHub
         $version = substr_replace($version, '.', 2, 0);
 
         return sprintf('%s.%s', getenv('VERSION'), $version);
