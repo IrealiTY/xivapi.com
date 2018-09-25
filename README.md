@@ -47,7 +47,7 @@ Maybe online API's are not your jam, maybe you're sick of the responses and how 
 | FFXIV Memory Reader | https://github.com/TamanegiMage/FFXIV_MemoryReader | Reads your mind |
 | Machina | https://github.com/ravahn/machina | Reads the servers mind (Network packet reader) |
 | Sharlayan | https://github.com/FFXIVAPP/sharlayan | Read more minds (Memory Reader) |
-
+| Quick Search | [xivapi-quick-search](https://chrome.google.com/webstore/detail/xivapi-quick-search/lgefpgdbbmcahllbifniibndmoignmfg) | A google chrome extension for quickly searching xivapi |
 
 - Game Data: https://github.com/xivapi/xivapi-data
 
