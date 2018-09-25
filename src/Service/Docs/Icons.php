@@ -88,7 +88,7 @@ class Icons
             }
 
             $icons[] = [
-                'url'   => "{$path}/{$filename}",
+                'url'   => str_ireplace('//', '/', "{$path}/{$filename}"),
                 'name'  => $pi['filename'],
                 'ext'   => $pi['extension'],
                 'size'  => $this->getImageFilesize(self::ROOT . "/{$path}/{$filename}"),
