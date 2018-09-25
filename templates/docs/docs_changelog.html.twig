@@ -1,0 +1,25 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}Change Logs - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'docs/nav.html.twig' %}
+    </aside>
+    <main class="doc-page">
+        <div class="alert alert-secondary">
+            <strong>DEPLOYED</strong><br>
+            <code>v{{ apiVersion() }} ({{ apiHash() }})</code>
+        </div>
+
+        <h5>Recent code changes</h5>
+        {% for commit in commits.values %}
+            <div class="{{ apiHash() == commit.hash ? 'git-deployed' : 'git-row' }}">
+                <small><strong>{{ commit.date|dateRelative }} (</strong>{{ commit.hash }})</small><br>
+                {{ apiHash() == commit.hash ? '<span class="badge badge-success">LIVE</span>' : '' }} {{ commit.message }}
+            </div>
+        {% endfor %}
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html.twig"  %}
+{% set page = 'app' %}
+{% block title %}{{ app.name }} - App - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'app/nav.html.twig' %}
+    </aside>
+    <main>
+
+        <div class="alert alert-danger">
+            <h1>
+                <strong>APP:</strong> {{ app.name }}
+            </h1>
+
+            <br>
+
+            <h4><strong>You are about to delete the application: {{ app.name }}</strong></h4>
+            This could potentially break any application using the key: <code>{{ app.apiKey }}</code>
+            <br><br><br>
+            If you do not want to delete this application, close this page or go back quickly. It will
+            be deleted in 30 seconds.
+        </div>
+
+        <br>
+
+        <div class="alert alert-warning">
+            <h2>Deleting in: <strong class="countdown" style="font-size: 32px;">30</strong></h2>
+            <p>Go back to stop it!</p>
+        </div>
+
+        <script>
+            let time = 30;
+            let interval = setInterval(function () {
+                time--;
+                $('.countdown').text(time);
+
+                if (time === 0) {
+                    clearInterval(interval);
+                    window.location.href = "{{ url }}";
+                }
+
+            }, 1000)
+        </script>
+
+    </main>
+</div>
+
+{% endblock %}

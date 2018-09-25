@@ -1,0 +1,161 @@
+{% extends "base.html.twig"  %}
+
+{% block title %}XIVAPI - A FINAL FANTASY XIV: Online REST API{% endblock %}
+
+{% block body %}
+
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">
+                <img src="/logo_light.svg" height="50">
+            </h1>
+            <p class="lead">
+                <strong>A FINAL FANTASY XIV: Online REST API</strong>
+                <br>Game content, characters, free companies, linkshells, lodestone content.
+            </p>
+        </div>
+    </div>
+
+    <div class="home-1 container">
+        <div class="row">
+            <div class="col" align="center">
+                <img src="/img-svg/1.svg" height="100">
+                <br><br>
+                <h2>REST API</h2>
+                <small>v{{ apiVersion() }}</small>
+                <br><br><br>
+                <a href="{{ path('docs') }}" class="btn btn-lg btn-primary">Documentation</a>
+            </div>
+            <div class="col" align="center">
+                <img src="/img-svg/2.svg" height="100">
+                <br><br>
+                <h2>Developer Apps</h2>
+                <small>Expand your powers</small>
+                <br><br><br>
+                <a href="{{ path('app') }}" class="btn btn-lg btn-primary">Create &amp; Manage</a>
+            </div>
+            <div class="col" align="center">
+                <img src="/img-svg/3.svg" height="100">
+                <br><br>
+                <h2>Open Source SDKs</h2>
+                <small>Libraries, tools &amp; research</small>
+                <br><br><br>
+                <a href="https://github.com/xivapi" class="btn btn-lg btn-primary">Github.com</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="home-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <h3>Code your way</h3>
+                    <p>
+                        The API provides a boat load of FINAL FANTASY XIV data
+                        in the common format JSON.
+                    </p>
+
+                    <p>
+                        PHP, JavaScript, C#, Go, Python or if you're a Scala mage, the API is super accessible.
+                    </p>
+                </div>
+                <div class="col-1">
+                    &nbsp;
+                </div>
+                <div class="col" align="right">
+                    <div class="home-code">
+                        <img src="/img-code/php.png" class="active">
+                        <img src="/img-code/csharp.png">
+                        <img src="/img-code/javascript.png">
+                        <img src="/img-code/jquery.png">
+                        <img src="/img-code/python.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="home-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <img src="/img-code/dashboard.png" height="500" class="img1">
+                </div>
+                <div class="col">
+                    <h3>Developer Apps</h3>
+                    <p>
+                        App keys unlock the API to provide a more unrestricted experience. Keys are free,
+                        make as many as you want!
+                    </p>
+                    <p>
+                        Keys allow you to track usage, get better support and
+                        allow the XIVAPI developers to better maintain support for your creations!
+                    </p>
+
+                    <br><br>
+
+                    <div class="row">
+                        <div class="col">
+                            <h4><strong>Flexible Rate-Limiting</strong></h4>
+                            <p>
+                                No matter how much your titan web-app smashes the API,
+                                responses can be tweaked and customised for
+                                reduced payloads.
+                            </p>
+                            <p>
+                                If all else fails, a powerful rate-limit attack will be casted!
+                            </p>
+                        </div>
+
+                        <div class="col-4">
+                            <img src="/img-misc/patch_titan.png" class="img2">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="home-4">
+        <img src="/discord/name_purple.png" height="82">
+        <br><br>
+        <h3>Community Driven</h3>
+        <p>
+            The FFXIV API is 100% community driven, <br> whatever you
+            need the API is there for you. <br>
+            <small>Unless you need a White Mage.</small>
+        </p>
+        <br>
+        <p>
+            <a href="https://discord.gg/MFFVHWC" class="btn btn-lg btn-primary">Join Discord</a>
+        </p>
+        <p>Join our little FFXIV developer hub!</p>
+    </div>
+
+    <footer>
+        <img src="/logo.svg" height="24"><br>
+
+        Premium Virtue (Phoenix)
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        Discord: Vekien#3458
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        Twitter: <a href="https://twitter.com/viion">Viion</a>
+        <small>ALL FINAL FANTASY XIV CONTENT IS PROPERTY OF SQUARE ENIX CO., LTD</small>
+    </footer>
+
+  {#
+    <br><br><br>
+
+    Cool stuff about the api
+
+    <br><br><br>
+
+    Code examples
+
+    <br><br><br>
+
+    Library support
+
+#}
+{% endblock %}

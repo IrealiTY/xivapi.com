@@ -1,0 +1,241 @@
+{% extends "base.html.twig"  %}
+{% set page = 'app' %}
+{% block title %}{{ app.name }} - App - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'app/nav.html.twig' %}
+    </aside>
+    <main class="nomax">
+
+        {% if message %}<div class="alert alert-success">{{ message }}</div>{% endif %}
+
+        <h1>
+            {{ app.name }}
+            <div class="fr">
+                <a href="{{ path('app_delete', { id: app.id }) }}" class="btn btn-danger">DELETE APPLICATION</a>
+            </div>
+        </h1>
+
+        <br>
+
+        <div>
+            <a href="{{ path('app_manage', { id: app.id }) }}" class="btn btn-primary">Application</a>
+            &nbsp;&nbsp;&nbsp;
+            <a href="{{ path('app_manage_map', { id: app.id }) }}" class="btn btn-outline-primary">Mapping Data</a>
+        </div>
+
+        <br><br>
+
+        <div class="card">
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="row">
+                    <div class="col">{{ form_row(form.name) }}</div>
+                    <div class="col">{{ form_row(form.description) }}</div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{ form_row(form.save) }}
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <br>
+
+        <table class="table table-bordered">
+            <tr>
+                <td colspan="2" class="table-title">
+                    <h3>Details</h3>
+                </td>
+            </tr>
+            <tr>
+                <td width="30%">
+                    <strong>API Key</strong>
+                    <br><br>
+                    <div>
+                        <small><strong>Need a new key?</strong></small>
+                    </div>
+                    <a href="{{ path('app_regenerate', { id: app.id }) }}" class="btn btn-warning">Regenerate key</a>
+                </td>
+                <td>
+                    <h3><code>{{ app.apiKey }}</code></h3>
+                    <strong>Example usage:</strong>
+                    <pre style="margin: 4px 0;"><code>$ curl http://xivapi.com/Item/1675?key={{ app.apiKey }}</code></pre>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>App ID</strong></td>
+                <td>{{ app.id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Status</strong></td>
+                <td>{{ ['None','Default','App Developer','Patreon','Admin'][app.level] ?: 'Too good for labels' }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="table-title">
+                    <h3>Requests</h3>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Rate Limit</strong></td>
+                <td>
+                    {{ app.apiRateLimit }} per second
+                    <div>
+                        <small>Rate limit is per (hashed) IP request</small>
+                    </div>
+                    <div>
+                        <small style="font-size: 13px;">
+                            <strong>Need higher rate-limit?</strong>
+                            Please jump on the <a href="https://discordapp.com/invite/MFFVHWC" target="_blank">discord server</a>
+                            and give <strong>Vekien#3458</strong> a message.
+                        </small>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Requests per second</strong></td>
+                <td>
+                    {{ stats.REQ_PER_SEC ?: 0 }} per second
+                    <div>
+                        <small>Based on the last 1000 requests</small>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Requests (Total)</strong></td>
+                <td>{{ stats.CACHE_HITS_TOTAL|number_format ?: 0 }}</td>
+            </tr>
+            <tr>
+                <td><strong>Requests (Rate Limited)</strong></td>
+                <td>{{ stats.CACHE_HITS_LIMITED|number_format ?: 0 }}</td>
+            </tr>
+
+            {# Tags #}
+                <tr>
+                    <td colspan="2" class="table-title">
+                        <h3>Tags</h3>
+                    </td>
+                </tr>
+                {% for tag, value in stats.TAGS %}
+                    <tr>
+                        <td><strong>{{ tag }}</strong></td>
+                        <td>{{ value|number_format }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">
+                                If you are interested in recording stat counters,
+                                <a href="/docs#section-3">view the documentation on tags.</a>
+                                <br>
+                                <strong>Usage</strong>
+                                <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
+                        </td>
+                    </tr>
+                {% endfor %}
+        </table>
+
+        <br>
+        <h3>Requests</h3>
+
+        <p>
+            <small>Per minute over {{ stats.CHART_LENGTH_HRS }} hours (realtime)</small>
+        </p>
+
+        <div class="app-dev-chart">
+            <canvas id="reqPerMin" class="app-dev-chart"></canvas>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+        <script>
+            new Chart(document.getElementById("reqPerMin"), {
+                type: 'bar',
+
+                data: {
+                    labels: {{ stats.CHART|keys|json_encode|raw }},
+                    datasets: [{
+                        label: 'Req per minute',
+                        data: [{{ stats.CHART|join(',') }}],
+
+                        backgroundColor: 'rgba(87,35,162,1)',
+
+                        borderWidth: 0
+
+                        /*
+                        backgroundColor: [
+                            'rgba(87,35,162,1)'
+                        ],
+
+                        borderColor: [
+                            'rgba(87,35,162,1)'
+                        ],
+
+                        borderWidth: 2,
+                        pointRadius: 1,
+                        pointBorderWidth: 3,
+                        cubicInterpolationMode: 'monotone'
+                        */
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        position: 'nearest',
+                        intersect: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            gridLines: {
+                                zeroLineColor: 'rgba(87,35,162,1)',
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                //steps: 10,
+                                //stepValue: 5,
+                                max: {{ stats.CHART_MAX }}
+                            }
+                        }]
+                    }
+                }
+            })
+        </script>
+
+
+        <p>
+            <small>The last <strong>1,000</strong> records out of <strong>{{ stats.HISTORY|length }}</strong> requests over the past {{ stats.CHART_LENGTH_HRS }} hours</small>
+        </p>
+
+        <div class="app-history-table">
+            <table class="table table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Date</th>
+                    <th>Method</th>
+                    <th width="40%">Endpoint</th>
+                    <th>Language</th>
+                </tr>
+                </thead>
+                {% for row in stats.HISTORY_TABLE %}
+                    <tr>
+                        <td><small style="font-size: 13px;">{{ row.Unix ~'.'~ row.MS }}</small></td>
+                        <td><small style="font-size: 13px;">{{ row.Time }}.{{ row.MS }}</small></td>
+                        <td><strong  style="font-size: 13px;">{{ row.Method }}</strong></td>
+                        <td><code>{{ row.Endpoint }}</code></td>
+                        <td><code>{{ row.Language }}</code></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">
+                            <small>No data right now, queries will appear here as you use the API with your key!</small>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </main>
+</div>
+
+{% endblock %}

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git rev-list --all --count > ./git_version.txt
+git rev-parse HEAD >> ./git_version.txt

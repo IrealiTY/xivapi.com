@@ -1,0 +1,129 @@
+html, body {
+    height: 100%;
+}
+
+.two-pane {
+    display: flex;
+    min-height: 100vh;
+
+    > aside {
+        flex: 0 1 300px;
+        width: 300px;
+    }
+
+    > main {
+        flex: 0 1 calc(100% - 300px);
+        max-width: 1200px;
+
+        &.nomax {
+            max-width: 100%;
+        }
+    }
+}
+
+aside {
+    background-color: #5723a2;
+    color: #fff;
+    padding: 100px 20px 50px 30px;
+    text-align: left;
+
+    .sticky {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+
+        &.sticky-Welcome { top: 0; }
+        &.sticky-Search { top: -50px; }
+        &.sticky-Content { top: -90px; }
+        &.sticky-Character { top: -120px; }
+        &.sticky-FreeCompany { top: -160px; }
+        &.sticky-Linkshell { top: -195px; }
+        &.sticky-PvPTeam { top: -230px; }
+        &.sticky-Lodestone { top: -265px; }
+        &.sticky-PatchList { top: -300px; }
+        &.sticky-ChangeLogs { top:-335px; }
+    }
+
+    .sub-menu {
+        border-left: solid 2px #3a196b;
+        padding-left: 15px;
+        margin-left: 8px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    a {
+        display: block;
+        padding: 6px 0;
+        color: #ddd;
+
+        &:hover, &:focus {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        &.active {
+            font-weight: bold;
+            color: var(--yellow);
+        }
+
+        &.sub {
+            font-size: 13px;
+            opacity: 0.6;
+            padding: 3px;
+            text-transform: uppercase;
+        }
+    }
+
+    hr {
+        margin: 20px -20px 20px -30px;
+        border-top-color: #2c1151;
+    }
+}
+
+main {
+    position: relative;
+    padding: 100px 60px;
+
+    p, li {
+        max-width: 1000px;
+    }
+}
+
+footer {
+    background-color: #222;
+    text-align: center;
+    font-size: 16px;
+    color: #888;
+    padding: 40px;
+
+    small {
+        margin-top: 5px;
+        display: block;
+    }
+}
+
+.table-title {
+    background-color: #eee;
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 300;
+        margin: 15px;
+    }
+}
+
+.table-bg td {
+    background-color: #eee;
+}
+
+.flex {
+    display: flex;
+
+    > div.flex2 { flex: 0 1 50%; }
+    > div.flex3 { flex: 0 1 33%; }
+    > div.flex4 { flex: 0 1 25%; }
+    > div.flex5 { flex: 0 1 20%; }
+    > div.flex6 { flex: 0 1 16%; }
+    > div.flex7 { flex: 0 1 14%; }
+    > div.flex8 { flex: 0 1 12.5%; }
+}

@@ -1,0 +1,192 @@
+<!--
+
+
+
+Looking my source code EY! YOU DON'T PAY MY SUB
+Join: https://discord.gg/MFFVHWC
+
+
+
+-->
+<script>console.log('Get off me console, shoo!');</script>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" rel="stylesheet">
+<!-- i don't do frontend, don't judge -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+    html, body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #111;
+        color: #eee;
+        font-size: 16px;
+    }
+    h1 { font-size: 50px; font-weight: 300; margin-bottom: 10px; }
+    h2 { font-size: 44px; font-weight: 300; }
+    h3 { font-size: 38px; font-weight: 300; }
+    h4 { font-size: 32px; font-weight: 300; }
+    h5 { font-size: 26px; font-weight: 300; }
+    h6 { font-size: 20px; font-weight: 300; }
+    header {
+        text-align: center;
+        padding: 20px 0;
+    }
+    header div {
+        margin-top: 5px;
+        font-size: 11px;
+    }
+    header h1 {
+        color: #ed6fef;
+        text-transform: uppercase;
+        letter-spacing: -5px;
+        font-weight: 600;
+        text-shadow: 0 1px 2px #000;
+    }
+    header h1 em {
+        color: #eccb56;
+    }
+    header img {
+        vertical-align: middle;
+        margin: -6px 16px 0 16px;
+    }
+    small {
+        color: #aaa;
+        font-size: 14px;
+    }
+    main {
+        padding: 10px 50px 50px 50px;
+    }
+    .search {
+        text-align: center;
+    }
+    .search input {
+        padding: 12px 15px 10px 15px;
+        background-color: #444;
+        color: #fff;
+        border-radius: 10px;
+        border: solid 3px #222;
+        box-shadow: 0 1px 15px #000;
+        outline: none;
+        font-size: 22px;
+        font-weight: 400;
+        min-width: 500px;
+    }
+    .search-results {
+        width: 600px;
+        margin: 20px auto;
+    }
+    .search-results small {
+        margin-bottom: 5px;
+        padding: 5px;
+        text-align: left;
+    }
+    .search-results a {
+        display: block;
+        text-align: left;
+        padding: 5px 0 7px 5px;
+        color: #fdffc6;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    .search-results a:hover {
+        background-color: #333;
+    }
+    .search-results a span {
+        opacity: 0.5;
+        font-size: 13px;
+        color: #fff;
+        text-transform: uppercase;
+        display: inline-block;
+        float: right;
+        padding: 7px 10px 0 0;
+    }
+    .search-results a img {
+        height: 24px;
+        width: 24px;
+        border-radius: 3px;
+        box-shadow: 0 1px 8px #000;
+        margin: 0 8px -5px 0;
+    }
+</style>
+
+<header>
+    <h1><img src="/img-misc/payment_currency_coin.png" height="32"><em>Market</em> Board<img src="/img-misc/payment_currency_point.png" height="32"></h1>
+    <small>For <strong>Phoenix(EU)</strong> only, sorry!</small>
+    <small> - Market prices are cached for 10 minutes</small>
+    <div>(concept xivapi.com)</div>
+</header>
+
+<main>
+
+    <div class="search">
+        <input type="text" id="search" placeholder="Search the market" autocomplete="off">
+        <div class="search-results"></div>
+        <script>
+            let $ui = $('.search-results');
+
+            // on clicking a search result
+            $('html').on('click', '.search-results a', function () {
+                $ui.html('<br><br><br><br><h4>Loading market prices</h4><br><small>Wakey wakey companion app ...</small><br><br><br><br>');
+            });
+
+            // run a search
+
+            function search() {
+                $.ajax({
+                    url: 'https://xivapi.com/search',
+                    data: {
+                        key:     '48722b1183cb450db0b37c46',
+                        indexes: 'item',
+                        filters: 'ItemSearchCategory.ID>0',
+                        limit:   50,
+                        string:  $('#search').val()
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.Pagination.ResultsTotal === 0) {
+                            $ui.html('Did not find anything.');
+                            return;
+                        }
+
+                        $ui.html("<small>Found: "+ response.Pagination.ResultsTotal +" results, " +
+                            "showing: "+ response.Pagination.Results +"</small>");
+
+                        for(let i in response.Results) {
+                            let item = response.Results[i];
+
+                            let template = '<a href="{url}"><img src="{icon}">{name} <span>{cat}</span></a>';
+                            template = template
+                                .replace('{url}', "/market/" + item.ID)
+                                .replace('{icon}', item.Icon)
+                                .replace('{name}', item.Name)
+                                .replace('{cat}', item['ItemUICategory.Name']);
+
+                            $ui.append(template);
+                        }
+                    },
+                    error: function(a,b,c) {
+                        console.error(a,b,c);
+                    }
+                });
+            }
+
+            let searchTimeout = null;
+            $('#search').on('keyup', function(event) {
+                if (event.which === 13 || event.keyCode === 13) {
+                    clearTimeout(searchTimeout);
+                    search();
+                    return;
+                }
+
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    search();
+                }, 150);
+            })
+        </script>
+    </div>
+
+    <div class="content">
+        {% block body %}{% endblock %}
+    </div>
+
+</main>

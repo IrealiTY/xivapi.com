@@ -1,0 +1,497 @@
+:root {
+    --highlight: #fff5ad;
+    --highlighter: #fffdd7;
+    --blue: #0096ff;
+    --blueDark: #015cd9;
+    --red: #ff5030;
+    --yellow: #fff936;
+    --dark: #0b0c0e;
+    --darkText: #212529;
+    --faint: #f4f4f4;
+    --code: #203e85;
+    --classjob: #c3b18d;
+    --gc1: #760d1e;
+    --gc2: #7f5404;
+    --gc3: #1c2021;
+
+    --danger: var(--red);
+}
+
+@import "Header";
+@import "Layout";
+@import "Mobile";
+
+h1, h2, h3, h4, h5 ,h6 {
+    font-weight: 300;
+}
+
+pre {
+    background-color: #272822;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+
+    code {
+        word-wrap: break-word;
+        word-break: break-all;
+        white-space: pre-wrap;
+        color: #fdfdbf;
+    }
+}
+
+small {
+    opacity: 0.5;
+    font-size: 16px;
+}
+
+.fr {
+    float: right;
+}
+
+.tar {
+    text-align: right;
+}
+
+.jumbotron {
+    background: #5723a2;
+    background: -moz-linear-gradient(left, #5723a2 0%, #7a42c9 100%);
+    background: -webkit-linear-gradient(left, #5723a2 0%,#7a42c9 100%);
+    background: linear-gradient(to right, #5723a2 0%,#7a42c9 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5723a2', endColorstr='#7a42c9',GradientType=1 );
+    color: #fff;
+    padding-top: 100px;
+    text-align: center;
+
+    h1 {
+        font-weight: 600;
+    }
+}
+
+.table-sm td, .table-sm th {
+    padding: 7px 12px;
+    min-width: 100px;
+}
+
+.table th {
+    background-color: #f4f4f4;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.navbar.bg-dark {
+    background-color: #202020 !important;
+}
+
+.git-row,
+.git-deployed {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+
+    small {
+        font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+        opacity: 0.6;
+        font-size: 11px;
+    }
+}
+
+.git-row {
+    background-color: #eee;
+}
+
+.git-deployed {
+    background-color: var(--highlight);
+}
+
+.alert p {
+    margin-bottom: 0;
+}
+
+.container-fluid {
+    padding-left: 0;
+}
+
+.btn-discord {
+    position: relative;
+    padding-left: 55px;
+
+    img {
+        left: -3px;
+        top: -1px;
+        position: absolute;
+    }
+}
+
+.account {
+    margin-top: 50px;
+
+    .card > div:first-of-type {
+        padding: 20px;
+        border-bottom: solid 1px #eee;
+    }
+
+    .card a {
+        display: block;
+        padding: 8px;
+    }
+}
+
+.header-user {
+    font-size: 18px;
+    color: #fff;
+
+    img {
+        margin-left: 10px;
+        margin-right: 10px;
+        border-radius: 5px;
+
+    }
+}
+
+:target {
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
+}
+
+.base-page {
+    max-width: 1400px;
+
+    p {
+        color: #444;
+        margin-bottom: 20px;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        margin-bottom: 20px;
+    }
+
+    hr {
+        border-top: 3px solid rgba(0,0,0,.1);
+        margin: 50px 0;
+    }
+
+    .alert-secondary {
+        background-color: #f4f4f4;
+        border-color: #f4f4f4;
+
+        p {
+            color: #555;
+            font-size: 14px;
+        }
+    }
+
+    .alert p:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+.doc-page {
+    max-width: 1400px;
+
+    h1, h2, h3, h4, h5, h6 {
+        margin-bottom: 20px;
+    }
+
+    h1, h6 {
+        font-size: 42px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 22px;
+        border-left: solid 5px #0096ff;
+        background-color: lighten(#0096ff, 45%);
+        padding: 15px 20px;
+    }
+
+    h3 {
+        font-size: 24px;
+        font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+        font-weight: 600;
+        color: #843aef;
+    }
+
+    h5 {
+        font-weight: 400;
+        margin-top: 30px;
+    }
+
+    p {
+        color: #444;
+        margin-bottom: 20px;
+    }
+
+    hr {
+        border-top: 3px solid rgba(0,0,0,.1);
+        margin: 50px 0;
+    }
+
+    ul li {
+        margin-bottom: 15px;
+    }
+
+    img {
+        max-width: 720px;
+        border-radius: 5px;
+    }
+
+    .alert-secondary {
+        background-color: #f4f4f4;
+        border-color: #f4f4f4;
+
+        p {
+            color: #555;
+            font-size: 14px;
+        }
+    }
+
+    .alert p:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .doc-icons {
+        display: flex;
+        flex-wrap: wrap;
+
+        > span {
+            flex: 0 1 180px;
+            border: solid 1px #eee;
+            margin: 0 -1px -1px 0;
+            display: inline-block;
+            text-align: center;
+            padding: 15px 6px;
+
+            img {
+                max-width: 64px;
+                max-height: 64px;
+                margin-bottom: 10px;
+            }
+
+            span {
+                display: block;
+                font-size: 10px;
+                color: #888;
+                word-break: break-all;
+            }
+        }
+    }
+}
+
+.doc-navigation {
+    width: 280px;
+}
+
+.app-dev-chart {
+    height: 200px;
+    margin: 10px 0;
+}
+
+
+.app-history-table {
+    overflow-y: scroll;
+    max-height: 600px;
+    padding: 10px;
+    border: solid 1px #5723a2;
+    border-radius: 5px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+
+    table {
+        margin: 0;
+    }
+}
+
+.home-1 {
+    padding: 30px;
+    margin-bottom: 50px;
+
+    h2 {
+        font-weight: 400;
+        color: #444;
+    }
+
+    small {
+        font-weight: 400;
+        font-size: 18px;
+    }
+}
+
+.home-2 {
+    background-color: #eee;
+    box-shadow: 0 0 200px 150px #eee;
+    padding: 60px 0;
+    min-height: 400px;
+
+    h3 {
+        font-weight: 300;
+        font-size: 42px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+
+    img {
+        max-height: 300px;
+    }
+
+    .home-code {
+        position: relative;
+        padding-top: 20px;
+
+        > img {
+            position: absolute;
+            right: 0;
+            left: 0;
+            max-width: 700px;
+
+            border-radius: 10px;
+            opacity: 0;
+            transition: 1s;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+
+            &.active {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.home-3 {
+    padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+
+    h3 {
+        font-weight: 300;
+        font-size: 42px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    img.img1  {
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.2);
+    }
+
+    .col-4 {
+        position: relative;
+    }
+
+    img.img2 {
+        position: relative;
+        z-index: 5;
+        animation-name: titan1;
+        animation-duration: 1.6s;
+        animation-iteration-count: infinite;
+    }
+
+    span {
+        position: relative;
+        background-color: #d27222;
+        border-radius: 500px;
+        width: 64px;
+        height: 64px;
+        display: block;
+        top: -40px;
+        left: 30px;
+
+        opacity: 0;
+        transform: scale(0.3);
+
+        animation-name: titan2;
+        animation-duration: 1.6s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+}
+
+@keyframes titan1 {
+    0%   { top: 0; }
+    8%   { top: -8px;}
+    12%  { top: 0;}
+}
+
+@keyframes titan2 {
+    8%   { opacity: 0; transform: scale(0.8); }
+    16%  { opacity: 0.6; transform: scale(1.2); }
+    35%  { opacity: 0; transform: scale(1.8); }
+}
+
+.home-4 {
+    background-color: #eee;
+    box-shadow: 0 0 250px 150px #eee;
+    padding: 60px 0;
+
+    text-align: center;
+
+    small {
+        font-size: 12px;
+    }
+}
+
+.pos-map {
+    box-shadow: 0 1px 10px rgba(0,0,0,0.6);
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    width: 1024px;
+    height: 1024px;
+
+    > img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1024px;
+        height: 1024px;
+    }
+
+    > span {
+        position: absolute;
+        display: inline-block;
+        z-index: 5;
+        width: 20px;
+        height: 20px;
+        border-radius: 50px;
+
+        background-image: url("/img-map/object.png");
+        background-size: 20px;
+
+        &.pos-Monster {
+            background-image: url("/img-map/enemy.png");
+        }
+
+        &.pos-NPC {
+            background-image: url("/img-map/npc.png");
+        }
+
+        &.pos-Aetheryte {
+            background-image: url("/img-map/aetheryte.png");
+            z-index: 10;
+        }
+
+        &.pos-Gathering {
+            background-image: url("/img-map/gathering.png");
+        }
+
+        &.pos-coverage {
+            background-image: none;
+
+            /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ff0000+0,ff0000+100&0.3+0,0+100 */
+            background: -moz-radial-gradient(center, ellipse cover, rgba(255,50,0,0.3) 0%, rgba(255,0,0,0) 100%); /* FF3.6-15 */
+            background: -webkit-radial-gradient(center, ellipse cover, rgba(255,50,0,0.3) 0%,rgba(255,0,0,0) 100%); /* Chrome10-25,Safari5.1-6 */
+            background: radial-gradient(ellipse at center, rgba(255,50,0,0.3) 0%,rgba(255,0,0,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4dff0000', endColorstr='#00ff0000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+            width: 30px;
+            height: 30px;
+            margin-left: -5px;
+            margin-top: -5px;
+
+            opacity: 0.7;
+        }
+    }
+}

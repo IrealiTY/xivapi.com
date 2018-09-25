@@ -1,0 +1,53 @@
+{% set page = page is defined ? page : 'home' %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125096878-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-125096878-1');
+        </script>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}XIVAPI{% endblock %}</title>
+        <link rel="shortcut icon" type="image/png" href="{{ favIcon() }}">
+        <link rel="search" type="application/opensearchdescription+xml" title="XIVAPI" href="/opensearch.xml">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/ui/vis.css?v={{ apiHash() }}">
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <div>
+                <img src="/img-misc/Mendacity.png" height="42" class="logo">
+                <a class="{{ page != 'home' ? '': 'active' }}" href="{{ path('home') }}">Home</a>
+                <a class="{{ page != 'docs' ? '': 'active' }}" href="{{ path('docs') }}">Documentation</a>
+                <a class="{{ page != 'app' ? '': 'active' }}" href="{{ path('app') }}">Applications</a>
+            </div>
+            <div>
+                {% if auth.user %}
+                    <span class="header-user">
+                        {{ auth.user.username|title }}
+                        <img src="{{ auth.user.avatar }}" height="38">
+                        <a href="{{ path('app_logout') }}" class="btn btn-secondary">Logout</a>
+                    </span>
+                {% else %}
+                    <a href="{{ path('app_login_discord') }}" class="btn btn-secondary">
+                        Login via <strong>Discord</strong>
+                    </a>
+                {% endif %}
+            </div>
+        </header>
+
+        {% block body %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+        <script src="/ui/app.js?v={{ apiHash() }}"></script>
+    </body>
+</html>

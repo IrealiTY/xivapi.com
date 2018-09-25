@@ -1,0 +1,35 @@
+.idea
+/data
+!/data/.gitkeep
+!/public/i/.gitkeep
+/public/i
+!/public/m/.gitkeep
+/public/m
+!/public/downloads/.gitkeep
+/public/downloads
+/mnt
+/vm/ubuntu-bionic-18.04-cloudimg-console.log
+/vm/.vagrant
+/src/offline.txt
+/src/Controller/MapData.csv
+/src/Controller/MemoryData.csv
+/src/Service/Companion/token
+/src/EventListener/Exceptions.txt
+
+#
+# Symfony
+#
+.env
+/public/bundles/
+/var/
+var/
+/vendor/
+.web-server-pid
+
+#
+# Encore
+#
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log

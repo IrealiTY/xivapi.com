@@ -1,0 +1,73 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}Icons - XIVAPI{% endblock %}
+
+{% block body %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/8.15.0/lazyload.min.js"></script>
+<div class="two-pane">
+    <aside>
+        {% include 'docs/nav.html.twig' %}
+    </aside>
+    <main class="doc-page">
+
+        <div class="alert alert-secondary">
+            <p>All icons are property of SQUARE-ENIX Ltd {{ "now"|date('Y') }} all rights reserved</p>
+        </div>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active"><a href="{{ path('docs_file', { filename: 'Icons' }) }}">Icons</a></li>
+                {% if set %}
+                    <li class="breadcrumb-item">{{ images.name }}</li>
+                {% endif %}
+            </ol>
+        </nav>
+
+        {% if set %}
+            <h6>
+                {{ images.name }} <small>({{ images.icons|length }} images)</small>
+
+                <div class="fr">
+                    <a href="{{ path('docs_file', { filename: 'Icons', set: set, download: 1 }) }}" target="_blank" class="btn btn-primary">Download Set</a>
+                </div>
+            </h6>
+            <p>Download the icons you want to use. <strong>Do not hotlink as URLs can change at anytime.</strong></p>
+
+            <br>
+
+            <div class="doc-icons">
+                {% for image in images.icons %}
+                    <span>
+                        <a href="{{ image.url }}" target="_blank">
+                            <img src="/img-svg/loading.svg" class="lazy" data-src="{{ image.url }}">
+                        </a>
+                        <span>{{ image.name }}</span>
+                        <span>{{ image.res.w }}x{{ image.res.h }} ({{ image.size }})</span>
+                    </span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <br>
+            <h6>Icon Sets</h6>
+
+            <ul>
+                {% for set, info in images %}
+                    {% if info == '---' %}
+                        <hr>
+                    {% else %}
+                        <li><a href="{{ path('docs_file', { filename: 'Icons', set: set }) }}">{{ info[0] }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <br><br><br>
+
+    </main>
+</div>
+<script>
+new LazyLoad({
+    elements_selector: ".lazy"
+});
+</script>
+{% endblock %}

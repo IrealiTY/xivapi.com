@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+START_TIME=$SECONDS
+
+## -------------------------------------------------------------------------------------
+
+# Convert data from CSV to Json
+/usr/bin/php /vagrant/bin/console app:cache 1
+
+# Build data
+/usr/bin/php /vagrant/bin/console app:update 0 50 1
+/usr/bin/php /vagrant/bin/console app:update 50 50 1
+/usr/bin/php /vagrant/bin/console app:update 100 50 1
+/usr/bin/php /vagrant/bin/console app:update 150 50 1
+/usr/bin/php /vagrant/bin/console app:update 200 50 1
+/usr/bin/php /vagrant/bin/console app:update 250 50 1
+/usr/bin/php /vagrant/bin/console app:update 300 50 1
+/usr/bin/php /vagrant/bin/console app:update 350 50 1
+/usr/bin/php /vagrant/bin/console app:update 400 50 1
+/usr/bin/php /vagrant/bin/console app:update 450 50 1
+
+# Add on patch info
+sleep 5
+/usr/bin/php /vagrant/bin/console app:patch 4
+
+# Add custom data
+sleep 5
+/usr/bin/php /vagrant/bin/console app:custom
+
+
+## -------------------------------------------------------------------------------------
+
+end=`date +%s`
+
+ELAPSED_TIME=$(($SECONDS - $START_TIME))
+
+echo ""
+echo "Completed"
+echo "$(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec"
+echo ""

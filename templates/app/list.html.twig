@@ -1,0 +1,42 @@
+<h1>
+    {{ auth.user.apps|length }} Apps
+    <small>&nbsp;&nbsp;&nbsp; Max {{ auth.user.appsMax }}</small>
+</h1>
+
+<p>
+    <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
+</p>
+
+<br>
+
+<div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Key</th>
+            </tr>
+        </thead>
+        {% for app in auth.user.apps %}
+            <tr>
+                <td>
+                    <a href="{{ path('app_manage', { id: app.id }) }}">{{ app.name }}</a>
+                    <div>
+                        <small>{{ app.description }}</small>
+                    </div>
+                </td>
+                <td valign="center">
+                    <code>{{ app.apiKey }}</code>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">
+                    <div class="alert alert-info">
+                        You have no API apps! <a href="{{ path('app_manage', { id: 'new' }) }}">Want to create one?</a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>

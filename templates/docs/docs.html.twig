@@ -1,0 +1,14 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}{{ filename }} - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'docs/nav.html.twig' %}
+    </aside>
+    <main class="doc-page">
+        {{ markdown.html|raw }}
+    </main>
+</div>
+{% endblock %}

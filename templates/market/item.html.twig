@@ -1,0 +1,133 @@
+{% extends 'market/base.html.twig' %}
+
+{% block body %}
+
+    <style>
+        h1 small {
+            font-size: 22px;
+        }
+        h3 {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background-color: #000;
+            color: #fff;
+            opacity: 0.3;
+            margin-bottom: 40px;
+            transition: .2s;
+        }
+        textarea:hover {
+            opacity: 1;
+        }
+        table {
+            width: 100%;
+            border: solid 1px #444;
+            background-color: #212121;
+        }
+        table td {
+            padding: 6px;
+            border-bottom: solid 1px #444;
+            border-right: solid 1px #444;
+        }
+        table td img {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        table td {
+            vertical-align: top;
+            line-height: 30px;
+        }
+        table th {
+            padding: 8px;
+            background-color: #444;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: #888;
+        }
+        table span {
+            color: #fbff8e;
+            font-weight: 400;
+            font-size: 20px;
+        }
+        table em {
+            color: #00d6ff;
+        }
+    </style>
+
+    <div class="page">
+
+        <h1>
+            <img src="https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/{{ item.Payload.Market.Lodestone.Icon }}.png"> &nbsp;
+            {{ item.Payload.Item.Name }}
+            &nbsp;&nbsp;&nbsp;
+            <small><img src="{{ item.Payload.Item.ItemUICategory.Icon }}" style="vertical-align: bottom;margin:0 5px 5px 0;"> {{ item.Payload.Item.ItemKind.Name }} - {{ item.Payload.Item.ItemUICategory.Name }}</small>
+        </h1>
+        <small>
+            <strong>{{ item.QueryInformation.Cached ? 'Cached' : 'Real-Time' }}</strong>
+            {% if item.QueryInformation.Cached %}
+                (Cache expires in: {{ item.QueryInformation.CacheExpires }} seconds)
+            {% endif %}
+        </small>
+
+        <br><br>
+
+        <table>
+            <thead>
+                <tr>
+                    <th width="5%">Quantity</th>
+                    <th width="15%">Prices</th>
+                    <th width="20%">Retainer</th>
+                    <th>Crafted?</th>
+                    <th>HQ?</th>
+                    <th width="20%">Materia</th>
+                    <th width="15%">Town</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for listing in item.Payload.Market.Listings %}
+            <tr>
+                <td align="right">{{ listing.Quantity|number_format }}</td>
+                <td><span><img src="/img-misc/061575.png"> &nbsp;{{ listing.Price|number_format }}</span></td>
+                <td><em>{{ listing.RetainerName }}</em></td>
+                <td>
+                    <small>
+                        {{ listing.IsCrafted ? 'Crafted by: ' : '' }}
+                        {% if listing.IsCrafted %}
+                            {{ listing.CraftSignature }}
+                        {% endif %}
+                    </small>
+                </td>
+                <td>
+                    {{ listing.IsHQ ? '<img src="/img-misc/hq.png" height="24">' : '' }}
+                </td>
+                <td>
+                    {% if listing.Materia %}
+                        {% for materia in listing.Materia %}
+                        <div>
+                            <img src="{{ materia.Icon }}" height="18" style="border-radius: 40px;"> &nbsp;{{ materia.Name }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td align="right">
+                    {{ listing.Town.Name }} &nbsp; <img src="{{ listing.Town.Icon }}">
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">NONE FOR SALE</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <br><br><br><br>
+
+        <small>API DATA</small>
+        <textarea>{{ item|json_encode }}</textarea>
+
+    </div>
+
+{% endblock %}

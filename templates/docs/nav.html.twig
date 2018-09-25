@@ -1,0 +1,21 @@
+<div class="sticky sticky-{{ filename }}">
+    <h3>documentation</h3>
+    <small><p>{{ apiVersion() }}</p></small>
+
+    {# docs #}
+    {% for file, classname in navigation %}
+        <a href="{{ path('docs_file', { filename: file }) }}" class="{{ filename != file ? '' : 'active' }}">{{ file }}</a>
+
+        {% if filename == file and markdown.headings %}
+            <div class="sub-menu" id="list-example">
+                {% for heading in markdown.headings %}
+                    <a href="#section-{{ (loop.index) }}" class="sub">{{ heading }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {# custom #}
+    <a href="{{ path('docs_file', { filename: 'ChangeLogs' }) }}">Change Logs</a>
+    <a href="{{ path('docs_file', { filename: 'Icons' }) }}">Icons</a>
+</div>

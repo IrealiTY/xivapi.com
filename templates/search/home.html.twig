@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/assets/css/app.css">
+    <script src="/assets/js/app.js"></script>
+
+    <h1>Search</h1>
+
+    <form data-ms="search">
+        <input class="form-control" data-ms-field="search" type="search" placeholder="Search for something awesome" value="cur">
+
+        <br><br><br>
+
+        <h4>ilv</h4>
+        <input class="form-control" data-ms-field="filter" name="level_item:gte" type="number" min="1" max="9999" placeholder="Min">
+    </form>
+
+    <script>
+
+        let conn = new WebSocket('ws://search.xiv.local:8080');
+        conn.onopen = function(e) {
+            console.log('connected');
+        };
+
+        conn.onmessage = function(e) {
+            const json = JSON.parse(e.data);
+
+            const time = json[0];
+            const total = json[1];
+            const results = json[2];
+
+            console.log(json);
+        };
+
+        //
+        // form
+        //
+
+        let $form = $('form');
+
+        let formdata = {
+            string: '',
+            filters: {},
+        };
+
+        $form.find('[data-ms-field="search"]').on('keyup', event => {
+            formdata.string = $(event.currentTarget).val().trim();
+            search();
+        });
+
+        $form.find('[data-ms-field="filter"]').on('change', event => {
+            const $ele = $(event.currentTarget);
+            const name = $ele.attr('name');
+            const value = $ele.val();
+
+            if (!name) {
+                return;
+            }
+
+            formdata.filters[name] = value;
+            search();
+        });
+
+        $form.find('button').on('click', event => {
+            search();
+        });
+
+        function search()
+        {
+            console.log(formdata);
+
+            conn.send(JSON.stringify(formdata));
+        }
+
+    </script>
+
+{% endblock %}

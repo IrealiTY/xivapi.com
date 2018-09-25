@@ -1,0 +1,34 @@
+{% extends "base.html.twig"  %}
+{% set page = 'app' %}
+{% block title %}Apps - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'app/nav.html.twig' %}
+    </aside>
+    <main>
+        {% if auth.user %}
+
+            {% include 'app/list.html.twig' %}
+            <br><br>
+            <h4>Why do I need a key?</h4>
+            <p>
+                The key helps me (xivapi developer) reduce the amount of spam the API received
+                from useless traffic (bots, search links, parsers, etc). It is a small and free step
+                to ensure I can better support developers and provide a custom experience.
+            </p>
+            <br>
+            <h4>What happens if someone obtains my key?</h4>
+            <p>
+                Nothing! Someone could in theory use your key. But keys are free, they should get their
+                own as you may delete your key or reduce its rate limit, thus breaking their app! You can
+                track your keys usage in the apps dashboard and if you believe it has been taken, click
+                "Generate New Key" to create a new one!
+            </p>
+        {% else %}
+            {% include 'app/login.html.twig' %}
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

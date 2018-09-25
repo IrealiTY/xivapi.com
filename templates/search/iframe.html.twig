@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <br>
+
+    <div align="center">
+        <button id="loadiframes">Load 20 Iframes</button>
+    </div>
+
+    <br>
+
+    <section>
+        <table class="table table-bordered table-sm">
+            <tr>
+                {% for i in range(1,20) %}
+                <td align="center">
+                    <iframe width="125" height="60" src="/" frameborder="0" scrolling="no"></iframe>
+                </td>
+                {% endfor %}
+            </tr>
+        </table>
+
+        <script>
+        let html = false,
+            added = 20;
+        $('#loadiframes').on('click', function() {
+            if (!html) {
+                html = $('table tbody').html();
+            }
+
+            $('table tbody').append(html);
+            added += 20;
+
+            $('#loadiframes').text('Load 15 Iframes ('+ added +')');
+        });
+
+        </script>
+
+    </section>
+
+{% endblock %}

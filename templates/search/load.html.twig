@@ -1,0 +1,222 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <h5>connecting ...</h5>
+    <h6>-</h6>
+
+    <br><br><br><br><br><br><br><br><br><br>
+
+    <h2>Search Testing</h2>
+    <br>
+
+    <form data-ms="search">
+
+        <div class="form-group form-row">
+            <div class="col">
+                <input class="form-control" data-ms-field="search" type="search" placeholder="Search for something awesome">
+            </div>
+            <div class="col">
+                <select data-ms-field="filter" class="form-control" id="search_algo">
+                    <option value="wildcard">wildcard</option>
+                    <option value="multi_match">multi_match</option>
+                    <option value="query_string">query_string</option>
+                    <option value="term">term</option>
+                    <option value="match_phrase_prefix" selected>match_phrase_prefix</option>
+                    <option value="fuzzy">fuzzy</option>
+                </select>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-group form-row">
+            <div class="col">
+                <h5>Item Level</h5>
+            </div>
+            <div class="col">
+                <input class="form-control" data-ms-field="filter" name="level_item:gte" type="number" min="1" max="9999" placeholder="Min">
+            </div>
+            <div class="col">
+                <input class="form-control" data-ms-field="filter" name="level_item:lte" type="number" min="1" max="9999" placeholder="Max">
+            </div>
+        </div>
+
+        <div class="form-group form-row">
+            <div class="col">
+                <h5>Equip Level</h5>
+            </div>
+            <div class="col">
+                <input class="form-control" data-ms-field="filter" name="level_equip:gte" type="number" min="1" max="9999" placeholder="Min">
+            </div>
+            <div class="col">
+                <input class="form-control" data-ms-field="filter" name="level_equip:lte" type="number" min="1" max="9999" placeholder="Max">
+            </div>
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            <p>Form will auto search on changes, or click below</p>
+            <button class="btn btn-primary" type="button">Search!</button>
+        </div>
+
+    </form>
+
+    <br><br>
+
+    <hr>
+
+    <div class="alert alert-secondary row" style="font-size: 20px;">
+        <div class="col-md-6 debug1"></div>
+        <div class="col-md-6 debug2"></div>
+    </div>
+
+    <br>
+
+    <div class="results">
+        <table cellpadding="10" class="table table-bordered">
+            <thead>
+                <th>Icon</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Equip Level</th>
+                <th>Item Level</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <style>
+        body {
+            transition: 2s
+        }
+        body.hit {
+            background-color: cornflowerblue;
+            transition: 0s
+        }
+    </style>
+
+    <script>
+
+    let start = false;
+    let a = setInterval(function() {
+        let currentdate = new Date();
+        let minute = currentdate.getMinutes();
+
+        if (minute >= 5) {
+            start = true;
+        }
+
+        if (minute >= 10) {
+            start = false;
+            clearInterval(a);
+        }
+    }, 500);
+
+    let delay = Math.floor((Math.random() * 10000) + 3000);
+    let b = setInterval(function() {
+        if (start) {
+
+            let words = "field_first_word,Sakazuki,Aegis,Engine,Bibliophobia,Fieldcraft,Susano's,Yu-no-hana,F'lhaminn,Yellow,Gambanteinn,Aged,Lily,Zenos,Zantetsuken,Renegades,Adept's,Rime,Foil,Astrild,Bouillon,Lupin,Order,Ballroom,Faust,Sapphire,Unidentifiable,Splintered,Masonwork,Rookery,Uncultured,Commemorative,Grass,Weevil,Mineking's,Lugworm,Rolling,Palace,Tomato,Musky,Berserker,Boots,Terracotta,Warded,Walnut,Musket,Kotsu,Landborne,Lyse,Azysfish,Minfilia,Belah'dian,Thief,Icelight,Gerbald's,Argath,Ultimate,Markab,Stale,Odorless,Shrub,Sunflower,Saint,Pummelite,Melancholy,Opo-opo,Wavesoul,Dimwold,Skythorn,Crystallized,Secret,Arrhidaeus,Blind,Emery,Clothcraft,Knife,Doctore's,Brightlily,Pie,Bacon,Deemster,Gyrodrive,Koppranickel,Rimless,Water-hardened,Megalodon,Tail,Alumen,Draconian,Hood,Kissing,Caller's,Dusken,Manjimutt,Violet,Scorpion,Spring,Fortifying,Pumice,Swallow's,Low,Tonban,Spiral,Ancile,Gaganaskin,Jibanyan,Fangshi,Piping,Whitehorse,Gaelikitten,Yanxian,Quickarm,Almace,Duskfall,Luminol,Talons,Nael,Isolator,Wizard,Worsted,Tarantula,Birdliege,Gliding,Mizzenmast,Coffin,Red-eyed,Warlock's,Magnificent,Matoya,Coal,Goosefish,Fractal,Birdsong,Supramax-Potion,Mythril-barreled,<Emphasis>Mimesis,Monkfish,Centrifugal,Torrent,Page,Bark,Archaeoskin,Wolfseye,Ram,Shishu,Moat,Gordian,Midgardsormr,Yeti,Ceremony,Millioncorn,Succubus,Tsutsu-hakama,Wave,Glowworm,Camlet,Hannibal,Deck,Sprouting,Notice,Cypress,Minos,Master,Warlion,Foundation,Hunter,Nagxian,Sleeping,Baderon,Ichimonji,Mirrorscale,Gathering,Dzemael,Ripened,Thunderclap,Kal,Dissolvent,Beyond,Air,Kidragora,Bonfire,Toxotes,Steelhead,Cactuar,Desert,Samurai,Will,Camphorwood,Ul,Bohemian's,Glaring,Miso,Planter,Compact,Bas-relief,Barracuda,Blood,Silver,Ishgardian,Nidhogg,Toothed,Handmade,Fortemps,Vortex,Gerolt,Bow,Lonely,Manderville,Gemscope,Bullwhip,Forager's,Bladder,Aetheryte,Fire,Wildwood,Firion,Oschon,Egg,Brass,Chiran,Little,Wargfangs,Tailfeather,Field,Hetairos,Comet,Mogpom,Moebius,Close,Draught,Warty,Hecteye,Hraesvelgr's,Windlight,Crown,Vulture,Brindlebass,Meteorite,Eft,Plush,Wolfliege,Jandelaine's,Kite,Flying,Bind,Tawny,Adamantite-barreled,Goby,Large,Gobcraft,Cornelia,Ixal,Cannonballs,Treasure,Anima,Outdated,Superior,Oldrose,Squall,Auroral,Hien,Manipulative,Cindersmith,Personal,Seductive,Dravanian,Guespiere,Noct,Wolfram,Majestas,Discus,Padjali,Nautilus,Halfgloves,Usagi,Mark,Axe,Ivory,Flamebringer's,Grimoire,Bustle,Meteor,Hi-Ether,Shortsword,Brachiosaur,Son,Dusklight,Aerodynamics,Memeroon,Ironworks,Wind,Noble's,Dawn,Dirty,Lancer's,Stained,Medium,Chocolate,Sesame,Doman,Salamander,Rapids,Halo,Xanthos,Pure,Siren,Tane,Floating,Gaelicap,Onus,Sylphsbane,Carpentry,Rhoswen,Unei,Pendant,Mammoth,Belt,Titanic,Maiboi,Through,Spriggan,Onion,Coming,Roasted,Thundergut,Ox,Raziqsand,Non,Moghome,Gyr,Potting,Nepto,Barb,Mudskipper,Pinprick,Falling,Prototype,Jacques,Charibert,Malachite,Frumenty,Mashed,Spoony,Brute,Bowfin,Starboard,Afternoon,Imagination,Smelling,Ring,Hidemaster's,Ysayle,Slate,Tangle,Astrologian's,Cinnabar,Smooth,Cuffs,Tattered,Bearliege,Ripped,Breeches,Scathach,Roland,Miser's,Lantern,Hoppfish,Olive,Thunderhead,Rosewood,Sleep,Capella,Giant,Junkmonger,Summoner's,Sewing,Lunar,Ornamental,Twinthread,Goshenite,Rauni,Greatsword,Biggs,Twinsilk,Classified,Ethica,Head,Hero's,Mitre,Coeurl's,Pike,Rivet,Cyclops,Goldsmith's,Mini,Hilda,Limited,Seraph,Enchiridion,Green,Magicked,Teak,Enhancing,Nanoriso,Umbral,Gigant,Boxing,Heavensnut,Astrometer,Icepick,Laevateinn,Singing,Impact,Potter's,Bracelet,Choka,Deepmist,Apologies,Stormcarrier's,Codex,Nanapasi's,Kuno,Kingly,Protector's,Corpse-eater,Diluted,Old,Sunfish,Susano,Schlaeger,Delivery,Lockbox,Marjoram,Angelic,Skytear,Okeanis,Materia,Emerald,Ramie,Mammet,Smoked,Carbonweave,Wine,Zinc,Smithing,Chimera,Starlight,Peperoon,Stygian,Vanya,Shogunyan,Serpent,Grape,Nether,Heaven-on-High,Onikiri,Bannock,Cave,Pteroskin,Wyrm,Nomad,Dragonhead,Shikaree's,South,Landtrap,Orchard,Alchemy,Agelyss,Brewer's,Dated,Priwen,Coldwind,Silkworm,Goblin,Cleavers,Elements,Cawl,Bearsmaw,Mint,Snipe,Goldfish,Saurian,Tricorn,Xelphatol,Conical,Nighthawk,Book,Redolent,Cropped,Corner,Panegyrist's,Hempen,Dairyu,Viltgance,Meditator,Scion,Spiritbond,Dragon's,Hairless,Landlord,Canticle,Antecedent's,Sanctum,Pinga,Housemaid's,Longinus,Amateur's,Early,Weighted,Brown";
+                words = words.split(',');
+
+            let item = words[Math.floor(Math.random()*words.length)];
+            $('form input[type="search"]').val(item).trigger('keyup');
+
+            $('h6').html(item);
+        }
+    }, delay);
+
+    // ----------------------------------------------------------------------------------
+
+    let conn = new WebSocket('ws://xivapi.com:8080');
+    conn.onopen = function(e)
+    {
+        $('h5').html('Connected!');
+    };
+
+    let hits = 0;
+    conn.onmessage = function(e)
+    {
+        hits++;
+
+        $('body').addClass('hit');
+        setTimeout(function() {
+            $('body').removeClass('hit');
+        });
+
+        let json = JSON.parse(e.data);
+        $('h5').html('Hits: ' + hits);
+
+        /*
+        const time = json[0];
+        const total = json[1];
+        const results = json[2];
+
+        let $ui = $('.results table tbody');
+        $ui.html('');
+
+        $('.debug1').html('<strong>Time:</strong> '+ time +'ms - <strong>Total:</strong> '+ total);
+
+        for(let i in results) {
+            let item = results[i];
+
+            $ui.append('<tr>' +
+                '<td><img src="https://xivapi.com'+ item._source.icon.replace('assets/', '') +'" height="32"></td>' +
+                '<td>'+ item._source.id +'</td>' +
+                '<td><h5>'+ item._source.name +'</h5></td>' +
+                '<td>'+ item._source.level_equip +'</td>' +
+                '<td>'+ item._source.level_item +'</td>' +
+            '</tr>');
+        }
+        */
+    };
+
+
+    //
+    // form
+    //
+
+    let $form = $('form');
+
+    let formdata = {
+        string: '',
+        filters: {},
+        algo: '',
+    };
+
+    $form.find('[data-ms-field="search"]').on('keyup', event => {
+        formdata.string = $(event.currentTarget).val().trim();
+        search();
+    });
+
+    $form.find('[data-ms-field="filter"]').on('change', event => {
+        const $ele = $(event.currentTarget);
+        const name = $ele.attr('name');
+        const value = $ele.val();
+
+        if (!name) {
+            return;
+        }
+
+        formdata.filters[name] = value;
+        search();
+    });
+
+    $form.find('button').on('click', event => {
+        search();
+    });
+
+    function search()
+    {
+        formdata.algo = $('#search_algo').val().trim();
+        conn.send(JSON.stringify(formdata));
+    }
+
+    </script>
+
+{% endblock %}
