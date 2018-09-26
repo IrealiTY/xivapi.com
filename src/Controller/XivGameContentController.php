@@ -6,6 +6,7 @@ use App\Entity\MapPosition;
 use App\Entity\MemoryData;
 use App\Service\Apps\AppManager;
 use App\Service\Content\ContentList;
+use App\Service\Data\CsvReader;
 use App\Service\GamePatch\Patch;
 use App\Service\Google\GoogleAnalytics;
 use App\Service\Helpers\ArrayHelper;
@@ -237,6 +238,31 @@ class XivGameContentController extends Controller
         }
         
         return $this->json($pos);
+    }
+
+    /**
+     * @Route("/Colors")
+     */
+    public function colors()
+    {
+        $csv    = CsvReader::Get(__DIR__.'/../Service/Helpers/UIColor.csv');
+        $colors = [];
+
+        foreach ($csv as $row) {
+            [$colourA, $colourB] = $row;
+
+            $colors = [
+                'ID' => $row['key'],
+                'ColorA' => $colourA,
+                'ColorB' => $colourB,
+                'ColorAHexAlpha' => str_pad(dechex($colourA), 8, '0', STR_PAD_LEFT),
+                'ColorBHexAlpha' => str_pad(dechex($colourA), 8, '0', STR_PAD_LEFT),
+                'ColorAHex' => substr(str_pad(dechex($colourA), 8, '0', STR_PAD_LEFT), 0, 6),
+                'ColorBHex' => substr(str_pad(dechex($colourA), 8, '0', STR_PAD_LEFT), 0, 6),
+            ];
+        }
+
+        return $this->json($colors);
     }
 
     /**
