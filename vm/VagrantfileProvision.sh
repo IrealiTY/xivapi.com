@@ -11,7 +11,7 @@ echo "- Updating"
 sudo apt-get update -y -qq
 sudo apt-get upgrade -y -qq
 echo "- Installing: python-software-properties, software-properties-common, acl, htop, unzip, curl, git"
-sudo apt-get install -y -qq python-software-properties software-properties-common acl htop unzip curl git
+sudo apt-get install -y -qq python-software-properties software-properties-common acl htop unzip curl git dos2unix
 
 
 #
@@ -97,6 +97,9 @@ echo "- Auto removing and cleaning up services"
 sudo apt-get autoremove -y -qq
 sudo apt-get update -y -qq
 sudo apt-get upgrade -y -qq
+echo "- Updating db"
+php /vagrant/bin/console doctrine:schema:update --force --dump-sql
+bash /vagrant/bin/version
 
 echo "- Testing ElasticSearch in 10 seconds ..."
 sleep 10
