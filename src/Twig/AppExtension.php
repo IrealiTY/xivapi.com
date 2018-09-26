@@ -20,11 +20,10 @@ class AppExtension extends AbstractExtension
         return [
             new \Twig_SimpleFunction('apiVersion', [$this, 'getApiVersion']),
             new \Twig_SimpleFunction('apiHash', [$this, 'getApiHash']),
+            new \Twig_SimpleFunction('apiDeployTime', [$this, 'getApiDeployTime']),
             new \Twig_SimpleFunction('favIcon', [$this, 'getFavIcon']),
         ];
     }
-
-
     
     public function getDateRelative($unix)
     {
@@ -41,7 +40,7 @@ class AppExtension extends AbstractExtension
     
     public function getApiVersion()
     {
-        [$version, $hash] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
+        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
         $version = $version + 600; // due to the move to GitHub
         $version = substr_replace($version, '.', 2, 0);
 
@@ -50,8 +49,15 @@ class AppExtension extends AbstractExtension
 
     public function getApiHash()
     {
-        [$version, $hash] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
+        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
         return $hash;
+    }
+
+    public function getApiDeployTime()
+    {
+        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
+
+        return (new Carbon($time))->format('D jS F, Y - g:i a') . ' (UTC)';
     }
     
     public function getFavIcon()
