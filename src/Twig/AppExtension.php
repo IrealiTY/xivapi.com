@@ -56,7 +56,7 @@ class AppExtension extends AbstractExtension
     public function getApiDeployTime()
     {
         [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
-        return Carbon::createFromTimestamp($time)->format('D jS F, Y - g:i a') . ' (UTC)';
+        return Carbon::createFromTimestamp($time)->format('jS M - g:i a') . ' (UTC)';
     }
     
     public function getFavIcon()
