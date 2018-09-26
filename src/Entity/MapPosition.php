@@ -11,12 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *     name="map_positions",
  *     indexes={
- *          @ORM\Index(name="MapID", columns={"MapID"}),
- *          @ORM\Index(name="MapIndex", columns={"MapIndex"}),
- *          @ORM\Index(name="MapTerritoryID", columns={"MapTerritoryID"}),
- *          @ORM\Index(name="PlaceNameID", columns={"PlaceNameID"}),
- *          @ORM\Index(name="ContentIndex", columns={"ContentIndex"}),
- *          @ORM\Index(name="Added", columns={"Added"})
+ *          @ORM\Index(name="map_id", columns={"map_id"}),
+ *          @ORM\Index(name="map_index", columns={"map_index"}),
+ *          @ORM\Index(name="map_territory_id", columns={"map_territory_id"}),
+ *          @ORM\Index(name="place_name_id", columns={"place_name_id"}),
+ *          @ORM\Index(name="content_index", columns={"content_index"}),
+ *          @ORM\Index(name="added", columns={"added"})
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\MapPositionRepository")
