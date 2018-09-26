@@ -2,9 +2,14 @@
 
 namespace Deployer;
 
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+
+argument('composer', InputArgument::OPTIONAL, 'Run: Composer Update', false);
+
 // Project name
 set('application', 'xivapi');
-set('repository', 'https://bitbucket.org/dalamud/xivapi');
+set('repository', 'https://github.com/xivapi/xivapi.com');
 set('ssh_multiplexing', false);
 inventory('deploy-hosts.yml');
 
@@ -24,17 +29,21 @@ function result($text)
     writeln("");
 }
 
-function deploy()
+function deploy($config)
 {
     writeln("------------------------------------------------------------------------------------");
-    writeln("- Deploying XIVAPI");
+    writeln("- Deploying {$config->name}");
     writeln("------------------------------------------------------------------------------------");
     
     // set directory
-    cd("/home/dalamud/dalamud/");
-
-    // we can make a lot of assumptions from the directory
+    cd($config->home);
     writeln('Checking authentication ...');
+
+    //
+    // Checkout branches and switch branch
+    //
+    run("git fetch");
+    run("git checkout {$config->branch}");
 
     //
     // Reset any existing changes
@@ -51,7 +60,7 @@ function deploy()
     //
     // Pull latest changes
     //
-    writeln('Pulling latest code from bitbucket ...');
+    writeln('Pulling latest code from github ...');
     $result = run('git pull');
     result($result);
     writeln('Latest 10 commits:');
@@ -65,12 +74,14 @@ function deploy()
     //
     // Composer update
     //
-
-    if (stripos($directory, 'composer.json') !== false) {
-        writeln('Updating composer libraries (it is normal for this to take a while)...');
-        $result = run('composer update');
-        result($result);
+    if (input()->getArgument('composer')) {
+        if (stripos($directory, 'composer.json') !== false) {
+            writeln('Updating composer libraries (it is normal for this to take a while)...');
+            $result = run('composer update');
+            result($result);
+        }
     }
+
     
     //
     // Write version
@@ -108,19 +119,37 @@ function deploy()
         }
     }
 
+    write("Deployed branch {$config->branch} to: {$config->name} environment\n\n");
+
     //
     // Announce on discord
     //
-    writeln('Posting update to discord');
-    run('php /home/dalamud/mog/bin/console ListCommitChangesCommand');
+    //writeln('Posting update to discord');
+    //run('php /home/dalamud/mog/bin/console ListCommitChangesCommand');
 }
 
 // --------------------------------------------------------
 
 task('api', function () {
-    deploy();
+    deploy((Object)[
+        'name'   => 'API',
+        'home'   => "/home/dalamud/dalamud/",
+        'branch' => 'master',
+    ]);
 })->onHosts('api');
 
+task('staging', function () {
+    deploy((Object)[
+        'name'   => 'Staging',
+        'home'   => "/home/dalamud/dalamud_staging/",
+        'branch' => 'staging',
+    ]);
+})->onHosts('staging');
+
 task('parser', function () {
-    deploy();
+    deploy((Object)[
+        'name'   => 'Lodestone Parser',
+        'home'   => "/home/dalamud/dalamud/",
+        'branch' => 'master',
+    ]);
 })->onHosts('parser');

@@ -3,6 +3,11 @@ api:
   user: dalamud
   port: 22
 
+staging:
+  hostname: 138.68.238.182
+  user: dalamud
+  port: 22
+
 parser:
   hostname: 108.61.187.100
   user: dalamud
