@@ -12,6 +12,8 @@ class ContentMinified
         if (!$content) {
             return $content;
         }
+        
+        $content = json_decode(json_encode($content), true);
 
         unset($content['GameContentLinks']);
         foreach ($content as $field => $value) {
@@ -27,6 +29,8 @@ class ContentMinified
 
             $content[$field] = $value;
         }
+    
+        $content = json_decode(json_encode($content));
 
         return $content;
     }
