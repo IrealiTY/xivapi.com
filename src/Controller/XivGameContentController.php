@@ -251,7 +251,7 @@ class XivGameContentController extends Controller
         foreach ($csv as $row) {
             [$colourA, $colourB] = $row;
 
-            $colors = [
+            $colors[] = [
                 'ID' => $row['key'],
                 'ColorA' => $colourA,
                 'ColorB' => $colourB,
