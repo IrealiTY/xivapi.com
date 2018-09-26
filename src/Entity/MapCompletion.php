@@ -6,7 +6,14 @@ use Ramsey\Uuid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="map_positions_completed")
+ * @ORM\Table(
+ *     name="map_positions_completed",
+ *     indexes={
+ *          @ORM\Index(name="Updated", columns={"Updated"}),
+ *          @ORM\Index(name="MapID", columns={"MapID"}),
+ *          @ORM\Index(name="Complete", columns={"Complete"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\MapCompletionRepository")
  */
 class MapCompletion

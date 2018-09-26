@@ -8,6 +8,17 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * - This has UpperCase variables as its game content
  * @ORM\Table(name="map_positions")
+ * @ORM\Table(
+ *     name="map_positions",
+ *     indexes={
+ *          @ORM\Index(name="MapID", columns={"MapID"}),
+ *          @ORM\Index(name="MapIndex", columns={"MapIndex"}),
+ *          @ORM\Index(name="MapTerritoryID", columns={"MapTerritoryID"}),
+ *          @ORM\Index(name="PlaceNameID", columns={"PlaceNameID"}),
+ *          @ORM\Index(name="ContentIndex", columns={"ContentIndex"}),
+ *          @ORM\Index(name="Added", columns={"Added"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\MapPositionRepository")
  */
 class MapPosition
