@@ -134,6 +134,100 @@ class ApplicationsController extends Controller
     }
     
     /**
+     * @Route("/app/{id}/regenerate", name="app_regenerate")
+     */
+    public function appRegenerate(Request $request, string $id)
+    {
+        /** @var User $user */
+        $user = $this->userService->getUser();
+        
+        if (!$user) {
+            return $this->redirectToRoute('app');
+        }
+        
+        /** @var App $app */
+        $app = $this->appManager->get($id);
+        
+        if (!$app) {
+            throw new NotFoundHttpException('Application not found');
+        }
+        
+        if ($app->getUser()->getId() !== $user->getId()) {
+            return $this->redirectToRoute('app');
+        }
+        
+        // generate new key
+        $app->generateApiKey();
+        $this->em->persist($app);
+        $this->em->flush();
+        
+        return $this->redirectToRoute('app_manage', [
+            'id' => $id,
+            'regen' => 1,
+        ]);
+    }
+    
+    /**
+     * @Route("/app/{id}/delete", name="app_delete")
+     */
+    public function appDelete(Request $request, string $id)
+    {
+        /** @var User $user */
+        $user = $this->userService->getUser();
+        
+        if (!$user) {
+            return $this->redirectToRoute('app');
+        }
+        
+        /** @var App $app */
+        $app = $this->appManager->get($id);
+        
+        if (!$app) {
+            throw new NotFoundHttpException('Application not found');
+        }
+        
+        if ($app->getUser()->getId() !== $user->getId()) {
+            return $this->redirectToRoute('app');
+        }
+        
+        return $this->render('app/delete.html.twig', [
+            'app' => $app,
+            'url' => $this->generateUrl('app_delete_confirm', [
+                'id' => $app->getId(),
+            ]),
+        ]);
+    }
+    
+    /**
+     * @Route("/app/{id}/delete/confirm", name="app_delete_confirm")
+     */
+    public function appDeleteConfirm(Request $request, string $id)
+    {
+        /** @var User $user */
+        $user = $this->userService->getUser();
+        
+        if (!$user) {
+            return $this->redirectToRoute('app');
+        }
+        
+        /** @var App $app */
+        $app = $this->appManager->get($id);
+        
+        if (!$app) {
+            throw new NotFoundHttpException('Application not found');
+        }
+        
+        if ($app->getUser()->getId() !== $user->getId()) {
+            return $this->redirectToRoute('app');
+        }
+        
+        $this->em->remove($app);
+        $this->em->flush();
+        
+        return $this->redirectToRoute('app');
+    }
+    
+    /**
      * @Route("/app/{id}/map", name="app_manage_map")
      */
     public function appMappy(Request $request, string $id)
@@ -329,97 +423,5 @@ class ApplicationsController extends Controller
         ]);
     }
     
-    /**
-     * @Route("/app/{id}/regenerate", name="app_regenerate")
-     */
-    public function regenerate(Request $request, string $id)
-    {
-        /** @var User $user */
-        $user = $this->userService->getUser();
     
-        if (!$user) {
-            return $this->redirectToRoute('app');
-        }
-    
-        /** @var App $app */
-        $app = $this->appManager->get($id);
-    
-        if (!$app) {
-            throw new NotFoundHttpException('Application not found');
-        }
-    
-        if ($app->getUser()->getId() !== $user->getId()) {
-            return $this->redirectToRoute('app');
-        }
-        
-        // generate new key
-        $app->generateApiKey();
-        $this->em->persist($app);
-        $this->em->flush();
-        
-        return $this->redirectToRoute('app_manage', [
-            'id' => $id,
-            'regen' => 1,
-        ]);
-    }
-    
-    /**
-     * @Route("/app/{id}/delete", name="app_delete")
-     */
-    public function delete(Request $request, string $id)
-    {
-        /** @var User $user */
-        $user = $this->userService->getUser();
-        
-        if (!$user) {
-            return $this->redirectToRoute('app');
-        }
-        
-        /** @var App $app */
-        $app = $this->appManager->get($id);
-        
-        if (!$app) {
-            throw new NotFoundHttpException('Application not found');
-        }
-        
-        if ($app->getUser()->getId() !== $user->getId()) {
-            return $this->redirectToRoute('app');
-        }
-        
-        return $this->render('app/delete.html.twig', [
-            'app' => $app,
-            'url' => $this->generateUrl('app_delete_confirm', [
-                'id' => $app->getId(),
-            ]),
-        ]);
-    }
-
-    /**
-     * @Route("/app/{id}/delete/confirm", name="app_delete_confirm")
-     */
-    public function deleteConfirmation(Request $request, string $id)
-    {
-        /** @var User $user */
-        $user = $this->userService->getUser();
-        
-        if (!$user) {
-            return $this->redirectToRoute('app');
-        }
-        
-        /** @var App $app */
-        $app = $this->appManager->get($id);
-    
-        if (!$app) {
-            throw new NotFoundHttpException('Application not found');
-        }
-        
-        if ($app->getUser()->getId() !== $user->getId()) {
-            return $this->redirectToRoute('app');
-        }
-        
-        $this->em->remove($app);
-        $this->em->flush();
-    
-        return $this->redirectToRoute('app');
-    }
 }
