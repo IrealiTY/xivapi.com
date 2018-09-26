@@ -248,7 +248,12 @@ class XivGameContentController extends Controller
         $csv    = CsvReader::Get(__DIR__.'/../Service/Helpers/UIColor.csv');
         $colors = [];
 
-        foreach ($csv as $row) {
+        foreach ($csv as $i => $row) {
+            // ignore headings
+            if ($i < 3) {
+                continue;
+            }
+
             [$colourA, $colourB] = $row;
 
             $colors[] = [
