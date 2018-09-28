@@ -19,9 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LodestoneFreeCompanyController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var FreeCompanyService */

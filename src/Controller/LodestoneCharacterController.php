@@ -25,9 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LodestoneCharacterController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var CharacterService */

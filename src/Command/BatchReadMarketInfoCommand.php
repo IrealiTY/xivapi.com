@@ -10,7 +10,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class BatchReadMarketInfoCommand extends Command
 {
@@ -29,9 +28,9 @@ class BatchReadMarketInfoCommand extends Command
         CompanionMarket $market,
         Cache $cache
     ) {
-        $this->em = $em;
+        $this->em     = $em;
         $this->market = $market;
-        $this->cache = $cache;
+        $this->cache  = $cache;
         parent::__construct($name);
     }
     
@@ -51,11 +50,10 @@ class BatchReadMarketInfoCommand extends Command
         $this->io->text('Starting ...');
         $this->startClock();
         
-        $start = $input->getArgument('start') ?: 0;
-        $finish = $input->getArgument('finish') ?: 100000;
-        
+        $start   = $input->getArgument('start') ?: 0;
+        $finish  = $input->getArgument('finish') ?: 100000;
         $itemIds = $this->cache->get('ids_Item');
-        $total = count($itemIds);
+        $total   = count($itemIds);
 
         foreach ($itemIds as $i => $id) {
             if ($id > $finish) {

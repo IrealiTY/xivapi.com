@@ -22,7 +22,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * | DEV:
  * |    php bin/console AutoManager
  * |
- * |
  */
 class AutoManager extends Command
 {

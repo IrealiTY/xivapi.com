@@ -7,7 +7,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Data\FileSystemCache;
 use App\Service\Data\DataHelper;
 use App\Service\Data\FileSystem;
@@ -19,7 +18,6 @@ use App\Service\GamePatch\Patch;
 class SaintCoinachRedisCommand extends Command
 {
     use CommandHelperTrait;
-    use ArrayHelper;
     
     const MAX_DEPTH = 3;
     const SAVE_TO_REDIS = true;
@@ -122,7 +120,6 @@ class SaintCoinachRedisCommand extends Command
             $allContentData = FileSystem::load($contentName, 'json');
 
             // build content (this saves it)
-            $idTotal = count((array)$allContentData);
             $idCount = 0;
             foreach ($allContentData as $contentId => $contentData) {
                 $idCount++;

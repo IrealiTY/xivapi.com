@@ -21,7 +21,7 @@ START_TIME=$SECONDS
 
 # Add on patch info
 sleep 5
-/usr/bin/php /vagrant/bin/console app:patch 4
+/usr/bin/php /vagrant/bin/console UpdatePatchCommand
 
 # Add custom data
 sleep 5

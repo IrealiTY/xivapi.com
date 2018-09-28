@@ -2,21 +2,14 @@
 
 namespace App\Service\Content;
 
-use App\Controller\ControllerTrait;
 use App\Entity\App;
-use App\Service\Common\Language;
 use App\Service\Redis\Cache;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Apps\AppManager;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ContentList
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var Request */
     private $request;
     /** @var Cache */

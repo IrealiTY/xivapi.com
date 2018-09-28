@@ -46,19 +46,6 @@ class PatchContent extends ManualHelper
         $this->updatePatchContent();
     }
     
-    public function fixFromLegacy($contentName, $csv)
-    {
-        $new = [];
-        $filename = __DIR__."/content/{$contentName}.json";
-        
-        foreach ($csv as $i => $line) {
-            [$id, $patch] = str_getcsv($line);
-            $new[$id] = $patch;
-        }
-        
-        file_put_contents($filename, json_encode($new));
-    }
-    
     private function updatePatchContent()
     {
         $this->io->section('Updating tracked content');

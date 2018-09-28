@@ -189,8 +189,6 @@ class AutoLodestone extends Command
         return (int)date('s') > ServiceQueues::TIME_LIMIT;
     }
 
-    # ------------------------------------------------------------------------------------------------------------------
-
     private function parseCharacters($obj)
     {
         $this->io->text("Parse Character: {$obj->id}");

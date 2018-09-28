@@ -42,9 +42,9 @@ class ResponseListener
                 // if its a list, handle columns per entry
                 // ignored when schema is requested
                 //
-                if (!$event->getRequest()->get('schema')) {
+                if ($columns = $request->get('columns')) {
                     // get columns param
-                    $columns = array_unique(explode(',', $request->get('columns')));
+                    $columns = array_unique(explode(',', $columns));
 
                     if (isset($json['Pagination']) && $json['Results']) {
                         foreach ($json['Results'] as $r => $result) {
@@ -59,7 +59,7 @@ class ResponseListener
                 // Mini
                 //
                 if ($request->get('minify')) {
-                    $json = ContentMinified::mini($json);
+                    $json = Arrays::minification($json);
                 }
 
                 //

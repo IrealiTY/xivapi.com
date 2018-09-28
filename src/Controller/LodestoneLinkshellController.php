@@ -20,9 +20,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LodestoneLinkshellController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var LinkshellService */

@@ -34,9 +34,9 @@ trait CommandHelperTrait
      */
     protected function setSymfonyStyle(InputInterface $input, OutputInterface $output): self
     {
-        $this->input = $input;
+        $this->input  = $input;
         $this->output = $output;
-        $this->io = new SymfonyStyle($input, $output);
+        $this->io     = new SymfonyStyle($input, $output);
         return $this;
     }
 
@@ -76,9 +76,7 @@ trait CommandHelperTrait
     {
         $duration = $this->startTime->diff(Carbon::now())->format('%y year, %m months, %d days, %h hours, %i minutes and %s seconds');
         $this->io->text([
-            "",
-            "Duration: <info>{$duration}</info>",
-            "",
+            "", "Duration: <info>{$duration}</info>", "",
         ]);
         return $this;
     }
@@ -100,7 +98,6 @@ trait CommandHelperTrait
         $this->io->write("\x0D");
         $this->io->write("\x1B[2K");
         $this->io->write(str_repeat("\x1B[1A\x1B[2K", $lines));
-        
         return $this;
     }
 
