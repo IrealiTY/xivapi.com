@@ -4,19 +4,45 @@ namespace App\Service\Language;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handle each of the FFXIV Game Languages
+ */
 class Language
 {
-    private static $lang = LanguageList::DEFAULT;
+    const DEFAULT = 'en';
+    const LANGUAGES = [
+        'en',
+        'de',
+        'fr',
+        'ja',
+        'kr',
+        'cn'
+    ];
+
+    private static $lang = self::DEFAULT;
+
+
+    /**
+     * Confirm a language param provided is legit
+     */
+    public static function confirm($language)
+    {
+        if (in_array($language, self::LANGUAGES)) {
+            return $language;
+        }
+
+        return self::DEFAULT;
+    }
     
     /**
      * Set the language for the API
      */
     public static function set(Request $request): void
     {
-        self::$lang = $request->get('language') ?? LanguageList::DEFAULT;
+        self::$lang = $request->get('language') ?? self::DEFAULT;
         
-        if (!in_array(self::$lang, LanguageList::LANGUAGES)) {
-            self::$lang = LanguageList::DEFAULT;
+        if (!in_array(self::$lang, self::LANGUAGES)) {
+            self::$lang = self::DEFAULT;
         }
     }
 
@@ -36,8 +62,8 @@ class Language
         $language = $language ?: self::$lang;
         $language = substr(strtolower($language), 0, 2);
 
-        if (!in_array($language, LanguageList::LANGUAGES)) {
-            $language = LanguageList::LANGUAGES[0];
+        if (!in_array($language, self::LANGUAGES)) {
+            $language = self::LANGUAGES[0];
         }
     
         foreach ($data as $i => $value) {

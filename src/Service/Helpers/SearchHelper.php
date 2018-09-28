@@ -3,7 +3,7 @@
 namespace App\Service\Helpers;
 
 use App\Service\ElasticSearch\Mapping;
-use App\Service\Language\LanguageList;
+use App\Service\Language\Language;
 
 trait SearchHelper
 {
@@ -48,7 +48,7 @@ trait SearchHelper
                     unset($columns[$i]);
 
                     // add column for each language
-                    foreach (LanguageList::LANGUAGES as $lang) {
+                    foreach (Language::LANGUAGES as $lang) {
                         $columns[] = sprintf($column, $lang);
                     }
                 }

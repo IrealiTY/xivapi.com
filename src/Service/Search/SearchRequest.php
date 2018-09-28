@@ -2,7 +2,7 @@
 
 namespace App\Service\Search;
 
-use App\Service\Language\LanguageList;
+use App\Service\Language\Language;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchRequest
@@ -53,7 +53,7 @@ class SearchRequest
     // page to start from
     public $page = 1;
     // language
-    public $language = LanguageList::DEFAULT;
+    public $language = Language::DEFAULT;
     
     /**
      * Build the search request from the http request
@@ -95,19 +95,11 @@ class SearchRequest
         $this->limitStart       = ($this->limit * ($this->page - 1));
         
         // override by what is allowed
-        $this->language         = LanguageList::get($this->language);
+        $this->language         = Language::confirm($this->language);
         
         // lower case it for the sake of performance and analyzer matching
         $this->string           = strtolower($this->string);
         $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_WILDCARD;
         $this->stringColumn     = sprintf($this->stringColumn, $this->language);
-    }
-    
-    /**
-     * Build from WebSocket message
-     */
-    public function buildFromMessage($message)
-    {
-    
     }
 }

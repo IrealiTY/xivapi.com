@@ -4,7 +4,7 @@ namespace App\Service\DataCustom;
 
 use App\Service\Content\ContentMinified;
 use App\Service\Helpers\ManualHelper;
-use App\Service\Language\LanguageList;
+use App\Service\Language\Language;
 
 class Quest extends ManualHelper
 {
@@ -77,7 +77,7 @@ class Quest extends ManualHelper
         $quest->TextData_kr  = null;
     
         // loop through languages
-        foreach (LanguageList::LANGUAGES as $language) {
+        foreach (Language::LANGUAGES as $language) {
             $filename = sprintf($quest->TextFilename, $language);
             $textdata = $this->getCsv($filename);
             if (!$textdata) {
