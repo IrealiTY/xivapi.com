@@ -83,7 +83,7 @@ class DocBuilder
         
         return $this
             ->add('<a id="'. $anchor .'"></a>')
-            ->add("### {$title} [§](#{$anchor})")->space();
+            ->add("### {$title} [#](#{$anchor})")->space();
     }
 
     protected function h4($title)
@@ -103,7 +103,7 @@ class DocBuilder
         
         return $this
             ->add('<a id="'. $anchor .'"></a>')
-            ->add("<h6>{$title} <a href=\"#{$anchor}\">§</a></h6>")->space();
+            ->add("<h6>{$title} <a href=\"#{$anchor}\">#</a></h6>")->space();
     }
 
     protected function text($text)

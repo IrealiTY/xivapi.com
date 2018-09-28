@@ -16,18 +16,28 @@
         </div>
     </div>
 
+    {% if environment() == 'staging' %}
+        <div class="container">
+            <div class="alert alert-warning">
+                <h3>You are viewing the Staging API</h3>
+                This has in-development functionality and is not considered stable,
+                please only use this endpoint if you are testing new features.
+            </div>
+        </div>
+    {% endif %}
+
     <div class="home-1 container">
         <div class="row">
             <div class="col" align="center">
-                <img src="/img-svg/1.svg" height="100">
+                <img src="/img-svg/1.svg" height="72">
                 <br><br>
                 <h2>REST API</h2>
-                <small>v{{ apiVersion() }}</small>
+                <small>v{{ siteVersion().version }}</small>
                 <br><br><br>
                 <a href="{{ path('docs') }}" class="btn btn-lg btn-primary">Documentation</a>
             </div>
             <div class="col" align="center">
-                <img src="/img-svg/2.svg" height="100">
+                <img src="/img-svg/2.svg" height="72">
                 <br><br>
                 <h2>Developer Apps</h2>
                 <small>Expand your powers</small>
@@ -35,7 +45,7 @@
                 <a href="{{ path('app') }}" class="btn btn-lg btn-primary">Create &amp; Manage</a>
             </div>
             <div class="col" align="center">
-                <img src="/img-svg/3.svg" height="100">
+                <img src="/img-svg/3.svg" height="72">
                 <br><br>
                 <h2>Open Source SDKs</h2>
                 <small>Libraries, tools &amp; research</small>
@@ -54,7 +64,6 @@
                         The API provides a boat load of FINAL FANTASY XIV data
                         in the common format JSON.
                     </p>
-
                     <p>
                         PHP, JavaScript, C#, Go, Python or if you're a Scala mage, the API is super accessible.
                     </p>
@@ -134,14 +143,15 @@
     </div>
 
     <footer>
-        <img src="/logo.svg" height="24"><br>
-
+        <img src="/logo.svg" height="32">
+        <br><br>
         Premium Virtue (Phoenix)
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         Discord: Vekien#3458
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         Twitter: <a href="https://twitter.com/viion">Viion</a>
-        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; v{{ apiVersion() }} - Deployed {{ apiDeployTime() }}
+        <br>
+        <small>v{{ siteVersion().version }} - Deployed {{ siteVersion().time }}</small>
         <small>ALL FINAL FANTASY XIV CONTENT IS PROPERTY OF SQUARE ENIX CO., LTD</small>
     </footer>
 

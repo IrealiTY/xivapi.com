@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Watch any kind of exception and decide if it needs to be handled via an API response
+ */
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -20,7 +23,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            return;
+            return null;
         }
     
         $ex         = $event->getException();

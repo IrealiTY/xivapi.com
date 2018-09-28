@@ -10,31 +10,68 @@ class Welcome extends DocBuilder implements DocInterface
     {
         return $this
 
+            ->h1('Welcome')
             ->text('The XIVAPI provides a massive amount of FINAL FANTASY XIV game data in a JSON format via 
                 a REST API. You can fetch information on all sorts of game content that has been discovered and 
                 mapped in the SaintCoinach Schema. In addition it provides Character, Free Company, Linkshell, PvPTeams 
                 and Lodestone information!')
-
-            ->h6('BETA')
-            ->text('Please consider the current version "BETA", it is still been heavily developed and things
-                may change quite drastically. I highly recommend getting on Discord and helping shape the API :)')
-
+            ->note('
+                <strong>BETA</strong> <br>
+                Please consider the current version "BETA", it is still been heavily developed and things
+                may change quite drastically. I highly recommend getting on Discord and helping shape the API :)
+            ')
             ->gap()
 
             //
             // ENDPOINTS
             //
             ->h6("Endpoints")
-            ->table(['Production', 'Staging'], [
-                [ 'https://xivapi.com', '*TBD*' ]
+            ->table(['Production', 'Staging', 'Local'], [
+                [ 'https://xivapi.com', 'http://xivapi.staging.com', 'http://xivapi.local' ]
             ])
-            ->note('All routes except game content can be accessed both by UpperCasing and lowercase. 
+            ->text('All routes except game content can be accessed both by UpperCasing and lowercase. 
                 This is intentional, the game content endpoints are Case-Sensitive UpperCasing, thus: 
                 `AchievementCategory` will work, but `achievementcategory` will not as this is how they 
                 are in the in-game files. The API provides endpoints in the same style for anything custom, 
                 eg: `Characters`, `Lodestone/WorldStatus`')
-            
-            ->gap(2)
+            ->text('As game content is provided by datamining tools that have UpperCasing names, all responses
+            provide UpperCase variables, this is also true for all custom endpoints to ensure consistency.')
+
+            //
+            // Open source
+            //
+            ->h6('Open Source')
+            ->text('XIVAPI is all open source with many prototypes, libraries and other resources available on
+                github:')
+            ->list([
+                '**Organisation**: https://github.com/xivapi',
+                '**Source Code**: https://github.com/xivapi/xivapi.com',
+            ])
+            ->note('The xivapi.com is not really looking for contributions at this time as much of the
+                functionality is being moved to micro services.')
+            ->gap()
+
+            ->h6('Microservices')
+            ->text('Splitting up the XIVAPI tools to provide libraries any developer can use!')
+            ->table(
+                [
+                    'Name', 'Repository',' Info'
+                ],
+                [
+                    [
+                        'Game Data',
+                        'https://github.com/xivapi/xivapi-data',
+                        'Extracting game data using SaintCoinach and automatically building content documents for the REST API'
+                    ],
+                    [
+                        'Mappy',
+                        'https://github.com/xivapi/xivapi-mappy',
+                        'Parse map information from FFXIV via the games memory'
+                    ]
+                ]
+            )
+            ->gap()
+            ->line()
 
             //
             //  GLOBAL QUERIES
@@ -51,8 +88,8 @@ class Welcome extends DocBuilder implements DocInterface
                 [ '`ja`', 'Japanese' ],
                 [ '`de`', 'German' ],
                 [ '`fr`', 'French' ],
-                [ '`cn`', 'Chinese' ],
-                [ '`kr`', 'Korean' ],
+                [ '`cn`', 'Chinese (WIP)' ],
+                [ '`kr`', 'Korean (WIP)' ],
             ])
 
             ->text('To help with development; you may want to use the simplified field `Name`. 

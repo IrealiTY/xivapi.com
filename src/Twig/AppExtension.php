@@ -2,6 +2,8 @@
 
 namespace App\Twig;
 
+use App\Service\Common\Environment;
+use App\Service\Common\SiteVersion;
 use Carbon\Carbon;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -18,9 +20,8 @@ class AppExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('apiVersion', [$this, 'getApiVersion']),
-            new \Twig_SimpleFunction('apiHash', [$this, 'getApiHash']),
-            new \Twig_SimpleFunction('apiDeployTime', [$this, 'getApiDeployTime']),
+            new \Twig_SimpleFunction('environment', [$this, 'getEnvironment']),
+            new \Twig_SimpleFunction('siteVersion', [$this, 'getApiVersion']),
             new \Twig_SimpleFunction('favIcon', [$this, 'getFavIcon']),
         ];
     }
@@ -37,28 +38,26 @@ class AppExtension extends AbstractExtension
         
         return Carbon::now()->subSeconds($difference)->diffForHumans();
     }
-    
+
+    /**
+     * Get the current site environment
+     */
+    public function getEnvironment()
+    {
+        return constant(Environment::CONSTANT);
+    }
+
+    /**
+     * Get API version information
+     */
     public function getApiVersion()
     {
-        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
-        $version = $version + 600; // due to the move to GitHub
-        $version = substr_replace($version, '.', 2, 0);
-
-        return sprintf('%s.%s', getenv('VERSION'), $version);
+        return SiteVersion::get();
     }
 
-    public function getApiHash()
-    {
-        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
-        return $hash;
-    }
-
-    public function getApiDeployTime()
-    {
-        [$version, $hash, $time] = explode("\n", file_get_contents(__DIR__.'/../../git_version.txt'));
-        return Carbon::createFromTimestamp($time)->format('jS M - g:i a') . ' (UTC)';
-    }
-    
+    /**
+     * Get Fav icon based on if the site is in dev or prod mode
+     */
     public function getFavIcon()
     {
         return getenv('APP_ENV') == 'dev' ? '/favicon_dev.png' : '/favicon.png';

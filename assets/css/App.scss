@@ -198,7 +198,7 @@ small {
         margin-bottom: 20px;
     }
 
-    h1, h6 {
+    h1 {
         font-size: 42px;
         margin-bottom: 20px;
     }
@@ -215,11 +215,38 @@ small {
         font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
         font-weight: 600;
         color: #843aef;
+
+        a {
+            font-size: 20px;
+            font-weight: bold;
+            opacity: 0.5;
+            transition: .2s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
     }
 
     h5 {
         font-weight: 400;
         margin-top: 30px;
+    }
+
+    h6 {
+        font-size: 34px;
+        margin-bottom: 20px;
+
+        a {
+            font-size: 20px;
+            font-weight: bold;
+            opacity: 0.5;
+            transition: .2s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
     }
 
     p {

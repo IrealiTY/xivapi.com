@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Exception\MaintenanceException;
+use App\Service\Common\Environment;
 use App\Service\Language\Language;
 use App\Service\User\Time;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -14,6 +15,9 @@ class RequestListener
         if (!$event->isMasterRequest()) {
             return;
         }
+
+
+        Environment::set($event->getRequest());
 
         $path = explode('/', $event->getRequest()->getPathInfo());
         if ($event->getRequest()->getHost() == 'lodestone.xivapi.com' && $path[1] !== 'japan') {
