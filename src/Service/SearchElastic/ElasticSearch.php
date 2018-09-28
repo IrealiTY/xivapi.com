@@ -14,18 +14,16 @@ class ElasticSearch
     /** @var \Elasticsearch\Client */
     private $client;
 
-    public function __construct()
+    public function __construct(string $ip = null, int $port = null)
     {
-        if (!getenv('ELASTIC_IP') || !getenv('ELASTIC_PORT')) {
-            //return;
+        $ip   = $ip ?: getenv('ELASTIC_IP');
+        $port = $port ?: getenv('ELASTIC_PORT');
+        
+        if (!$ip || !$port) {
+            throw new \Exception('No ElasticSearch IP or PORT configured in env file');
         }
 
-        $hosts = sprintf(
-            "%s:%s",
-            '127.0.0.1', // getenv('ELASTIC_IP'),
-            '9200' // getenv('ELASTIC_PORT')
-        );
-
+        $hosts = sprintf("%s:%s", $ip, $port);
         $this->client = ClientBuilder::create()->setHosts([ $hosts ])->build();
 
         if (!$this->client) {

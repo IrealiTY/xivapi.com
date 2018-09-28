@@ -27,6 +27,9 @@ sleep 5
 sleep 5
 /usr/bin/php /vagrant/bin/console app:custom
 
+# Update search
+sleep 5
+/usr/bin/php /vagrant/bin/console UpdateSearchCommand dev
 
 ## -------------------------------------------------------------------------------------
 

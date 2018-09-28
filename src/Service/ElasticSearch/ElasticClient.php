@@ -132,9 +132,11 @@ class ElasticClient
      */
     public function deleteIndex(string $index)
     {
-        return $this->client->indices()->delete([
-            'index' => $index,
-        ]);
+        if ($this->isIndex($index)) {
+            return $this->client->indices()->delete([
+                'index' => $index,
+            ]);
+        }
     }
 
     /**

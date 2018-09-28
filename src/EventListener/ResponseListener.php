@@ -123,7 +123,7 @@ class ResponseListener
             }
             
             foreach ($newData as $index => $value) {
-                $dotCount = count(explode('.', $index));
+                $dotCount = substr_count($index, '.');
                 
                 if ($dotCount > 10) {
                     throw new \Exception("What possible data is in 10 nested arrays?");

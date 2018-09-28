@@ -39,8 +39,12 @@ class Cache
     /**
      * Get a redis auth from the env file
      */
-    public function getConfig($name): \stdClass
+    public function getConfig($name = null): \stdClass
     {
+        if (!$name) {
+            return $this->config;
+        }
+        
         [$ip, $port, $auth] = explode(',', getenv($name));
 
         return (Object)[
@@ -227,7 +231,7 @@ class Cache
         if ($this->isCacheDisabled()) {
             return null;
         }
-
+        
         try {
             $data = $this->pipeline
                 ? $this->pipeline->get($key)
