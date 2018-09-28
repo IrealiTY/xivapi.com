@@ -10,16 +10,50 @@
     <main class="doc-page">
         <div class="alert alert-secondary">
             <strong>DEPLOYED</strong><br>
-            <code>v{{ apiVersion() }} ({{ apiHash() }})</code>
+            <code>
+                v{{ siteVersion().version }}
+                {{ siteVersion().hash }} -
+                {{ siteVersion().time }}
+            </code>
+            <p>
+                <h4>"{{ commits.current.commit.message }}"</h4>
+                <small>Committed: {{ commits.current.commit.committer.date|dateRelative }}</small>
+            </p>
         </div>
-
-        <h5>Recent code changes</h5>
-        {% for commit in commits.values %}
-            <div class="{{ apiHash() == commit.hash ? 'git-deployed' : 'git-row' }}">
-                <small><strong>{{ commit.date|dateRelative }} (</strong>{{ commit.hash }})</small><br>
-                {{ apiHash() == commit.hash ? '<span class="badge badge-success">LIVE</span>' : '' }} {{ commit.message }}
-            </div>
-        {% endfor %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="50%">Production</th>
+                    <th>Staging</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                    {% for commit in commits.master %}
+                        <div class="git-row">
+                            {{ siteVersion().hash == commit.sha ? '<span class="badge badge-success">LIVE</span>' : '' }} {{ commit.commit.message }}
+                            <div>
+                                {{ commit.commit.committer.date|dateRelative }} -
+                                <a href="{{ commit.commit.url }}" target="_blank">{{ commit.sha }}</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </td>
+                    <td>
+                        {% for commit in commits.staging %}
+                            <div class="git-row">
+                                {{ siteVersion().hash == commit.sha ? '<span class="badge badge-success">LIVE</span>' : '' }} {{ commit.commit.message }}
+                                <div>
+                                    {{ commit.commit.committer.date|dateRelative }} -
+                                    <a href="{{ commit.commit.url }}" target="_blank">{{ commit.sha }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 </div>
 {% endblock %}

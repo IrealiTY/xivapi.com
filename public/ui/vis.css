@@ -286,23 +286,15 @@ small {
 .navbar.bg-dark {
   background-color: #202020 !important; }
 
-.git-row,
-.git-deployed {
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  font-size: 14px; }
-  .git-row small,
-  .git-deployed small {
-    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-    opacity: 0.6;
-    font-size: 11px; }
-
 .git-row {
-  background-color: #eee; }
-
-.git-deployed {
-  background-color: var(--highlight); }
+  margin: 0 -.75rem;
+  padding: 15px;
+  border-bottom: solid 1px #eee;
+  font-size: 16px; }
+  .git-row > div {
+    opacity: 0.6;
+    font-size: 12px;
+    margin-top: 5px; }
 
 .alert p {
   margin-bottom: 0; }
