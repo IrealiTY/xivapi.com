@@ -7,29 +7,35 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchRequest
 {
-    const STRING_WILDCARD       = 'wildcard';
-    const STRING_WILDCARD_PLUS  = 'wildcard_plus';
-    const STRING_MULTI_MATCH    = 'multi_match';
-    const STRING_QUERY_STRING   = 'query_string';
-    const STRING_PREFIX         = 'prefix';
-    const STRING_TERM           = 'term';
-    const STRING_PHRASE_PREFIX  = 'match_phrase_prefix';
-    const STRING_PHRASE         = 'match_phrase';
-    const STRING_FUZZY          = 'fuzzy';
-    
+    const STRING_CUSTOM              = 'custom';
+    const STRING_FUZZY               = 'fuzzy';
+    const STRING_TERM                = 'term';
+    const STRING_WILDCARD            = 'wildcard';
+    const STRING_WILDCARD_PLUS       = 'wildcard_plus';
+    const STRING_PREFIX              = 'prefix';
+    const STRING_MATCH               = 'match';
+    const STRING_MATCH_PHRASE        = 'match_phrase';
+    const STRING_MATCH_PHRASE_PREFIX = 'match_phrase_prefix';
+    const STRING_MULTI_MATCH         = 'multi_match';
+    const STRING_QUERY_STRING        = 'query_string';
+    const STRING_SIMILAR             = 'similar';
+
     const MIN_LIMIT = 1;
     const MAX_LIMIT = 500;
     
     const STRING_ALGORITHMS = [
+        self::STRING_CUSTOM,
+        self::STRING_FUZZY,
+        self::STRING_TERM,
         self::STRING_WILDCARD,
         self::STRING_WILDCARD_PLUS,
+        self::STRING_PREFIX,
+        self::STRING_MATCH,
+        self::STRING_MATCH_PHRASE,
+        self::STRING_MATCH_PHRASE_PREFIX,
         self::STRING_MULTI_MATCH,
         self::STRING_QUERY_STRING,
-        self::STRING_PREFIX,
-        self::STRING_TERM,
-        self::STRING_PHRASE_PREFIX,
-        self::STRING_PHRASE,
-        self::STRING_FUZZY,
+        self::STRING_SIMILAR,
     ];
     
     // specific indexes
@@ -37,7 +43,7 @@ class SearchRequest
     // the search string
     public $string = '';
     // the string query algorithm to use
-    public $stringAlgo = 'wildcard_plus';
+    public $stringAlgo = self::STRING_CUSTOM;
     // string search column
     public $stringColumn = 'Name_%s';
     // list of filters
@@ -54,6 +60,8 @@ class SearchRequest
     public $page = 1;
     // language
     public $language = Language::DEFAULT;
+    // columns
+    public $columns = ['ID','Name','Icon','Url'];
     
     /**
      * Build the search request from the http request
@@ -70,11 +78,12 @@ class SearchRequest
         $this->limit            = $request->get('limit',          $this->limit);
         $this->language         = $request->get('language',       $this->language);
         $this->filters          = $request->get('filters',        $this->filters);
+        $this->columns          = $request->get('columns',        $this->columns);
         
         // validate provided indexes
         if ($this->indexes) {
             $this->indexes = explode(',', $this->indexes);
-            $validIndexes = explode(',', SearchData::indexes());
+            $validIndexes = explode(',', SearchContent::indexes());
             
             // remove non valid ones
             foreach ($this->indexes as $i => $index) {
@@ -99,7 +108,12 @@ class SearchRequest
         
         // lower case it for the sake of performance and analyzer matching
         $this->string           = strtolower($this->string);
-        $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_WILDCARD;
+        $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_CUSTOM;
         $this->stringColumn     = sprintf($this->stringColumn, $this->language);
+
+        // convert to array if provided
+        if (is_string($this->columns)) {
+            $this->columns = explode(',', $this->columns);
+        }
     }
 }

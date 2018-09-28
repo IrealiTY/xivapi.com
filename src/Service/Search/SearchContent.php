@@ -25,4 +25,9 @@ class SearchContent
         'Title',
         'Weather',
     ];
+
+    public static function indexes()
+    {
+        return array_map('strtolower', self::LIST);
+    }
 }

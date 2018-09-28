@@ -39,6 +39,14 @@ class ElasticQuery
         return $response;
     }
 
+    /**
+     * Get JSON payload that is sent to ElasticSearch
+     */
+    public function getJson(string $type = 'should'): string
+    {
+        return json_encode($this->getQuery($type), JSON_PRETTY_PRINT);
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     public function limit(int $from, int $size): self
@@ -65,8 +73,6 @@ class ElasticQuery
         $this->body['min_score'] = $score;
         return $this;
     }
-
-    //------------------------------------------------------------------------------------------------------------------
 
     public function all(): self
     {

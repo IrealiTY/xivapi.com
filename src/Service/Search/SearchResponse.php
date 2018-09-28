@@ -30,8 +30,8 @@ class SearchResponse
             return;
         }
     
-        $this->response->SpeedMs    = $results['took'];
-        $this->response->Results    = $this->formatResults($results['hits']['hits']);
+        $this->response->SpeedMs = $results['took'];
+        $this->response->Results = $this->formatResults($results['hits']['hits']);
     
         // Pagination
         $totalResults = (int)$results['hits']['total'];
@@ -70,25 +70,23 @@ class SearchResponse
      */
     public function buildView($hit)
     {
-        $index  = $hit['_index'];
-        $source = $hit['_source'];
-        
-        $row = [ '_' => $index ];
-        $view = array_merge(SearchData::views($index), [
-            'ID',
-            'Icon',
-            'Url',
-            'GamePatch.ID'
-        ]);
-        
-        foreach ($view as $field) {
-            $column = str_ireplace('_%s', null, $field);
-            $field  = sprintf($field, $this->request->language);
-            $row[$column] = $source[$field] ?? null;
+        // defaults
+        $row = [
+            '_'      => $hit['_index'],
+            '_Score' => $hit['_score'],
+        ];
+
+        // add columns
+        foreach ($this->request->columns as $column) {
+            $column       = str_ireplace('_%s', null, $column);
+            $column       = sprintf($column, $this->request->language);
+            $row[$column] = $hit['_source'][$column] ?? null;
         }
-        
-        $row['GameType'] = explode('/', $row['Url'])[1];
-        $row['_Score'] = $hit['_score'];
+
+        // if url exists, add Game type
+        if (isset($row['Url'])) {
+            $row['UrlName'] = explode('/', $row['Url'])[1];
+        }
         
         ksort($row);
         return $row;
