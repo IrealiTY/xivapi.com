@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Service\ElasticSearch\ElasticClient;
 use App\Service\Redis\Cache;
 use App\Service\Search\SearchContent;
 use App\Service\SearchElastic\ElasticMapping;
