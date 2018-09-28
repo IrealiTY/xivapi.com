@@ -21,13 +21,10 @@ class GoogleAnalytics
         'v'   => 1,
         'tid' => 'UA-125096878-1',
     ];
-    
-    /** @var Client */
-    private $client;
-    
-    public function __construct()
+
+    public static function getClient()
     {
-        $this->client = new Client([
+        return new Client([
             'base_uri' => self::ENDPOINT,
             'timeout'  => self::TIMEOUT
         ]);
@@ -36,19 +33,19 @@ class GoogleAnalytics
     /**
      * Post a hit to Google Analytics
      */
-    public function hit(array $routes): self
+    public static function hit(array $routes): void
     {
         $options = self::OPTIONS;
         $options['t'] = 'pageview';
         $options['dp'] = "/". implode('/', $routes);
         
-        return $this->post($options);
+        self::post($options);
     }
     
     /**
      * Post an event to Google Analytics
      */
-    public function event(string $category, string $action, string $label = null, $value = null): self
+    public static function event(string $category, string $action, string $label = null, $value = null): void
     {
         $options = self::OPTIONS;
         $options['t'] = 'event';
@@ -63,25 +60,23 @@ class GoogleAnalytics
             $options['ev'] = $value; // eg: 500 (seconds)
         }
 
-        return $this->post($options);
+        self::post($options);
     }
     
     /**
      * Process a post request
      */
-    private function post($options): self
+    private static function post($options): void
     {
         $options['cid'] = Uuid::uuid4()->toString();
         $options['z'] = mt_rand(0,999999);
         
         try {
-            $this->client->post('/collect', [
+            self::getClient()->post('/collect', [
                 RequestOptions::QUERY => $options
             ]);
         } catch (\Exception $ex) {
             // ignore
         }
-        
-        return $this;
     }
 }

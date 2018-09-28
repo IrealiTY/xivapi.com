@@ -42,7 +42,8 @@ class SearchController extends Controller
         $this->search->handleRequest($searchRequest, $searchResponse);
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['Search'])->event('search', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['Search']);
+        GoogleAnalytics::event('search', 'get', 'duration', $duration);
         return $this->json($searchResponse->response);
     }
 }

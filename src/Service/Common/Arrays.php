@@ -129,6 +129,65 @@ class Arrays
     }
 
     /**
+     * Flattens an array into dot notation
+     */
+    public static function flattenArray($array, $prepend = '')
+    {
+        $results = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value) && ! empty($value)) {
+                $results = array_merge($results, self::flattenArray($value, $prepend.$key.'.'));
+            } else {
+                $results[$prepend.$key] = $value;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Describes an array
+     * - values that are an array will become []
+     * - Values not array will be "best guess"
+     */
+    public static function describeArray($array)
+    {
+        foreach ($array as $i => $a) {
+            if (is_array($a) && !is_numeric($i)) {
+                if (self::isAssociateArray($a)) {
+                    $array[$i] = self::describeArray($a);
+                } else {
+                    $array[$i] = "array";
+                }
+            } else {
+                if ($a === true || $a === false) {
+                    $array[$i] = "boolean";
+                } else if (is_numeric($a)) {
+                    $array[$i] = "int";
+                } else if (is_float($a)) {
+                    $array[$i] = "int";
+                } else if (is_string($a)) {
+                    $array[$i] = "string";
+                } else if (is_object($a)) {
+                    $array[$i] = "object";
+                } else {
+                    $array[$i] = "[?] {$a}";
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * Returns true OR false if the array is Associate or not (Numeric)
+     */
+    public static function isAssociateArray(array $arr)
+    {
+        if (array() === $arr) return false;
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    /**
      * Sort a multi-dimensional array by its key
      */
     public static function sortArrayByKey(array $array)

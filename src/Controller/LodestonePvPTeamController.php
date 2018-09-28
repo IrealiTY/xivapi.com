@@ -17,9 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LodestonePvPTeamController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var PvPTeamService */
@@ -39,7 +36,7 @@ class LodestonePvPTeamController extends Controller
     public function search(Request $request)
     {
         $this->appManager->fetch($request);
-        (new GoogleAnalytics())->hit(['PvPTeam','Search']);
+        GoogleAnalytics::hit(['PvPTeam','Search']);
         
         return $this->json(
             Japan::query('/japan/search/pvpteam', [
@@ -79,7 +76,8 @@ class LodestonePvPTeamController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['PvPTeam',$id])->event('PvPTeam', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['PvPTeam',$id]);
+        GoogleAnalytics::event('PvPTeam', 'get', 'duration', $duration);
         return $this->json($response);
     }
     
@@ -103,8 +101,8 @@ class LodestonePvPTeamController extends Controller
         if ($ent->getState() === PvPTeam::STATE_NOT_FOUND) {
             return $this->json($this->service->delete($ent));
         }
-    
-        (new GoogleAnalytics())->hit(['PvPTeam',$id,'Delete']);
+
+        GoogleAnalytics::hit(['PvPTeam',$id,'Delete']);
         return $this->json(false);
     }
     
@@ -128,7 +126,7 @@ class LodestonePvPTeamController extends Controller
         $this->service->persist($ent);
     
         $this->service->cache->set(__METHOD__.$id, ServiceQueues::PVPTEAM_UPDATE_TIMEOUT);
-        (new GoogleAnalytics())->hit(['PvPTeam',$id,'Update']);
+        GoogleAnalytics::hit(['PvPTeam',$id,'Update']);
         return $this->json(1);
     }
 }

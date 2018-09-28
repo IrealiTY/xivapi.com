@@ -55,7 +55,7 @@ class LodestoneCharacterController extends Controller
     public function search(Request $request)
     {
         $this->appManager->fetch($request);
-        (new GoogleAnalytics())->hit(['Character','Search']);
+        GoogleAnalytics::hit(['Character','Search']);
         
         return $this->json(
             Japan::query('/japan/search/character', [
@@ -177,7 +177,8 @@ class LodestoneCharacterController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['Character',$id])->event('Character', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['Character',$id]);
+        GoogleAnalytics::event('Character', 'get', 'duration', $duration);
         return $this->json($response);
     }
 
@@ -210,7 +211,7 @@ class LodestoneCharacterController extends Controller
 
         // small cache time as it's just to prevent "spam"
         $this->service->cache->set($key, $data, 15);
-        (new GoogleAnalytics())->hit(['Character',$id,'Verification']);
+        GoogleAnalytics::hit(['Character',$id,'Verification']);
         
         return $this->json($data);
     }
@@ -249,7 +250,7 @@ class LodestoneCharacterController extends Controller
             return $this->json(1);
         }
     
-        (new GoogleAnalytics())->hit(['Character',$id,'Delete']);
+        GoogleAnalytics::hit(['Character',$id,'Delete']);
         return $this->json(false);
     }
 
@@ -299,7 +300,7 @@ class LodestoneCharacterController extends Controller
         $this->service->persist($entAchievements);
 
         $this->service->cache->set(__METHOD__.$id, ServiceQueues::CHARACTER_UPDATE_TIMEOUT);
-        (new GoogleAnalytics())->hit(['Character',$id,'Update']);
+        GoogleAnalytics::hit(['Character',$id,'Update']);
         
         return $this->json(1);
     }

@@ -38,7 +38,7 @@ class Japan
         $cache->set($key, $data, (60*60*3));
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->event('lodestone', 'get', 'duration', $duration);
+        GoogleAnalytics::event('lodestone', 'get', 'duration', $duration);
         
         return $data;
     }

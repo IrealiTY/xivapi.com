@@ -6,10 +6,10 @@ use App\Entity\MapPosition;
 use App\Entity\MemoryData;
 use App\Service\Apps\AppManager;
 use App\Service\Content\ContentList;
+use App\Service\Content\GameServers;
 use App\Service\Data\CsvReader;
 use App\Service\GamePatch\Patch;
 use App\Service\Google\GoogleAnalytics;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Redis\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,9 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class XivGameContentController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var Cache */
     private $cache;
     /** @var ContentList */
@@ -54,11 +51,10 @@ class XivGameContentController extends Controller
     public function patches(Request $request)
     {
         $this->appManager->fetch($request);
-
-        $patches = (new Patch())->get();
-    
-        (new GoogleAnalytics())->hit(['PatchList']);
-        return $this->json($patches);
+        GoogleAnalytics::hit(['PatchList']);
+        return $this->json(
+            (new Patch())->get()
+        );
     }
     
     /**
@@ -68,78 +64,8 @@ class XivGameContentController extends Controller
     public function servers(Request $request)
     {
         $this->appManager->fetch($request);
-        
-        $list = [
-            'Adamantoise',
-            'Aegis',
-            'Alexander',
-            'Anima',
-            'Asura',
-            'Atomos',
-            'Bahamut',
-            'Balmung',
-            'Behemoth',
-            'Belias',
-            'Brynhildr',
-            'Cactuar',
-            'Carbuncle',
-            'Cerberus',
-            'Chocobo',
-            'Coeurl',
-            'Diabolos',
-            'Durandal',
-            'Excalibur',
-            'Exodus',
-            'Faerie',
-            'Famfrit',
-            'Fenrir',
-            'Garuda',
-            'Gilgamesh',
-            'Goblin',
-            'Gungnir',
-            'Hades',
-            'Hyperion',
-            'Ifrit',
-            'Ixion',
-            'Jenova',
-            'Kujata',
-            'Lamia',
-            'Leviathan',
-            'Lich',
-            'Louisoix',
-            'Malboro',
-            'Mandragora',
-            'Masamune',
-            'Mateus',
-            'Midgardsormr',
-            'Moogle',
-            'Odin',
-            'Omega',
-            'Pandaemonium',
-            'Phoenix',
-            'Ragnarok',
-            'Ramuh',
-            'Ridill',
-            'Sargatanas',
-            'Shinryu',
-            'Shiva',
-            'Siren',
-            'Tiamat',
-            'Titan',
-            'Tonberry',
-            'Typhon',
-            'Ultima',
-            'Ultros',
-            'Unicorn',
-            'Valefor',
-            'Yojimbo',
-            'Zalera',
-            'Zeromus',
-            'Zodiark',
-        ];
-    
-        (new GoogleAnalytics())->hit(['Servers']);
-        return $this->json($list);
+        GoogleAnalytics::hit(['Servers']);
+        return $this->json(GameServers::LIST);
     }
 
     /**
@@ -149,8 +75,7 @@ class XivGameContentController extends Controller
     public function content(Request $request)
     {
         $this->appManager->fetch($request);
-    
-        (new GoogleAnalytics())->hit(['Content']);
+        GoogleAnalytics::hit(['Content']);
         return $this->json(
             $this->cache->get('content')
         );
@@ -290,7 +215,8 @@ class XivGameContentController extends Controller
         }
         
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit([$name])->event('content', 'list', 'duration', $duration);
+        GoogleAnalytics::hit([$name]);
+        GoogleAnalytics::event('content', 'list', 'duration', $duration);
         return $this->json($content);
     }
 
@@ -309,14 +235,14 @@ class XivGameContentController extends Controller
         } else {
             // grab content
             $content = $this->cache->get("xiv_{$name}_{$id}");
-
             if (!$content) {
                 throw new NotFoundHttpException("FFXIV Game Content not found for; ID = {$id}, Name = {$name}");
             }
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit([$name, $id])->event('content', 'get', 'duration', $duration);
+        GoogleAnalytics::hit([$name, $id]);
+        GoogleAnalytics::event('content', 'get', 'duration', $duration);
         return $this->json($content);
     }
 }
