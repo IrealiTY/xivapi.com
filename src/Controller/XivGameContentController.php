@@ -9,7 +9,7 @@ use App\Service\Content\ContentList;
 use App\Service\Content\GameServers;
 use App\Service\Data\CsvReader;
 use App\Service\GamePatch\Patch;
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Redis\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Service\Apps\AppManager;
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Search\SearchRequest;
 use App\Service\Search\SearchResponse;
 use App\Service\Search\Search;

@@ -2,7 +2,7 @@
 
 namespace App\Service\Japan;
 
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Redis\Cache;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;

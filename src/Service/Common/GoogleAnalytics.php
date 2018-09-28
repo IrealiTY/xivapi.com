@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Google;
+namespace App\Service\Common;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;

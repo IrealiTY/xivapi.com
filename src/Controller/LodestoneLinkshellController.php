@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\Linkshell;
 use App\Service\Apps\AppManager;
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Helpers\ArrayHelper;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\LinkshellService;
