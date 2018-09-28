@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Service\Common;
+
+class Arrays
+{
+    /**
+     * Extra columns from an array
+     */
+    public static function extractColumns(array $array, array $columns): array
+    {
+        $columns = self::detectRangeColumns($columns);
+
+        // empty?
+        if (!$columns) {
+            return $array;
+        }
+
+        $newData = [];
+        foreach ($columns as $col) {
+            $newData[$col] = self::getArrayValueFromDotNotation($array, $col);
+        }
+
+        foreach ($newData as $index => $value) {
+            $dotCount = substr_count($index, '.');
+
+            if ($dotCount > 10) {
+                throw new \Exception("What possible data is in 10 nested arrays?");
+            }
+
+            if ($dotCount > 1) {
+                self::handleDotNotationToArray($newData, $index, $value);
+                unset($newData[$index]);
+            }
+        }
+
+        return $newData;
+    }
+
+    /**
+     * Convert dot notations into arrays
+     */
+    public static function handleDotNotationToArray(array &$array, string $key, $value)
+    {
+        if (is_null($key)) {
+            return $array = $value;
+        }
+
+        $keys = explode('.', $key);
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            // If the key doesn't exist at this depth, we will just create an empty array
+            // to hold the next value, allowing us to create the arrays to hold final
+            // values at the correct depth. Then we'll keep digging into the array.
+            if (! isset($array[$key]) || ! is_array($array[$key])) {
+                $array[$key] = [];
+            }
+
+            $array = &$array[$key];
+        }
+
+        $array[array_shift($keys)] = $value;
+        return $array;
+    }
+
+    /**
+     * look for x.* columns and pre-populate arrays
+     */
+    public static function detectRangeColumns(array $columns): array
+    {
+        // reformat some keys
+        foreach ($columns as $i => $column) {
+            $column = explode('.', $column);
+
+            $countColumn = false;
+            foreach ($column as $j => $col) {
+                if (substr($col, 0, 1) === '*') {
+                    // remove this column as it will be merged later
+                    unset($columns[$i]);
+
+                    // grab column count
+                    $countColumn = (int)substr($col, 1);
+                    break;
+                }
+            }
+
+            // Append all count columns
+            if ($countColumn) {
+                // build a bunch of columns
+                foreach (range(0, $countColumn) as $r) {
+                    $columns[] = implode(
+                        '.', str_ireplace("*{$countColumn}", $r, $column)
+                    );
+                }
+            }
+        }
+
+        return $columns;
+    }
+
+    /**
+     * Get an array value via dot notation
+     */
+    public static function getArrayValueFromDotNotation(array $array, string $key, $default = null)
+    {
+        $value = $default;
+        if (is_array($array) && array_key_exists($key, $array)) {
+            $value = $array[$key];
+        } else if (is_object($array) && property_exists($array, $key)) {
+            $value = $array->$key;
+        } else {
+            $segments = explode('.', $key);
+
+            foreach ($segments as $segment) {
+                if (is_array($array) && array_key_exists($segment, $array)) {
+                    $value = $array = $array[$segment];
+                } else if (is_object($array) && property_exists($array, $segment)) {
+                    $value = $array = $array->$segment;
+                } else {
+                    $value = $default;
+                    break;
+                }
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Sort a multi-dimensional array by its key
+     */
+    public static function sortArrayByKey(array $array)
+    {
+        foreach ($array as $i => $value) {
+            if (is_array($value)) {
+                $array[$i] = self::sortArrayByKey($value);
+            }
+        }
+
+        ksort($array);
+        return $array;
+    }
+}
