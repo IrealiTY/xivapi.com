@@ -2,7 +2,7 @@
 
 namespace App\Service\Search;
 
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchRequest

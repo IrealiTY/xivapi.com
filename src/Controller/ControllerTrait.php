@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Service\Content\ContentMinified;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use GuzzleHttp\RequestOptions;
 use Symfony\Component\HttpFoundation\Request;
 

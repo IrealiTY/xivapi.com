@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Language;
+namespace App\Service\Common;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,7 +20,6 @@ class Language
     ];
 
     private static $lang = self::DEFAULT;
-
 
     /**
      * Confirm a language param provided is legit
@@ -59,8 +58,7 @@ class Language
      */
     public static function handle($data, string $language = null)
     {
-        $language = $language ?: self::$lang;
-        $language = substr(strtolower($language), 0, 2);
+        $language = substr(strtolower($language ?: self::$lang), 0, 2);
 
         if (!in_array($language, self::LANGUAGES)) {
             $language = self::LANGUAGES[0];

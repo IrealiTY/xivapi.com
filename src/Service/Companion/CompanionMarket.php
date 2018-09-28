@@ -3,7 +3,7 @@
 namespace App\Service\Companion;
 
 use App\Service\Content\ContentMinified;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 
 class CompanionMarket extends Companion

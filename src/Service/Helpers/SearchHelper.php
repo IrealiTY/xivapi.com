@@ -3,7 +3,7 @@
 namespace App\Service\Helpers;
 
 use App\Service\ElasticSearch\Mapping;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 
 trait SearchHelper
 {

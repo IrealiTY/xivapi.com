@@ -4,7 +4,7 @@ namespace App\Service\DataCustom;
 
 use App\Service\Content\ContentMinified;
 use App\Service\Helpers\ManualHelper;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 
 class Quest extends ManualHelper
 {

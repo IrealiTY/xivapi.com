@@ -4,7 +4,7 @@ namespace App\EventListener;
 
 use App\Exception\MaintenanceException;
 use App\Service\Common\Environment;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use App\Service\User\Time;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 

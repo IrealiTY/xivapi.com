@@ -5,7 +5,7 @@ namespace App\EventListener;
 use App\Service\Common\Arrays;
 use App\Service\Common\DataType;
 use App\Service\Content\ContentMinified;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
