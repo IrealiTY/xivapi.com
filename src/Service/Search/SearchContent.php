@@ -25,9 +25,20 @@ class SearchContent
         'Title',
         'Weather',
     ];
-
-    public static function indexes()
+    
+    /**
+     * Validate a list of ElasticSearch indeces
+     */
+    public static function validate($list)
     {
-        return array_map('strtolower', self::LIST);
+        $valid = array_map('strtolower', self::LIST);
+        
+        foreach ($list as $i => $index) {
+            if (!in_array($index, $valid)) {
+                unset($list[$i]);
+            }
+        }
+        
+        return $list;
     }
 }

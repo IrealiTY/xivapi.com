@@ -47,14 +47,11 @@ class Search
         $this->performStringSearch($req);
         $this->performFilterSearch($req);
         
-        print_r($this->query->getJson());die;
+        #echo $this->query->getJson();#die;
         
         try {
-            $indexes = $req->indexes ?: SearchContent::indexes();
-
             $res->setResults(
-                $this->search
-                    ->search($indexes, 'search', $this->query) ?: []
+                $this->search->search($req->indexes, 'search', $this->query) ?: []
             );
         } catch (\Exception $ex) {
             // if this is an elastic exception, clean the error
@@ -155,9 +152,7 @@ class Search
 
             if (in_array($op, ['='])) {
                 $this->query->filterTerm($column, $value);
-            }
-
-            if (in_array($op, ['>','<','>=','<='])) {
+            } else if (in_array($op, ['>','<','>=','<='])) {
                 $opConversion = [
                     '>=' => 'gte',
                     '<=' => 'lte',
@@ -165,7 +160,9 @@ class Search
                     '<' => 'lt'
                 ];
 
-                $this->query->filterRange($column, $opConversion[$op], (int)$value);
+                $this->query->filterRange($column, (int)$value, $opConversion[$op]);
+            } else {
+                throw new \Exception("Invalid operand provided: {$op}, please provide either: >, >=, <, <=, or =");
             }
         }
     }

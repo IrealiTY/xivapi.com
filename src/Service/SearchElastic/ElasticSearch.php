@@ -10,6 +10,7 @@ class ElasticSearch
     const NUMBER_OF_REPLICAS = 0;
     const MAX_RESULT_WINDOW  = 100000;
     const MAX_BULK_DOCUMENTS = 1000;
+    const MAX_FIELDS         = 10000;
 
     /** @var \Elasticsearch\Client */
     private $client;
@@ -37,6 +38,7 @@ class ElasticSearch
             'number_of_shards'   => self::NUMBER_OF_SHARDS,
             'number_of_replicas' => self::NUMBER_OF_REPLICAS,
             'max_result_window'  => self::MAX_RESULT_WINDOW,
+            'index.mapping.total_fields.limit' => self::MAX_FIELDS,
         ]);
 
         $this->client->indices()->create([
@@ -64,7 +66,7 @@ class ElasticSearch
         ]);
     }
 
-    public function addDocument(string $index, string $type, string $id, array $document): void
+    public function addDocument(string $index, string $type, string $id, $document): void
     {
         $this->client->index([
             'index' => $index,
@@ -76,6 +78,33 @@ class ElasticSearch
 
     public function bulkDocuments(string $index, string $type, array $documents): void
     {
+        /*
+        $params = ['body' => []];
+        $count = 0;
+    
+        foreach($documents as $id => $body) {
+            $base = [
+                'index' => [
+                    '_index' => $index,
+                    '_type' => $type,
+                    '_id' => $id,
+                ]
+            ];
+        
+            $params['body'][] = $base;
+            $params['body'][] = $body;
+            $count++;
+        
+            if ($count % self::MAX_BULK_DOCUMENTS == 0) {
+                $responses = $this->client->bulk($params);
+                $params = ['body' => []];
+                unset($responses);
+            }
+        }
+    
+        $this->client->bulk($params);
+        */
+        
         foreach (array_chunk($documents, self::MAX_BULK_DOCUMENTS, true) as $docs) {
             $params = [
                 'body' => []
@@ -93,7 +122,7 @@ class ElasticSearch
                 $params['body'][] = $base;
                 $params['body'][] = $doc;
             }
-
+    
             $this->client->bulk($params);
         }
     }

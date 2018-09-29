@@ -2,7 +2,7 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
 
 class NPC extends ManualHelper
@@ -28,10 +28,10 @@ class NPC extends ManualHelper
             // assuming a max of 50 items
             foreach (range(0,50) as $shopNum) {
                 $gilShopItem = $this->redis->get("xiv_GilShopItem_{$id}.{$shopNum}");
-                $gilShopItem = ContentMinified::mini($gilShopItem);
+                $gilShopItem = Arrays::minification($gilShopItem);
         
                 if ($gilShopItem) {
-                    $content->Items[] = ContentMinified::mini(
+                    $content->Items[] = Arrays::minification(
                         $this->redis->get("xiv_Item_{$gilShopItem->Item}")
                     );
                 }
@@ -74,7 +74,7 @@ class NPC extends ManualHelper
                 // TopicSelect
                 //
                 if ($dataValue >= 3276800 && $dataValue <= 3276900) {
-                    $topicSelect = ContentMinified::mini(
+                    $topicSelect = Arrays::minification(
                         $this->redis->get("xiv_TopicSelect_{$dataValue}")
                     );
                     
@@ -141,7 +141,7 @@ class NPC extends ManualHelper
                 // DefaultTalk
                 //
                 if ($dataValue >= 589800 && $dataValue <= 594900) {
-                    $npc->DefaultTalk[] = ContentMinified::mini(
+                    $npc->DefaultTalk[] = Arrays::minification(
                         $this->redis->get("xiv_DefaultTalk_{$dataValue}")
                     );
                 }
@@ -150,7 +150,7 @@ class NPC extends ManualHelper
                 // CustomTalk
                 //
                 if ($dataValue >= 720896 && $dataValue <= 721406) {
-                    $npc->CustomTalk[] = ContentMinified::mini(
+                    $npc->CustomTalk[] = Arrays::minification(
                         $this->redis->get("xiv_CustomTalk_{$dataValue}")
                     );
                 }
@@ -159,7 +159,7 @@ class NPC extends ManualHelper
                 // CraftLeve
                 //
                 if ($dataValue >= 917500 && $dataValue <= 918500) {
-                    $npc->CraftLeve[] = ContentMinified::mini(
+                    $npc->CraftLeve[] = Arrays::minification(
                         $this->redis->get("xiv_CraftLeve_{$dataValue}")
                     );
                 }
@@ -168,7 +168,7 @@ class NPC extends ManualHelper
                 // Quests
                 //
                 if ($dataValue >= 65530 && $dataValue <= 68700) {
-                    $npc->Quests[] = ContentMinified::mini(
+                    $npc->Quests[] = Arrays::minification(
                         $this->redis->get("xiv_Quest_{$dataValue}")
                     );
                 }

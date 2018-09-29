@@ -2,7 +2,7 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
 
 class InstanceContent extends ManualHelper
@@ -15,11 +15,10 @@ class InstanceContent extends ManualHelper
     {
         $this->io->text(__METHOD__);
         
-        // Warm-Up
+        // store content finder conditions against their instance content id
         foreach ($this->redis->get('ids_ContentFinderCondition') as $id) {
-            $this->contentFinderConditions[$id] = ContentMinified::mini(
-                $this->redis->get("xiv_ContentFinderCondition_{$id}")
-            );
+            $cfc = $this->redis->get("xiv_ContentFinderCondition_{$id}");
+            $this->contentFinderConditions[$cfc->InstanceContentTargetID] = $cfc;
         }
         
         $ids = $this->getContentIds('InstanceContent');
@@ -50,14 +49,7 @@ class InstanceContent extends ManualHelper
      */
     private function addContentFinderCondition($instanceContent)
     {
-        // Content finder condition
-        foreach ($this->contentFinderConditions as $condition) {
-            if ($condition->InstanceContent === $instanceContent->ID) {
-                $instanceContent->ContentFinderCondition = $condition;
-                break;
-            }
-        }
-        
+        $instanceContent->ContentFinderCondition = $this->contentFinderConditions[$instanceContent->ID] ?? null;
         if (!$instanceContent->ContentFinderCondition) {
             return;
         }
@@ -70,10 +62,10 @@ class InstanceContent extends ManualHelper
         $instanceContent->Description_fr = $descriptions->Description_fr;
         
         // Content Member Type
-        $instanceContent->ContentMemberType = $this->redis->get("xiv_ContentMemberType_{$instanceContent->ContentFinderCondition->ContentMemberType}");
+        $instanceContent->ContentMemberType = $this->redis->get("xiv_ContentMemberType_{$instanceContent->ContentFinderCondition->ContentMemberTypeTargetID}");
         
         // ContentType
-        $instanceContent->ContentType = $this->redis->get("xiv_ContentType_{$instanceContent->ContentFinderCondition->ContentType}");
+        $instanceContent->ContentType = $this->redis->get("xiv_ContentType_{$instanceContent->ContentFinderCondition->ContentTypeTargetID}");
         $instanceContent->Icon = $instanceContent->ContentType->Icon;
         $instanceContent->Banner = $instanceContent->ContentFinderCondition->Icon;
     }

@@ -2,9 +2,8 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
-use function GuzzleHttp\Psr7\_parse_message;
 
 class Achievement extends ManualHelper
 {
@@ -43,7 +42,7 @@ class Achievement extends ManualHelper
     const PRIORITY = 20;
     
     const DATA_IDS = [
-        0,1,2,3,4,5,6,7,8
+        0,1,2,3,4,5,6,7
     ];
 
     public function handle()
@@ -52,15 +51,14 @@ class Achievement extends ManualHelper
         $ids = $this->getContentIds('Achievement');
     
         foreach ($ids as $id) {
-            
             $key = "xiv_Achievement_{$id}";
             $achievement = $this->redis->get($key);
     
             // add this so all achievements get them
-            $achievement->PreAchievements = $achievement->PreAchievements ?? [];
-            $achievement->PostAchievements = $achievement->PostAchievements ?? [];
-            $achievement->QuestRequirements = $achievement->QuestRequirements ?? [];
-            $achievement->ClassJobRequirements = $achievement->ClassJobRequirements ?? null;
+            $achievement->PreAchievements      = is_array($achievement->PreAchievements) ? $achievement->PreAchievements : [];
+            $achievement->PostAchievements     = is_array($achievement->PostAchievements) ? $achievement->PostAchievements : [];
+            $achievement->QuestRequirements    = is_array($achievement->QuestRequirements) ? $achievement->QuestRequirements : [];
+            $achievement->ClassJobRequirements = $achievement->ClassJobRequirements ?? [];
     
             if ($achievement->Type == 2) {
                 $this->insertPreAndPostAchievements($achievement);
@@ -73,7 +71,9 @@ class Achievement extends ManualHelper
             if ($achievement->Type == 3) {
                 $this->insertJobClassRequirements($achievement);
             }
-
+    
+            $achievement->QuestRequirements = !empty($achievement->QuestRequirements) ?: [];
+    
             // save
             $this->redis->set($key, $achievement, self::REDIS_DURATION);
         }
@@ -99,7 +99,7 @@ class Achievement extends ManualHelper
                 //
                 // Add pre-achievements
                 //
-                $preAchievement = ContentMinified::mini(
+                $preAchievement = Arrays::minification(
                     $this->redis->get("xiv_Achievement_{$id}")
                 );
                 if (!in_array($preAchievement, $achievement->PreAchievements)) {
@@ -117,7 +117,7 @@ class Achievement extends ManualHelper
                 }
 
                 // get the current achievement in minimum format and add to the post achievement
-                $currentAchievement = ContentMinified::mini(
+                $currentAchievement = Arrays::minification(
                     $this->redis->get("xiv_Achievement_{$achievement->ID}")
                 );
                 if (!in_array($currentAchievement, $postAchievement->PostAchievements)) {
@@ -133,27 +133,27 @@ class Achievement extends ManualHelper
      */
     private function insertQuestRequirements($achievement)
     {
-        $quests = [];
         foreach (self::DATA_IDS as $i) {
             $value = $achievement->{"Data{$i}"};
 
             if ($value > 0) {
-                $quest = ContentMinified::mini(
+                $quest = Arrays::minification(
                     $this->redis->get("xiv_Quest_{$value}")
                 );
-                
+
                 unset(
                     $quest->TextData_en,
                     $quest->TextData_de,
                     $quest->TextData_fr,
                     $quest->TextData_ja
                 );
-                
-                $quests[] = $quest;
+    
+                if (is_object($quest)) {
+                    $achievement->QuestRequirements[] = $quest;
+                }
             }
         }
 
-        $achievement->QuestRequirements = $quests;
         $achievement->QuestRequirementsAll = ($achievement->Type == 6);
     }
 
@@ -171,7 +171,7 @@ class Achievement extends ManualHelper
 
         $achievement->ClassJobRequirements = [
             'Level'     => $level,
-            'ClassJob'  => ContentMinified::mini(
+            'ClassJob'  => Arrays::minification(
                 $this->redis->get("xiv_ClassJob_{$classJob}")
             ),
         ];

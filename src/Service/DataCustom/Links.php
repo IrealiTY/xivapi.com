@@ -32,7 +32,7 @@ class Links extends ManualHelper
                 $key2 = "connections_{$contentName}_{$contentId}";
             
                 // grab data
-                $content = $this->redis->get($key1);
+                $content     = $this->redis->get($key1);
                 $connections = $this->redis->get($key2);
             
                 // rebuild

@@ -2,6 +2,7 @@
 
 namespace App\Service\DataCustom;
 
+use App\Service\Common\Arrays;
 use App\Service\Content\ContentMinified;
 use App\Service\Helpers\ManualHelper;
 
@@ -98,7 +99,7 @@ class Recipe extends ManualHelper
         // Set on main recipe
         //
         if (isset($recipe->CraftType->ID) && $recipe->CraftType->ID) {
-            $recipe->ClassJob = ContentMinified::mini(
+            $recipe->ClassJob = Arrays::minification(
                 $this->redis->get("xiv_ClassJob_{$arr[$recipe->CraftType->ID]}")
             );
         }
@@ -112,7 +113,7 @@ class Recipe extends ManualHelper
             if ($recipe->{$column}) {
                 foreach ($recipe->{$column} as $subRecipe) {
                     if (isset($subRecipe->CraftType->ID) && $subRecipe->CraftType->ID) {
-                        $subRecipe->ClassJob = ContentMinified::mini(
+                        $subRecipe->ClassJob = Arrays::minification(
                             $this->redis->get("xiv_ClassJob_{$arr[$subRecipe->CraftType->ID]}")
                         );
                     }

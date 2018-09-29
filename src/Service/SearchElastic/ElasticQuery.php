@@ -8,6 +8,8 @@ class ElasticQuery
     private $body = [];
     private $filters = [];
     private $suggestions = [];
+    private $limit;
+    private $sorting;
 
     /**
      * Types: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
@@ -23,6 +25,15 @@ class ElasticQuery
                 'bool' => []
             ]
         ];
+        
+        if ($this->limit) {
+            $response['from'] = $this->limit[0];
+            $response['size'] = $this->limit[1];
+        }
+        
+        if ($this->sorting) {
+            $response['sort'] = $this->sorting;
+        }
 
         if ($this->body) {
             $response['query']['bool'][$type] = $this->body;
@@ -51,8 +62,7 @@ class ElasticQuery
 
     public function limit(int $from, int $size): self
     {
-        $this->body['from'] = $from;
-        $this->body['size'] = $size;
+        $this->limit = [$from, $size];
         return $this;
     }
 
@@ -60,7 +70,7 @@ class ElasticQuery
     {
         foreach ($sorting as $sort) {
             [$field, $order] = $sort;
-            $this->body['sort'][] = [
+            $this->sorting[] = [
                 $field => $order
             ];
         }

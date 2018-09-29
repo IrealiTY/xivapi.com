@@ -2,13 +2,11 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Helpers\ArrayHelper;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
 
 class Schema extends ManualHelper
 {
-    use ArrayHelper;
-    
     // always last
     const PRIORITY = 9999;
     
@@ -31,29 +29,30 @@ class Schema extends ManualHelper
                 continue;
             }
             
-            foreach ($ids as $id) {
-                $content = $this->redis->get("xiv_{$contentName}_{$id}");
-    
-                // count total fields
-                $schemaObject       = json_decode(json_encode($content), true);
-                $schemaCount        = count($schemaObject, COUNT_RECURSIVE);
+            // pick a random one, sod it :D
+            $id = $ids[array_rand($ids)];
+            
+            $content = $this->redis->get("xiv_{$contentName}_{$id}");
+
+            // count total fields
+            $schemaObject       = json_decode(json_encode($content), true);
+            $schemaCount        = count($schemaObject, COUNT_RECURSIVE);
+            
+            // if above max, process it
+            if ($schemaCount > $schema['count']) {
+                // build schema and columns
+                $contentSchema  = Arrays::describeArray($schemaObject);
+                $contentColumns = array_keys(Arrays::flattenArray($contentSchema));
                 
-                // if above max, process it
-                if ($schemaCount > $schema['count']) {
-                    // build schema and columns
-                    $contentSchema  = $this->describeArray($schemaObject);
-                    $contentColumns = array_keys($this->flattenArray($contentSchema));
-                    
-                    $schema = [
-                        'count'  => $schemaCount,
-                        'data'   => [
-                            'ContentID'      => $id,
-                            'ContentSchema'  => $contentSchema,
-                            'ColumnCount'    => $schemaCount,
-                            'Columns'        => $contentColumns
-                        ],
-                    ];
-                }
+                $schema = [
+                    'count'  => $schemaCount,
+                    'data'   => [
+                        'ContentID'      => $id,
+                        'ContentSchema'  => $contentSchema,
+                        'ColumnCount'    => $schemaCount,
+                        'Columns'        => $contentColumns
+                    ],
+                ];
             }
     
             // save

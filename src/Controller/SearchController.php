@@ -44,6 +44,9 @@ class SearchController extends Controller
         $duration = microtime(true) - $start;
         GoogleAnalytics::hit(['Search']);
         GoogleAnalytics::event('search', 'get', 'duration', $duration);
+        
+        # print_r($searchResponse->response);die;
+        
         return $this->json($searchResponse->response);
     }
 }

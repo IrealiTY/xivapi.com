@@ -39,13 +39,13 @@ class SearchRequest
     ];
     
     // specific indexes
-    public $indexes = '';
+    public $indexes = 'item';
     // the search string
     public $string = '';
     // the string query algorithm to use
     public $stringAlgo = self::STRING_CUSTOM;
     // string search column
-    public $stringColumn = 'Name_%s';
+    public $stringColumn = 'NameCombined_%s';
     // list of filters
     public $filters = '';
     // sort field
@@ -61,7 +61,7 @@ class SearchRequest
     // language
     public $language = Language::DEFAULT;
     // columns
-    public $columns = ['ID','Name','Icon','Url'];
+    public $columns = '_,_Score,ID,Icon,Name,Url,UrlType';
     
     /**
      * Build the search request from the http request
@@ -80,20 +80,12 @@ class SearchRequest
         $this->filters          = $request->get('filters',        $this->filters);
         $this->columns          = $request->get('columns',        $this->columns);
         
-        // validate provided indexes
-        if ($this->indexes) {
-            $this->indexes = explode(',', $this->indexes);
-            $validIndexes = explode(',', SearchContent::indexes());
-            
-            // remove non valid ones
-            foreach ($this->indexes as $i => $index) {
-                if (!in_array($index, $validIndexes)) {
-                    unset($this->indexes[$i]);
-                }
-            }
-            
-            $this->indexes = implode(',', $this->indexes);
-        }
+        // this ensures response handler will use default search columns
+        $request->request->set('columns', $this->columns);
+        
+        // validate indexes
+        $this->indexes = SearchContent::validate(explode(',', $this->indexes));
+        $this->indexes = implode(',', $this->indexes);
         
         // check limit
         $this->limit = $this->limit >= self::MIN_LIMIT ? $this->limit : self::MIN_LIMIT;
@@ -107,13 +99,8 @@ class SearchRequest
         $this->language         = Language::confirm($this->language);
         
         // lower case it for the sake of performance and analyzer matching
-        $this->string           = strtolower($this->string);
+        $this->string           = str_ireplace('+', ' ', strtolower($this->string));
         $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_CUSTOM;
         $this->stringColumn     = sprintf($this->stringColumn, $this->language);
-
-        // convert to array if provided
-        if (is_string($this->columns)) {
-            $this->columns = explode(',', $this->columns);
-        }
     }
 }

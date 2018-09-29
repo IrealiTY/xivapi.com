@@ -18,7 +18,7 @@ class SaintCoinachJsonCacheCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:cache')
+            ->setName('SaintCoinachJsonCacheCommand')
             ->setDescription('Converts all CSV files into JSON documents for easier access during the update stage.')
             ->addArgument('fast', InputArgument::OPTIONAL, 'Skip all questions and use default values');
         ;

@@ -21,6 +21,7 @@
 #
 .env
 /public/bundles/
+/bin/.phpunit
 /var/
 var/
 /vendor/

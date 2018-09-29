@@ -28,7 +28,7 @@ class Arrays
                 throw new \Exception("What possible data is in 10 nested arrays?");
             }
 
-            if ($dotCount > 1) {
+            if ($dotCount > 0) {
                 self::handleDotNotationToArray($newData, $index, $value);
                 unset($newData[$index]);
             }
@@ -143,6 +143,18 @@ class Arrays
         }
         return $results;
     }
+    
+    /**
+     * reverse of flatten array
+     */
+    public static function unflattenArray($array)
+    {
+        foreach ($array as $key => $value) {
+            self::handleDotNotationToArray($array, $key, $value);
+        }
+        
+        return $array;
+    }
 
     /**
      * Describes an array
@@ -170,7 +182,11 @@ class Arrays
                 } else if (is_object($a)) {
                     $array[$i] = "object";
                 } else {
-                    $array[$i] = "[?] {$a}";
+                    if (isset($array["{$i}Target"])) {
+                        $array[$i] = 'Object<'. $array["{$i}Target"] ?: '?' .'>';
+                    } else {
+                        $array[$i] = "[?] {$a}";
+                    }
                 }
             }
         }
@@ -188,7 +204,7 @@ class Arrays
     }
 
     /**
-     * Sort a multi-dimensional array by its key
+     * Sort a multi-dimensional array by its keys
      */
     public static function sortArrayByKey(array $array)
     {
@@ -200,6 +216,25 @@ class Arrays
 
         ksort($array);
         return $array;
+    }
+    
+    /**
+     * Sort a multi-dimensional object by its keys
+     */
+    public static function sortObjectByKey($object)
+    {
+        if (!$object || (!is_object($object) && !is_array($object))) {
+            return;
+        }
+    
+        foreach ($object as $i => $value) {
+            if (is_object($value)) {
+                self::sortObjectByKey($value);
+            }
+        }
+    
+        $ksort = new \ArrayObject($object);
+        $ksort->ksort();
     }
     
     /**
@@ -225,7 +260,7 @@ class Arrays
                 }
             }
             
-            $content[$field] = $value;
+            $content[$field] = $value ?: null;
         }
         
         $content = json_decode(json_encode($content));

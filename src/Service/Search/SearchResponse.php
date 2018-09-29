@@ -59,36 +59,13 @@ class SearchResponse
     {
         $results = [];
         foreach ($hits as $hit) {
-            $results[] = $this->buildView($hit);
+            $data            = $hit['_source'];
+            $data['_']       = $hit['_index'];
+            $data['_Score']  = $hit['_score'];
+            $data['UrlType'] = explode('/', $data['Url'])[1];
+            $results[] = $data;
         }
         
         return $results;
-    }
-    
-    /**
-     * Build the search view
-     */
-    public function buildView($hit)
-    {
-        // defaults
-        $row = [
-            '_'      => $hit['_index'],
-            '_Score' => $hit['_score'],
-        ];
-
-        // add columns
-        foreach ($this->request->columns as $column) {
-            $column       = str_ireplace('_%s', null, $column);
-            $column       = sprintf($column, $this->request->language);
-            $row[$column] = $hit['_source'][$column] ?? null;
-        }
-
-        // if url exists, add Game type
-        if (isset($row['Url'])) {
-            $row['UrlName'] = explode('/', $row['Url'])[1];
-        }
-        
-        ksort($row);
-        return $row;
     }
 }

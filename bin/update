@@ -5,31 +5,31 @@ START_TIME=$SECONDS
 ## -------------------------------------------------------------------------------------
 
 # Convert data from CSV to Json
-/usr/bin/php /vagrant/bin/console app:cache 1
+/usr/bin/php /vagrant/bin/console SaintCoinachJsonCacheCommand 1
 
 # Build data
-/usr/bin/php /vagrant/bin/console app:update 0 50 1
-/usr/bin/php /vagrant/bin/console app:update 50 50 1
-/usr/bin/php /vagrant/bin/console app:update 100 50 1
-/usr/bin/php /vagrant/bin/console app:update 150 50 1
-/usr/bin/php /vagrant/bin/console app:update 200 50 1
-/usr/bin/php /vagrant/bin/console app:update 250 50 1
-/usr/bin/php /vagrant/bin/console app:update 300 50 1
-/usr/bin/php /vagrant/bin/console app:update 350 50 1
-/usr/bin/php /vagrant/bin/console app:update 400 50 1
-/usr/bin/php /vagrant/bin/console app:update 450 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 0 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 50 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 100 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 150 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 200 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 250 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 300 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 350 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 400 50 1
+#/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 450 50 1
 
 # Add on patch info
 sleep 5
-/usr/bin/php /vagrant/bin/console UpdatePatchCommand
+#/usr/bin/php /vagrant/bin/console UpdatePatchCommand
 
 # Add custom data
 sleep 5
-/usr/bin/php /vagrant/bin/console app:custom
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCustomCommand
 
 # Update search
 sleep 5
-/usr/bin/php /vagrant/bin/console UpdateSearchCommand dev
+#/usr/bin/php /vagrant/bin/console UpdateSearchCommand dev
 
 ## -------------------------------------------------------------------------------------
 

@@ -2,6 +2,8 @@
 
 namespace App\Command;
 
+use App\Service\Common\DataType;
+use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 use App\Service\Search\SearchContent;
 use App\Service\SearchElastic\ElasticMapping;
@@ -25,7 +27,7 @@ class UpdateSearchCommand extends Command
         $this
             ->setName('UpdateSearchCommand')
             ->setDescription('Deploy all search data to live!')
-            ->addArgument('environment',  InputArgument::REQUIRED, 'prod OR dev')
+            ->addArgument('environment',  InputArgument::OPTIONAL, 'prod OR dev')
         ;
     }
     
@@ -33,7 +35,7 @@ class UpdateSearchCommand extends Command
     {
         $this
             ->setSymfonyStyle($input, $output)
-            ->title('DEPLOY TO SEARCH')
+            ->title('SEARCH')
             ->startClock();
     
         // connect to production cache
@@ -45,64 +47,141 @@ class UpdateSearchCommand extends Command
         $cache   = new Cache();
         
         // import documents to ElasticSearch
-        foreach (SearchContent::LIST as $contentName) {
-            $index  = strtolower($contentName);
-            $ids    = $cache->get("ids_{$contentName}");
-            $total  = count($ids);
-            $docs   = [];
+        try {
+            foreach (SearchContent::LIST as $contentName) {
+                $index  = strtolower($contentName);
+                $ids    = $cache->get("ids_{$contentName}");
+                $total  = count($ids);
+                $docs   = [];
+            
+                $this->io->text("<info>ElasticSearch import: {$total} {$contentName} documents to index: {$index}</info>");
+    
+                // rebuild index
+                $elastic->deleteIndex($index);
         
-            $this->io->text("<info>ElasticSearch import: {$total} {$contentName} documents to index: {$index}</info>");
-
-            // rebuild index
-            $elastic->deleteIndex($index);
-    
-            // dynamic mappings!
-            $mapping = [
-                'search' => [
-                    '_source' => [ 'enabled' => true ],
-                    'dynamic' => true,
-                    'dynamic_templates' => [
-                        [
-                            'strings' => [
-                                'match_mapping_type' => 'string',
-                                'mapping' => ElasticMapping::STRING
+                // dynamic mappings!
+                $settings = [
+                    'analysis' => ElasticMapping::ANALYSIS
+                ];
+                $mapping  = [
+                    'search' => [
+                        '_source' => [ 'enabled' => true ],
+                        'dynamic' => true,
+                        'dynamic_templates' => [
+                            [
+                                'strings' => [
+                                    'match_mapping_type' => 'string',
+                                    'mapping' => ElasticMapping::STRING
+                                ],
+                            ],[
+                                'integers' => [
+                                    'match_mapping_type' => 'long',
+                                    'mapping' => ElasticMapping::INTEGER
+                                ],
+                            ],[
+                                'booleans' => [
+                                    'match_mapping_type' => 'boolean',
+                                    'mapping' => ElasticMapping::BOOLEAN
+                                ],
+                            ],[
+                                'texts' => [
+                                    'match_mapping_type' => 'string',
+                                    'mapping' => ElasticMapping::TEXT
+                                ]
                             ]
-                        ]
+                        ],
                     ],
-                ],
-            ];
+                ];
+        
+                // create index
+                $elastic->addIndex($index, $mapping, $settings);
+        
+                // Add documents to elastic
+                $count = 0;
+                $this->io->progressStart($total);
+                foreach ($ids as $id) {
+                    $count++;
     
-            // create index
-            $elastic->addIndex($index, $mapping, []);
+                    // grab content
+                    $content = $cache->get("xiv_{$contentName}_{$id}");
     
-            // Add documents to elastic
-            $count = 0;
-            $this->io->progressStart($total);
-            foreach ($ids as $id) {
-                $count++;
+                    // remove arrays from content
+                    foreach ($content as $field => $value) {
+                        if (is_array($value)) {
+                            unset($content->{$field});
+                        }
+                    }
+                    
+                    // convert the whole thing to an array
+                    $content = json_decode(json_encode($content), true);
+                    
+                    // ensure content types are correctly assigned
+                    $content = DataType::ensureStrictDataTypes($content);
+                    
+                    // handle custom string columns
+                    $content = $this->handleCustomStringColumns($contentName, $content);
 
-                $content = $cache->get("xiv_{$contentName}_{$id}");
-                $docs[] = $content;
-                unset($content);
-    
-                // insert docs
-                if ($count > 250) {
-                    $this->io->progressAdvance($count);
-                    $elastic->bulkDocuments($index, 'search', $docs);
-                    $docs = [];
-                    $count = 0;
+                    // append to docs
+                    $docs[$id] = $content;
+
+                    # $elastic->addDocument($index, 'search', $id, $content);
+                    
+                    // insert docs
+                    if ($count == (ElasticSearch::MAX_BULK_DOCUMENTS / 2)) {
+                        $this->io->progressAdvance($count);
+                        $elastic->bulkDocuments($index, 'search', $docs);
+                        $docs = [];
+                        $count = 0;
+                    }
                 }
+        
+                // add any reminders
+                if ($count > 0) {
+                    $elastic->bulkDocuments($index, 'search', $docs);
+                }
+                $this->io->progressFinish();
             }
-    
-            // add any reminders
-            if ($count > 0) {
-                $elastic->bulkDocuments($index, 'search', $docs);
-
-            }
-            $this->io->progressFinish();
+        } catch (\Exception $ex) {
+            throw $ex;
         }
     
         unset($content, $docs);
         $this->complete()->endClock();
+    }
+    
+    /**
+     * This will create 2 new columns:
+     * - NameCombined_[Lang]: Combines the fields of content where 2 names may
+     *                        be present (eg Titles have Name + NameFemale)
+     * - NameLocale: Provides a column with all names from all languages so
+     *               1 column can be searched via multiple languages
+     */
+    private function handleCustomStringColumns(string $contentName, array $content)
+    {
+        //
+        // Build NameCombined fields
+        //
+        foreach (Language::LANGUAGES as $lang) {
+            $content["NameCombined_{$lang}"] = $content["Name_{$lang}"] ?? '';
+            
+            // append on female names
+            if ($contentName == 'Title') {
+                $content["NameCombined_{$lang}"] .= " ". ($content["NameFemale_{$lang}"] ?? '');
+            }
+    
+            $content["NameCombined_{$lang}"] = trim($content["NameCombined_{$lang}"]);
+        }
+    
+        //
+        // Build NameLocale fields
+        //
+        $content['NameLocale'] = '';
+        foreach (Language::LANGUAGES as $lang) {
+            $content['NameLocale'] .= ' '. $content["NameCombined_{$lang}"];
+        }
+    
+        $content['NameLocale'] = trim($content['NameLocale']);
+        
+        return $content;
     }
 }
