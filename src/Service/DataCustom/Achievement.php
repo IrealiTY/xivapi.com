@@ -55,9 +55,9 @@ class Achievement extends ManualHelper
             $achievement = $this->redis->get($key);
     
             // add this so all achievements get them
-            $achievement->PreAchievements      = is_array($achievement->PreAchievements) ? $achievement->PreAchievements : [];
-            $achievement->PostAchievements     = is_array($achievement->PostAchievements) ? $achievement->PostAchievements : [];
-            $achievement->QuestRequirements    = is_array($achievement->QuestRequirements) ? $achievement->QuestRequirements : [];
+            $achievement->PreAchievements      = (isset($achievement->PreAchievements) && is_array($achievement->PreAchievements)) ? $achievement->PreAchievements : [];
+            $achievement->PostAchievements     = (isset($achievement->PostAchievements) && is_array($achievement->PostAchievements)) ? $achievement->PostAchievements : [];
+            $achievement->QuestRequirements    = (isset($achievement->QuestRequirements) && is_array($achievement->QuestRequirements)) ? $achievement->QuestRequirements : [];
             $achievement->ClassJobRequirements = $achievement->ClassJobRequirements ?? [];
     
             if ($achievement->Type == 2) {
