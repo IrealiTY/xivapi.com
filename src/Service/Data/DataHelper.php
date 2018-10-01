@@ -35,7 +35,7 @@ class DataHelper
         ],
         'Quest' => [
             'Id' => 'TextFile',
-        ]
+        ],
     ];
 
     /**

@@ -15,7 +15,7 @@ class SaintCoinachDownloadCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:saint')
+            ->setName('SaintCoinachDownloadCommand')
             ->setDescription('Connect to GitHub and check for updated builds of SaintCoinach. Downloads and extracts a build.')
             ->addArgument('fast', InputArgument::OPTIONAL, 'Fast command, skips questions')
         ;

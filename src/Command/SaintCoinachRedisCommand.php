@@ -397,7 +397,7 @@ class SaintCoinachRedisCommand extends Command
             //$this->io->text("<info>[LINK {$depth}]</info> {$contentId} {$contentName} : {$definition->name} ---> {$linkId} {$linkTarget}");
             
             // if the content links to itself, then return back
-            if ($contentName == $linkTarget && $contentId == $linkId) {
+            if ($contentName == $linkTarget && (int)$contentId == (int)$linkId) {
                 return null;
             }
             
