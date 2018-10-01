@@ -130,7 +130,6 @@ class SaintCoinachRedisCommand extends Command
                 }
    
                 # $this->io->text("Build: #{$contentId} - {$idCount} / {$idTotal}");
-                $this->saveContentId($contentId, $contentName);
                 $this->buildContent($contentId, $contentName, $contentSchema, clone $contentData, 0, true);
             }
             
@@ -152,6 +151,7 @@ class SaintCoinachRedisCommand extends Command
                     Arrays::sortObjectByKey($data);
     
                     // save
+                    $this->saveContentId($data->ID, $contentName);
                     $this->redis->set($key, $data, self::REDIS_DURATION);
                 }
                 
@@ -345,6 +345,14 @@ class SaintCoinachRedisCommand extends Command
         if (isset($definition->converter) && $definition->converter->type == 'link') {
             // id of linked data
             $linkId = $content->{$definition->name} ?? null;
+    
+            // target name of linked data
+            $linkTarget = $definition->converter->target;
+    
+            // add link target and target id
+            $content->{$definition->name} = null;
+            $content->{$definition->name ."Target"} = $linkTarget;
+            $content->{$definition->name ."TargetID"} = $linkId;
             
             // if link id is an object, it has already been managed
             if (is_object($linkId)) {
@@ -380,14 +388,6 @@ class SaintCoinachRedisCommand extends Command
                 die;
                 */
             }
-            
-            // target name of linked data
-            $linkTarget = $definition->converter->target;
-    
-            // add link target and target id, set definition column to null (object at this point does not exist)
-            $content->{$definition->name} = null;
-            $content->{$definition->name ."Target"} = $linkTarget;
-            $content->{$definition->name ."TargetID"} = $linkId;
             
             // if the depth limit has been met or the link id is too low, end now.
             if ($depth >= self::MAX_DEPTH || ($linkId < 1 && !in_array($contentName, self::ZERO_CONTENT))) {
