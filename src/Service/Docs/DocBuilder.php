@@ -159,7 +159,7 @@ class DocBuilder
     {
         return $this->add("[{$name}]({$url})");
     }
-
+    
     protected function image($name, $url)
     {
         return $this->add("![{$name}]({$url})")->space();

@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 class SearchRequest
 {
     const STRING_CUSTOM              = 'custom';
-    const STRING_FUZZY               = 'fuzzy';
-    const STRING_TERM                = 'term';
     const STRING_WILDCARD            = 'wildcard';
     const STRING_WILDCARD_PLUS       = 'wildcard_plus';
+    const STRING_FUZZY               = 'fuzzy';
+    const STRING_TERM                = 'term';
     const STRING_PREFIX              = 'prefix';
     const STRING_MATCH               = 'match';
     const STRING_MATCH_PHRASE        = 'match_phrase';
@@ -25,10 +25,10 @@ class SearchRequest
     
     const STRING_ALGORITHMS = [
         self::STRING_CUSTOM,
-        self::STRING_FUZZY,
-        self::STRING_TERM,
         self::STRING_WILDCARD,
         self::STRING_WILDCARD_PLUS,
+        self::STRING_FUZZY,
+        self::STRING_TERM,
         self::STRING_PREFIX,
         self::STRING_MATCH,
         self::STRING_MATCH_PHRASE,
