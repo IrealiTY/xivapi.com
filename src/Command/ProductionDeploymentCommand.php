@@ -27,7 +27,7 @@ class ProductionDeploymentCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:deploy:data')
+            ->setName('ProductionDeploymentCommand')
             ->setDescription('Deploy all content data to live!')
             ->addArgument('redis_key', InputArgument::OPTIONAL, 'Deploy a specific redis key')
         ;

@@ -18,6 +18,11 @@ class InstanceContent extends ManualHelper
         // store content finder conditions against their instance content id
         foreach ($this->redis->get('ids_ContentFinderCondition') as $id) {
             $cfc = $this->redis->get("xiv_ContentFinderCondition_{$id}");
+            
+            if (!isset($cfc->InstanceContentTargetID)) {
+                continue;
+            }
+            
             $this->contentFinderConditions[$cfc->InstanceContentTargetID] = $cfc;
         }
         

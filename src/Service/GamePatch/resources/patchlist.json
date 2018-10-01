@@ -1,16 +1,16 @@
 [
     {
-        "Banner": null,
+        "Banner": "http:\/\/i.imgur.com\/ZUUtGzH.png",
         "ID": 0,
-        "ExVersion": null,
-        "Name_cn": "Game Patch Unknown",
-        "Name_de": "Game Patch Unknown",
-        "Name_en": "Game Patch Unknown",
-        "Name_fr": "Game Patch Unknown",
-        "Name_ja": "Game Patch Unknown",
-        "Name_kr": "Game Patch Unknown",
-        "ReleaseDate": null,
-        "Version": null
+        "ExVersion": 0,
+        "Name_cn": "Patch 2.0: A Realm Reborn",
+        "Name_de": "Patch 2.0: A Realm Reborn",
+        "Name_en": "Patch 2.0: A Realm Reborn",
+        "Name_fr": "Patch 2.0: A Realm Reborn",
+        "Name_ja": "\u65b0\u751f\u30a8\u30aa\u30eb\u30bc\u30a2 2.0",
+        "Name_kr": "Patch 2.0: A Realm Reborn",
+        "ReleaseDate": 1376611200,
+        "Version": "2.0"
     },
     {
         "Banner": "http:\/\/i.imgur.com\/ZUUtGzH.png",

@@ -19,13 +19,13 @@ START_TIME=$SECONDS
 /usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 400 50 1
 #/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 450 50 1
 
-# Add on patch info
-sleep 5
-#/usr/bin/php /vagrant/bin/console UpdatePatchCommand
-
 # Add custom data
 sleep 5
 /usr/bin/php /vagrant/bin/console SaintCoinachRedisCustomCommand
+
+# Add on patch info
+sleep 5
+/usr/bin/php /vagrant/bin/console UpdatePatchCommand
 
 # Update search
 sleep 5

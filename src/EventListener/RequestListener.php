@@ -16,7 +16,6 @@ class RequestListener
             return;
         }
 
-
         Environment::set($event->getRequest());
 
         $path = explode('/', $event->getRequest()->getPathInfo());

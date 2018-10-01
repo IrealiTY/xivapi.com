@@ -262,7 +262,7 @@ class Arrays
             
             $content[$field] = $value ?: null;
         }
-        
+    
         $content = json_decode(json_encode($content));
         
         return $content;

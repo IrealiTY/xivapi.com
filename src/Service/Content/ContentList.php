@@ -91,7 +91,11 @@ class ContentList
         // get list data
         $data = [];
         foreach ($this->ids as $id) {
-            $data[] = $this->cache->get("xiv_{$this->name}_{$id}");
+            $content = $this->cache->get("xiv_{$this->name}_{$id}");
+            
+            if ($content) {
+                $data[] = $content;
+            }
         }
        
         return [
