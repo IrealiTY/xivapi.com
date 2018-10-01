@@ -59,7 +59,13 @@ class ResponseListener
                 // Mini
                 //
                 if ($request->get('minify')) {
-                    $json = Arrays::minification($json);
+                    if (isset($json['Pagination']) && !empty($json['Results'])) {
+                        foreach ($json['Results'] as $r => $result) {
+                            $json['Results'][$r] = Arrays::minification($result);
+                        }
+                    } else if (!isset($json['Pagination'])) {
+                        $json = Arrays::minification($json);
+                    }
                 }
 
                 //
