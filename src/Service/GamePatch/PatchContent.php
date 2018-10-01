@@ -40,13 +40,13 @@ class PatchContent extends ManualHelper
         'Weather',
     ];
 
-    public function handle()
+    public function handle($single = null)
     {
         $this->updatePatchPersistence();
-        $this->updatePatchContent();
+        $this->updatePatchContent($single);
     }
     
-    private function updatePatchContent()
+    private function updatePatchContent($single)
     {
         $this->io->section('Updating tracked content');
         
@@ -55,6 +55,11 @@ class PatchContent extends ManualHelper
         $total = count(self::TRACKED_CONTENT);
         foreach (self::TRACKED_CONTENT as $i => $contentName) {
             $current = ($i+1);
+            
+            if ($single && $single != $contentName) {
+                continue;
+            }
+            
             $this->io->text("{$current}/{$total} <comment>Tracked: {$contentName}</comment>");
             $ids = $this->redis->get("ids_{$contentName}");
     
@@ -65,15 +70,15 @@ class PatchContent extends ManualHelper
             // process all content ids
             foreach ($ids as $contentId) {
                 // grab the patchId for this contentId
-                $patchId = $json[$contentId] ?? false;
-                $patchId = $patchId == 1 ? 2 : $patchId;
+                $patchId = $json[$contentId] ?? null;
     
                 // grab content
                 $key     = "xiv_{$contentName}_{$contentId}";
                 $content = $this->redis->get($key);
 
                 // set patch
-                $content->GamePatch = $patchId ? $patchService->getPatchAtID($patchId) : null;
+                $content->GamePatchID   = $patchId;
+                $content->GamePatch     = $patchService->getPatchAtID((int)$patchId);
                 
                 // re-save content
                 $this->redis->set($key, $content, self::REDIS_DURATION);

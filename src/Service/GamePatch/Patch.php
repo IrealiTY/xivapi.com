@@ -48,10 +48,13 @@ class Patch
      */
     public function getPatchAtID($id)
     {
+        $list = [];
         foreach ($this->data as $patch) {
-            if ($patch->ID == $id) {
-                return $patch;
-            }
+            $list[$patch->ID] = $patch;
+        }
+        
+        if ($list[$id]) {
+            return $list[$id];
         }
         
         throw new \Exception('No patch for id: '. $id);
