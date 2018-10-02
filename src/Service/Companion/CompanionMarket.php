@@ -57,28 +57,10 @@ class CompanionMarket extends Companion
      */
     public function getItemMarketData(int $itemId): ?CompanionResponse
     {
-        $key = "xiv_Item_{$itemId}";
-
         // grab item
-        $item = $this->cache->get($key);
-        $market = $this->cache->get("{$key}_market");
-
+        $item = $this->cache->get("xiv_Item_{$itemId}");
         if (!$item) {
-            return null;
-        }
-
-        // if cached
-        if ($market) {
-            return new CompanionResponse(
-                [
-                    'Market' => $market,
-                    'Item'   => $item,
-                ],
-                true,
-                $this->cache->getTtl("{$key}_market"),
-                0,
-                0
-            );
+            die('No item for: '. $itemId);
         }
 
         // request market data
@@ -88,9 +70,6 @@ class CompanionMarket extends Companion
         
         // enrich the market response
         $data = $this->enrichMarketResponse($data);
-
-        // cache market data
-        $this->cache->set("{$key}_market", $data, Companion::CACHE_TIME);
 
         // build response
         return new CompanionResponse(
