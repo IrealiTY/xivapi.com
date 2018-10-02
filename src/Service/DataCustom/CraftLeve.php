@@ -7,7 +7,8 @@ use App\Service\Helpers\ManualHelper;
 
 class CraftLeve extends ManualHelper
 {
-    const PRIORITY = 20;
+    // run after "links"
+    const PRIORITY = 120;
     
     public function handle()
     {
