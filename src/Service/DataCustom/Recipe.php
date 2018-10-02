@@ -97,9 +97,9 @@ class Recipe extends ManualHelper
         //
         // Set on main recipe
         //
-        if (isset($recipe->CraftType->ID) && $recipe->CraftType->ID) {
+        if (isset($recipe->CraftType->ID)) {
             $recipe->ClassJob = Arrays::minification(
-                $this->redis->get("xiv_ClassJob_{$arr[$recipe->CraftType->ID]}")
+                $this->redis->get("xiv_ClassJob_{$arr[(int)$recipe->CraftType->ID]}")
             );
         }
         
@@ -111,9 +111,9 @@ class Recipe extends ManualHelper
             
             if ($recipe->{$column}) {
                 foreach ($recipe->{$column} as $subRecipe) {
-                    if (isset($subRecipe->CraftType->ID) && $subRecipe->CraftType->ID) {
+                    if (isset($subRecipe->CraftType->ID)) {
                         $subRecipe->ClassJob = Arrays::minification(
-                            $this->redis->get("xiv_ClassJob_{$arr[$subRecipe->CraftType->ID]}")
+                            $this->redis->get("xiv_ClassJob_{$arr[(int)$subRecipe->CraftType->ID]}")
                         );
                     }
                 }

@@ -25,6 +25,7 @@ class SaintCoinachRedisCommand extends Command
     const REDIS_DURATION = (60 * 60 * 24 * 365 * 10); // 10 years
     const ZERO_CONTENT = [
         'GatheringType',
+        'CraftType',
         'Cabinet',
         'World'
     ];
