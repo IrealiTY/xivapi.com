@@ -27,8 +27,6 @@ class InstanceContent extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
-        
         // store content finder conditions against their instance content id
         foreach ($this->redis->get('ids_ContentFinderCondition') as $id) {
             $cfc  = $this->redis->get("xiv_ContentFinderCondition_{$id}");

@@ -15,7 +15,6 @@ class Quest extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         // todo - JournalSection
         
         // pre-warm NPCs

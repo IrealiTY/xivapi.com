@@ -10,7 +10,6 @@ class Stain extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('Stain');
         
         foreach ($ids as $id) {

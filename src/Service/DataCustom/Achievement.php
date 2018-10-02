@@ -47,7 +47,6 @@ class Achievement extends ManualHelper
 
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('Achievement');
     
         foreach ($ids as $id) {

@@ -9,7 +9,7 @@ use App\Service\Helpers\ManualHelper;
  */
 class Links extends ManualHelper
 {
-    const PRIORITY = 60;
+    const PRIORITY = 9995;
     
     public function handle()
     {

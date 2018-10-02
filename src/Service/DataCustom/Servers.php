@@ -11,7 +11,6 @@ class Servers extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('World');
     
         foreach ($ids as $id) {

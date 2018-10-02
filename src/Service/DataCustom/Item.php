@@ -11,7 +11,6 @@ class Item extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('Item');
     
         foreach ($ids as $id) {

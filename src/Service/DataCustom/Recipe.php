@@ -8,13 +8,12 @@ use App\Service\Helpers\ManualHelper;
 
 class Recipe extends ManualHelper
 {
-    const PRIORITY = 20;
+    const PRIORITY = 15;
     
     private $itemToRecipe = [];
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $this->warmRecipeData();
         
         $ids = $this->getContentIds('Recipe');
