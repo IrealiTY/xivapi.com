@@ -19,6 +19,7 @@ class UpdatePatchCommand extends Command
         $this
             ->setName('UpdatePatchCommand')
             ->setDescription('Update game patch values')
+            ->addArgument('force', InputArgument::OPTIONAL, 'Force this instance')
             ->addArgument('single', InputArgument::OPTIONAL, 'Specified content')
         ;
     }
@@ -30,7 +31,7 @@ class UpdatePatchCommand extends Command
         
         $patch = (new Patch())->getLatest();
 
-        if ($this->io->confirm('Is the current patch: '. $patch->Name_en, false)) {
+        if ($input->getArgument('force') || $this->io->confirm('Is the current patch: '. $patch->Name_en, false)) {
             (new PatchContent())->init($this->io)->handle($input->getArgument('single'));
         }
 

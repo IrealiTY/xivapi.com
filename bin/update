@@ -25,7 +25,7 @@ sleep 5
 
 # Add on patch info
 sleep 5
-#/usr/bin/php /vagrant/bin/console UpdatePatchCommand
+/usr/bin/php /vagrant/bin/console UpdatePatchCommand 1
 
 # Update search
 sleep 5
