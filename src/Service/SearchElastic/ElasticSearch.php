@@ -2,15 +2,16 @@
 
 namespace App\Service\SearchElastic;
 
+use App\Service\Common\Environment;
 use Elasticsearch\ClientBuilder;
 
 class ElasticSearch
 {
-    const NUMBER_OF_SHARDS   = 1;
-    const NUMBER_OF_REPLICAS = 0;
-    const MAX_RESULT_WINDOW  = 100000;
-    const MAX_BULK_DOCUMENTS = 1000;
-    const MAX_FIELDS         = 10000;
+    const NUMBER_OF_SHARDS    = 1;
+    const NUMBER_OF_REPLICAS  = 0;
+    const MAX_RESULT_WINDOW   = 100000;
+    const MAX_BULK_DOCUMENTS  = 1000;
+    const MAX_FIELDS          = 10000;
 
     /** @var \Elasticsearch\Client */
     private $client;
@@ -32,6 +33,22 @@ class ElasticSearch
         }
     }
 
+    /**
+     * Convert the $index into a environment specific index.
+     */
+    private function getEnvironmentIndex($index)
+    {
+        $env = constant(Environment::CONSTANT);
+
+        // to avoid breaking BC for now, this will remain
+        // todo - remove this when going live with the new search logic
+        if ($env === 'prod') {
+            return $index;
+        }
+
+        return sprintf('%s_%s', constant(Environment::CONSTANT), $index);
+    }
+
     public function addIndex(string $index, array $mapping, array $settings = []): void
     {
         $settings = array_merge($settings, [
@@ -42,7 +59,7 @@ class ElasticSearch
         ]);
 
         $this->client->indices()->create([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'body' => [
                 'settings' => $settings,
                 'mappings' => $mapping
@@ -52,6 +69,8 @@ class ElasticSearch
 
     public function deleteIndex(string $index): void
     {
+        $index = $this->getEnvironmentIndex($index);
+
         if ($this->isIndex($index)) {
             $this->client->indices()->delete([
                 'index' => $index
@@ -62,14 +81,14 @@ class ElasticSearch
     public function isIndex(string $index): bool
     {
         return $this->client->indices()->exists([
-            'index' => $index
+            'index' => $this->getEnvironmentIndex($index)
         ]);
     }
 
     public function addDocument(string $index, string $type, string $id, $document): void
     {
         $this->client->index([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'type'  => $type,
             'id'    => $id,
             'body'  => $document
@@ -78,6 +97,8 @@ class ElasticSearch
 
     public function bulkDocuments(string $index, string $type, array $documents): void
     {
+        $index = $this->getEnvironmentIndex($index);
+
         /*
         $params = ['body' => []];
         $count = 0;
@@ -130,7 +151,7 @@ class ElasticSearch
     public function getDocument(string $index, string $type, string $id)
     {
         return $this->client->get([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'type'  => $type,
             'id'    => $id,
         ]);
@@ -139,7 +160,7 @@ class ElasticSearch
     public function deleteDocument(string $index, string $type, string $id): void
     {
         $this->client->indices()->delete([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'type' => $type,
             'id' => $id,
         ]);
@@ -148,7 +169,7 @@ class ElasticSearch
     public function search(string $index, string $type, ElasticQuery $elasticQuery)
     {
         return $this->client->search([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'type'  => $type,
             'body'  => $elasticQuery->getQuery()
         ]);
@@ -157,7 +178,7 @@ class ElasticSearch
     public function count(string $index, string $type, ElasticQuery $elasticQuery)
     {
         return $this->client->count([
-            'index' => $index,
+            'index' => $this->getEnvironmentIndex($index),
             'type'  => $type,
             'body'  => $elasticQuery->getQuery()
         ]);
