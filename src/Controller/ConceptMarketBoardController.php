@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @package App\Controller
  */
-class MarketBoardController extends Controller
+class ConceptMarketBoardController extends Controller
 {
     /** @var CompanionMarket */
     private $market;

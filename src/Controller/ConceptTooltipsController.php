@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * At this time, this class is deprecated.
  */
-class TooltipsController extends Controller
+class ConceptTooltipsController extends Controller
 {
     /** @var Cache */
     private $cache;
