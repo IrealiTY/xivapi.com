@@ -22,7 +22,7 @@ class CompanionRequest
 
         // build headers
         $this->headers = [
-            'request-id'    => $apiRoute, // "api-api-api-api", //\Ramsey\Uuid\Uuid::uuid4()->toString(),
+            'request-id'    => $apiRoute, # \Ramsey\Uuid\Uuid::uuid4()->toString(),
             'Content-Type'  => 'application/json;charset=utf-8',
             'Accept'        => '*/*',
             'domain-type'   => 'global',

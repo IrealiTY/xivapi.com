@@ -2,7 +2,6 @@
 
 namespace App\Service\Companion;
 
-use App\Service\Content\ContentMinified;
 use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 
@@ -62,7 +61,7 @@ class CompanionMarket extends Companion
         if (!$item) {
             die('No item for: '. $itemId);
         }
-
+  
         // request market data
         [$data, $speed, $attempts] = $this->request(
             new CompanionRequest(Companion::ENDPOINT_DC, "/market/items/catalog/{$itemId}")
@@ -74,8 +73,8 @@ class CompanionMarket extends Companion
         // build response
         return new CompanionResponse(
             [
-                'Market' => $data,
-                'Item'   => $item,
+                'Market' => Language::handle($data),
+                'Item'   => Language::handle($item),
             ],
             false,
             0,
