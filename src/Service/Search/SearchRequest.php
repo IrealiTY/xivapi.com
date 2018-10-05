@@ -39,7 +39,7 @@ class SearchRequest
     ];
     
     // specific indexes
-    /** @var string */
+    /** @var string|array */
     public $indexes = SearchContent::LIST_DEFAULT;
     // the search string
     public $string = '';
@@ -85,8 +85,10 @@ class SearchRequest
         $request->request->set('columns', $this->columns);
         
         // validate indexes
-        $this->indexes = !is_array($this->indexes) ?: implode(',', $this->indexes);
-        $this->indexes = SearchContent::validate(explode(',', $this->indexes));
+        $this->indexes = is_array($this->indexes) ?: explode(',', $this->indexes);
+        $this->indexes = array_map('strtolower', $this->indexes);
+        $this->indexes = SearchContent::validate($this->indexes);
+        $this->indexes = SearchContent::prefix($this->indexes);
         $this->indexes = implode(',', $this->indexes);
         
         // check limit

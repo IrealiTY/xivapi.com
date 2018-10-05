@@ -61,7 +61,7 @@ class UpdateSearchCommand extends Command
                     continue;
                 }
         
-                $index  = strtolower($contentName);
+                $index  = SearchContent::prefix(strtolower($contentName));
                 $ids    = $cache->get("ids_{$contentName}");
                 $total  = count($ids);
                 $docs   = [];
@@ -192,6 +192,8 @@ class UpdateSearchCommand extends Command
                 );
             }
         }
+        
+        return $content;
     }
     
     /**

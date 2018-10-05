@@ -51,19 +51,19 @@ class SearchContent
             if (!in_array($index, $valid)) {
                 unset($list[$i]);
             }
-    
-            $env = constant(Environment::CONSTANT);
-    
-            // to avoid breaking BC for now, this will remain
-            // todo - remove this when going live with the new search logic
-            if ($env === 'prod' || $env === 'dev') {
-                continue;
-            }
-    
-            $list[$i] = sprintf('%s_%s', constant(Environment::CONSTANT), $index);
-
         }
         
         return $list;
+    }
+    
+    public static function prefix($index)
+    {
+        if (is_array($index)) {
+            foreach ($index as $i => $x) {
+                $index[$i] = self::prefix($index);
+            }
+        }
+        
+        return sprintf('%s_%s', constant(Environment::CONSTANT), $index);
     }
 }
