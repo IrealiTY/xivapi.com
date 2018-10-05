@@ -42,7 +42,7 @@ class ElasticSearch
 
         // to avoid breaking BC for now, this will remain
         // todo - remove this when going live with the new search logic
-        if ($env === 'prod') {
+        if ($env === 'prod' || $env === 'dev') {
             return $index;
         }
 
@@ -69,11 +69,9 @@ class ElasticSearch
 
     public function deleteIndex(string $index): void
     {
-        $index = $this->getEnvironmentIndex($index);
-
         if ($this->isIndex($index)) {
             $this->client->indices()->delete([
-                'index' => $index
+                'index' => $this->getEnvironmentIndex($index)
             ]);
         }
     }
@@ -98,33 +96,6 @@ class ElasticSearch
     public function bulkDocuments(string $index, string $type, array $documents): void
     {
         $index = $this->getEnvironmentIndex($index);
-
-        /*
-        $params = ['body' => []];
-        $count = 0;
-    
-        foreach($documents as $id => $body) {
-            $base = [
-                'index' => [
-                    '_index' => $index,
-                    '_type' => $type,
-                    '_id' => $id,
-                ]
-            ];
-        
-            $params['body'][] = $base;
-            $params['body'][] = $body;
-            $count++;
-        
-            if ($count % self::MAX_BULK_DOCUMENTS == 0) {
-                $responses = $this->client->bulk($params);
-                $params = ['body' => []];
-                unset($responses);
-            }
-        }
-    
-        $this->client->bulk($params);
-        */
         
         foreach (array_chunk($documents, self::MAX_BULK_DOCUMENTS, true) as $docs) {
             $params = [

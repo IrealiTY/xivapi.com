@@ -79,21 +79,21 @@ class Search
             case SearchRequest::STRING_CUSTOM:
                 $this->query->queryCustom($req->stringColumn, $req->string);
                 break;
-
+    
+            case SearchRequest::STRING_WILDCARD:
+                $this->query->queryWildcard($req->stringColumn, $req->string);
+                break;
+    
+            case SearchRequest::STRING_WILDCARD_PLUS:
+                $this->query->queryWildcardPlus($req->stringColumn, $req->string);
+                break;
+                
             case SearchRequest::STRING_FUZZY:
                 $this->query->queryFuzzy($req->stringColumn, $req->string);
                 break;
 
             case SearchRequest::STRING_TERM:
                 $this->query->queryTerm($req->stringColumn, $req->string);
-                break;
-
-            case SearchRequest::STRING_WILDCARD:
-                $this->query->queryWildcard($req->stringColumn, $req->string);
-                break;
-
-            case SearchRequest::STRING_WILDCARD_PLUS:
-                $this->query->queryWildcardPlus($req->stringColumn, $req->string);
                 break;
 
             case SearchRequest::STRING_PREFIX:

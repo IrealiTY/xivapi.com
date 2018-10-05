@@ -39,7 +39,8 @@ class SearchRequest
     ];
     
     // specific indexes
-    public $indexes = 'item';
+    /** @var string */
+    public $indexes = SearchContent::LIST_DEFAULT;
     // the search string
     public $string = '';
     // the string query algorithm to use
@@ -84,6 +85,7 @@ class SearchRequest
         $request->request->set('columns', $this->columns);
         
         // validate indexes
+        $this->indexes = !is_array($this->indexes) ?: implode(',', $this->indexes);
         $this->indexes = SearchContent::validate(explode(',', $this->indexes));
         $this->indexes = implode(',', $this->indexes);
         

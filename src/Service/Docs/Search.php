@@ -2,10 +2,19 @@
 
 namespace App\Service\Docs;
 
+use App\Service\Search\SearchContent;
+
 class Search extends DocBuilder implements DocInterface
 {
     public function build()
     {
+        $indexes = [];
+        foreach (SearchContent::LIST as $name) {
+            $index      = strtolower($name);
+            $default    = in_array($name, SearchContent::LIST_DEFAULT) ? '*(Default)*' : '';
+            $indexes[]  = "`{$index}` {$name} {$default}";
+        }
+        
         return $this
             ->text('XIVAPI provides the ability to quickly search all game content via ElasticSearch. 
                 This search endpoint only searches game content and not: characters, free companies, 
@@ -39,30 +48,8 @@ class Search extends DocBuilder implements DocInterface
             // indexes=a,b,c
             ->h3('indexes')
             ->usage("{endpoint}/search?indexes=achievement,item,action")
-            ->text('Search a specific series of indexes separated by commas, by default it will search all indexes.')
-            ->list([
-                '`achievement`',
-                '`action`',
-                '`bnpcname` - Enemies',
-                '`companion` - Minions',
-                '`enpcresident` - NPCs',
-                '`emote`',
-                '`fate`',
-                '`instancecontent` - Instances; Raids, Dungeons, etc.',
-                '`item`',
-                '`leve` - GuildLeves',
-                '`mount`',
-                '`placename` - Zones, Regions',
-                '`quest`',
-                '`recipe`',
-                '`status` - eg; Ailment status affects',
-                '`title`',
-                '`weather`',
-                
-                // new
-                '`buddyequip` - Chocobo companion gear',
-                '`orchestrion`'
-            ])
+            ->text('Search a specific series of indexes separated by commas.')
+            ->list($indexes)
             ->gap()
         
         
@@ -89,24 +76,24 @@ class Search extends DocBuilder implements DocInterface
             ->table(
                 [ 'string', 'string_algo', 'Found?', 'Result Number', 'Notes' ],
                 [
-                    [ 'mother', 'wildcard', 'Y', '1', '' ],
-                    [ 'mother+miounn', 'wildcard', 'Y', '1', '' ],
-                    [ 'other+mi', 'wildcard', 'N', '', '' ],
-                    [ 'other+mi', 'wildcard_plus', 'Y', '1', '' ],
-                    [ 'mo????+miounne', 'wildcard_plus', 'Y', '1', '`?` will figure out what you mean' ],
-                    [ 'mother', 'prefix', 'Y', '3', '**mother horbill** is #1' ],
-                    [ 'mother', 'term', 'N', '', '' ],
-                    [ 'mother+miounne', 'match_phrase_prefix', 'Y', '3', '' ],
-                    [ 'mother', 'match_phrase_prefix', 'Y', '3', '', '' ],
-                    [ 'mother+m', 'match_phrase_prefix', 'Y', '3', '' ],
-                    [ 'other+m', 'match_phrase_prefix', 'N', '', '' ],
+                    [ 'mother', '`custom`', 'Y', '1', '' ],
+                    [ 'mother+miounn', '`custom`', 'Y', '1', '' ],
+                    [ 'other+mi', '`custom`', 'Y', '1', '' ],
+                    
+                    [ 'mother', '`wildcard`', 'Y', '1', '' ],
+                    [ 'mother+miounn', '`wildcard`', 'Y', '1', '' ],
+                    [ 'other+mi', '`wildcard`', 'N', '', '' ],
+                    [ 'other+mi', '`wildcard_plus`', 'Y', '1', '' ],
+                    [ 'mo????+miounne', '`wildcard_plus`', 'Y', '1', '`?` will figure out what you mean' ],
+                    
+                    [ 'mother', '`prefix`', 'Y', '3', '**mother horbill** is #1' ],
+                    [ 'mother', '`term`', 'N', '', '' ],
+                    [ 'mother+miounne', '`match_phrase_prefix`', 'Y', '3', '' ],
+                    [ 'mother', '`match_phrase_prefix`', 'Y', '3', '', '' ],
+                    [ 'mother+m', '`match_phrase_prefix`', 'Y', '3', '' ],
+                    [ 'other+m', '`match_phrase_prefix`', 'N', '', '' ],
                 ]
             )
-            ->text('As you can see, varing results, I highly recommend the following `string_algo`:')
-            ->list([
-                '`wildcard_plus` **(default)** - no scoring',
-                '`match_phrase_prefix` - includes scoring'
-            ])
             ->note('These are all based on what ElasticSearch can do, if you do not get the desired result 
                 then hop onto Discord and custom search algorithm could be implemented. For high level details 
                 you could read the [Elastic Search Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html).')
@@ -114,32 +101,82 @@ class Search extends DocBuilder implements DocInterface
             
             ->h5('String Algorithms')
             ->table(
-                [ 'Option', 'Scoring?', 'Details' ],
+                [ 'Option', 'Scoring?', 'Details', 'ElasticSearch Docs' ],
                 [
                     [
                         '`custom`',
                         'Y',
-                        'Performs `wildcard_plus` and a `fuzzy` at the same time, this allows you to search <br> split non-full words, eg: `Ifrit Axe` = `Ifrit\'s Battleaxe`.'
+                        'Performs `wildcard_plus` and a `fuzzy` at the same time, this allows you to search <br> split non-full words, eg: `Ifrit Axe` = `Ifrit\'s Battleaxe`.',
+                        '`wildcard` + `fuzzy`',
                     ],
                     [
                         '`wildcard`',
                         'N',
-                        'Basic, searches post string, eg: `Aim` would match `|Aim|ing` however `ing` would not match `Aiming`'
+                        'Searches post string, eg: `Aim` would match `*Aim*ing`',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)'
                     ],
-                    
-                    [ '`wildcard`', 'N', ],
-                    [ '`wildcard_plus`', 'N', '**(Default)** Very similar to `wildcard` but searches pre and <br> post string, eg: `*X*`, `ing` would match `Aim|ing|`, think of this as MySQL `%like%`' ],
-                    [ '`match_phrase_prefix`', 'Y', 'Very similar to `wildcard` will match post strings, <br> eg: `Aim` matches `|Aim|ing`. The benefit is that it has weighting and returns scores.' ],
-                    [ '`multi_match`', 'Y', 'Attempts to match multiple words, this would be really good <br> for a "Lore Finder" eg: `mother miounne` would match with a high score, but it has <br> to be exact, `mother mio` would not match and you would just end up with noise.' ],
-                    [ '`query_string`', 'Y', 'Must be exact, the `X=Y` has to match 100%, eg: `mother+miounne` <br> will only return results that contain that exact phrase.' ],
-                    [ '`term`', 'Y', '*(unstable)* Similar to `query_string`, must match exactly. ' ],
-                    [ '`fuzzy`', 'Y', '*(unstable)* Does not support spaces and can return some really funky stuff...' ],
+                    [
+                        '`wildcard_plus`',
+                        'N',
+                        'Will search each word individually, eg: "Ifrit Axe" searched as: `*ifrit* *axe*`',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)'
+                    ],
+                    [
+                        '`fuzzy`',
+                        'Y',
+                        'Perform a fuzzy search. Fuzziness = 5',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)'
+                    ],
+                    [
+                        '`term`',
+                        'Y',
+                        'Match whole words by keyword terms.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html)'
+                    ],
+                    [
+                        '`prefix`',
+                        'Y',
+                        'Match a prefix, like a cheap auto-complete',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html)'
+                    ],
+                    [
+                        '`match`',
+                        'Y',
+                        'Perform a match query.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html)'
+                    ],
+                    [
+                        '`match_phrase`',
+                        'Y',
+                        'Perform a match phrase query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html)'
+                    ],
+                    [
+                        '`match_phrase_prefix`',
+                        'Y',
+                        'Perform a match phrase prefix query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html)'
+                    ],
+                    [
+                        '`multi_match`',
+                        'Y',
+                        'Match against multiple string columns, seperated by a comma.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html)'
+                    ],
+                    [
+                        '`query_string`',
+                        'Y',
+                        'Perform a query string, this has lots of logic!',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)'
+                    ],
+                    [
+                        '`similar`',
+                        'Y',
+                        'Perform a "more like this" similar query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html)'
+                    ],
                 ]
             )
-            ->text('- *unstable* = I can\'t guarantee these have any use until the implementation has been
-                improved. If you\'re really good with ElasticSearch be sure to jump into Discord :D')
-            
-        
             ->line()
             // other stuff
         

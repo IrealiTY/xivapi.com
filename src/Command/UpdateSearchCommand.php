@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Service\Common\DataType;
+use App\Service\Common\Environment;
 use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 use App\Service\Search\SearchContent;
@@ -28,6 +29,7 @@ class UpdateSearchCommand extends Command
             ->setName('UpdateSearchCommand')
             ->setDescription('Deploy all search data to live!')
             ->addArgument('environment',  InputArgument::OPTIONAL, 'prod OR dev')
+            ->addArgument('content', InputArgument::OPTIONAL, 'Run a specific content')
         ;
     }
     
@@ -37,9 +39,14 @@ class UpdateSearchCommand extends Command
             ->setSymfonyStyle($input, $output)
             ->title('SEARCH')
             ->startClock();
+        
+        // set environment for indexes
+        if ($input->getArgument('environment') == 'staging') {
+            define(Environment::CONSTANT, 'staging');
+        }
     
         // connect to production cache
-        [$ip, $port] = $input->getArgument('environment') == 'prod'
+        [$ip, $port] = (in_array($input->getArgument('environment'), ['prod','staging']))
             ? explode(',', getenv('ELASTIC_SERVER_PROD'))
             : explode(',', getenv('ELASTIC_SERVER_LOCAL'));
         
@@ -49,6 +56,11 @@ class UpdateSearchCommand extends Command
         // import documents to ElasticSearch
         try {
             foreach (SearchContent::LIST as $contentName) {
+                if ($input->getArgument('content') &&
+                    $input->getArgument('content') != $contentName) {
+                    continue;
+                }
+        
                 $index  = strtolower($contentName);
                 $ids    = $cache->get("ids_{$contentName}");
                 $total  = count($ids);
@@ -120,6 +132,9 @@ class UpdateSearchCommand extends Command
                     
                     // handle custom string columns
                     $content = $this->handleCustomStringColumns($contentName, $content);
+                    
+                    // handle clean up
+                    $content = $this->handleCleanUp($contentName, $content);
 
                     // append to docs
                     $docs[$id] = $content;
@@ -149,6 +164,36 @@ class UpdateSearchCommand extends Command
         $this->complete()->endClock();
     }
     
+    private function handleCleanUp(string $contentName, array $content)
+    {
+        if ($contentName === 'Quest') {
+            //
+            // Remove junk
+            //
+            foreach(range(0,170) as $num) {
+                unset(
+                    $content["Level{$num}"],
+                    $content["Level{$num}Target"],
+                    $content["Level{$num}TargetID"],
+                    $content["ScriptInstruction{$num}_en"],
+                    $content["ScriptInstruction{$num}_de"],
+                    $content["ScriptInstruction{$num}_fr"],
+                    $content["ScriptInstruction{$num}_ja"],
+                    $content["ScriptArg{$num}"],
+                    
+                    $content["PreviousQuest0"]["Level{$num}"],
+                    $content["PreviousQuest0"]["Level{$num}Target"],
+                    $content["PreviousQuest0"]["Level{$num}TargetID"],
+                    $content["PreviousQuest0"]["ScriptInstruction{$num}_en"],
+                    $content["PreviousQuest0"]["ScriptInstruction{$num}_de"],
+                    $content["PreviousQuest0"]["ScriptInstruction{$num}_fr"],
+                    $content["PreviousQuest0"]["ScriptInstruction{$num}_ja"],
+                    $content["PreviousQuest0"]["ScriptArg{$num}"]
+                );
+            }
+        }
+    }
+    
     /**
      * This will create 2 new columns:
      * - NameCombined_[Lang]: Combines the fields of content where 2 names may
@@ -159,6 +204,15 @@ class UpdateSearchCommand extends Command
     private function handleCustomStringColumns(string $contentName, array $content)
     {
         //
+        // Copy balloon dialogue to a name field, just for simplicity
+        //
+        if ($contentName == 'Balloon') {
+            foreach (Language::LANGUAGES as $lang) {
+                $content["Name_{$lang}"] = $content["Dialogue_{$lang}"] ?? '';
+            }
+        }
+        
+        //
         // Build NameCombined fields
         //
         foreach (Language::LANGUAGES as $lang) {
@@ -168,7 +222,7 @@ class UpdateSearchCommand extends Command
             if ($contentName == 'Title') {
                 $content["NameCombined_{$lang}"] .= " ". ($content["NameFemale_{$lang}"] ?? '');
             }
-    
+
             $content["NameCombined_{$lang}"] = trim($content["NameCombined_{$lang}"]);
         }
     
@@ -177,7 +231,7 @@ class UpdateSearchCommand extends Command
         //
         $content['NameLocale'] = '';
         foreach (Language::LANGUAGES as $lang) {
-            $content['NameLocale'] .= ' '. $content["NameCombined_{$lang}"];
+            $content['NameLocale'] .= ' '. ($content["NameCombined_{$lang}"] ?? '');
         }
     
         $content['NameLocale'] = trim($content['NameLocale']);

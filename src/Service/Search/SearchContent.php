@@ -2,28 +2,42 @@
 
 namespace App\Service\Search;
 
+use App\Service\Common\Environment;
+
 class SearchContent
 {
-    const LIST = [
-        'Achievement',
-        'Action',
-        'BNpcName',
-        'BuddyEquip',
-        'Companion',
-        'Emote',
-        'ENpcResident',
-        'Fate',
-        'InstanceContent',
-        'Item',
+    const LIST_DEFAULT = [
+        'Achievement', 'Title',
+        'Action', 'CraftAction', 'Trait', 'PvPAction', 'PvPTrait', 'Status',
+        'BNpcName', 'ENpcResident',
+        'Companion', 'Mount',
         'Leve',
-        'Mount',
+        'Emote',
+        'InstanceContent',
+        'Item', 'Recipe',
+        'Fate',
+        'Quest',
+    ];
+    
+    const LIST = [
+        'Achievement', 'Title',
+        'Action', 'CraftAction', 'Trait', 'PvPAction', 'PvPTrait', 'Status',
+        'BNpcName', 'ENpcResident',
+        'Companion', 'Mount',
+        'Leve',
+        'Emote',
+        'InstanceContent',
+        'Item', 'Recipe',
+        'Fate',
+        'Quest',
+        
+        // non default
+        'Balloon',
+        'BuddyEquip',
         'Orchestrion',
         'PlaceName',
-        'Quest',
-        'Recipe',
-        'Status',
-        'Title',
         'Weather',
+        'World'
     ];
     
     /**
@@ -37,6 +51,17 @@ class SearchContent
             if (!in_array($index, $valid)) {
                 unset($list[$i]);
             }
+    
+            $env = constant(Environment::CONSTANT);
+    
+            // to avoid breaking BC for now, this will remain
+            // todo - remove this when going live with the new search logic
+            if ($env === 'prod' || $env === 'dev') {
+                continue;
+            }
+    
+            $list[$i] = sprintf('%s_%s', constant(Environment::CONSTANT), $index);
+
         }
         
         return $list;
