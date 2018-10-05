@@ -60,8 +60,10 @@ class SearchContent
     {
         if (is_array($index)) {
             foreach ($index as $i => $x) {
-                $index[$i] = self::prefix($index);
+                $index[$i] = self::prefix($x);
             }
+            
+            return $index;
         }
         
         return sprintf('%s_%s', constant(Environment::CONSTANT), $index);
