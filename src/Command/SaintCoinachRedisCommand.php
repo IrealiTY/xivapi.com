@@ -391,7 +391,9 @@ class SaintCoinachRedisCommand extends Command
             }
             
             // if the depth limit has been met or the link id is too low, end now.
-            if ($depth >= self::MAX_DEPTH || ($linkId < 1 && !in_array($contentName, self::ZERO_CONTENT))) {
+            if ($depth >= self::MAX_DEPTH || ($linkId < 1
+                && !in_array($contentName, self::ZERO_CONTENT)
+                && !in_array($linkTarget, self::ZERO_CONTENT))) {
                 return null;
             }
             
