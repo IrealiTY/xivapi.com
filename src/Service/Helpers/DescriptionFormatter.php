@@ -43,13 +43,13 @@ class DescriptionFormatter
     public function formatColors()
     {
         // remove 73 because not sure what it is right now
-        $this->description = preg_replace("#<73>(.*?)</73>#is", null, $this->description);
+        $this->description = preg_replace("#<UIGlow>(.*?)</UIGlow>#is", null, $this->description);
         
         // replace 72 closing with a reset
-        $this->description = str_ireplace('<72>01</72>', '__ENDSPAN__', $this->description);
+        $this->description = str_ireplace('<UIForeground>01</UIForeground>', '__ENDSPAN__', $this->description);
         
         // replace all colour entries with hex values
-        preg_match_all("#<72>(.*?)</72>#is", $this->description, $matches);
+        preg_match_all("#<UIForeground>(.*?)</UIForeground>#is", $this->description, $matches);
         foreach($matches[1] as $code) {
             // we only care for last 2 bytes
             $color = substr($code, -4);
@@ -68,7 +68,7 @@ class DescriptionFormatter
             
             // ignore alpha and just take the first 6
             $color = substr($color, 0, 6);
-            $this->description = str_ireplace("<72>{$code}</72>", "--START_SPAN style=\"color:#{$color};\"--", $this->description);
+            $this->description = str_ireplace("<UIForeground>{$code}</UIForeground>", "--START_SPAN style=\"color:#{$color};\"--", $this->description);
         }
     }
 
