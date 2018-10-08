@@ -7,6 +7,7 @@ use App\Entity\MapCompletion;
 use App\Entity\MapPosition;
 use App\Entity\User;
 use App\Form\AppForm;
+use App\Repository\MapPositionRepository;
 use App\Service\Apps\AppManager;
 use App\Service\Maps\Mappy;
 use App\Service\Redis\Cache;
@@ -256,9 +257,10 @@ class ApplicationsController extends Controller
             if (!isset($obj->PlaceName->ID)) {
                 continue;
             }
-            
+
+            /** @var MapPositionRepository $repo */
             $repo = $this->em->getRepository(MapPosition::class);
-            $positions = count($repo->findBy([ 'MapID' => $obj->ID ]));
+            $positions = $repo->getTotal($obj->ID);
             
             $map = [
                 'ID'            => $obj->ID,
@@ -289,7 +291,7 @@ class ApplicationsController extends Controller
             
             // get map state
             $repo = $this->em->getRepository(MapCompletion::class);
-            $mapCompletion  = $repo->findOneBy([ 'MapID' => $obj->ID ]);
+            $mapCompletion = $repo->findOneBy([ 'MapID' => $obj->ID ]);
             $mapsCompleted[$obj->ID] = false;
             
             /** @var MapCompletion $complete */
