@@ -9,8 +9,8 @@ class MapData extends DocBuilder implements DocInterface
 {
     public function build()
     {
-        $totalMapPositions = count($this->em->getRepository(MapPosition::class)->findAll());
-        
+        $totalMapPositions = $this->em->getRepository(MapPosition::class)->getTotal();
+
         return $this
     
             ->note('At this time (September 2018) there is no caching on the Map Data and any positions will
