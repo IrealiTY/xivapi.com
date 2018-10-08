@@ -110,7 +110,7 @@ class XivGameContentController extends Controller
     
     /**
      * @Route("/MemoryData/Download")
-     * @Route("/memoryData/download")
+     * @Route("/memorydata/download")
      */
     public function memoryDataDownload(Request $request)
     {
