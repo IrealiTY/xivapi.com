@@ -41,10 +41,8 @@ class UpdateSearchCommand extends Command
             ->startClock();
         
         // set environment for indexes
-        if ($input->getArgument('environment') == 'staging') {
-            define(Environment::CONSTANT, 'staging');
-        }
-    
+        define(Environment::CONSTANT, $input->getArgument('environment'));
+
         // connect to production cache
         [$ip, $port] = (in_array($input->getArgument('environment'), ['prod','staging']))
             ? explode(',', getenv('ELASTIC_SERVER_PROD'))
