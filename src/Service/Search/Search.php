@@ -43,15 +43,26 @@ class Search
                 $req->limitStart, $req->limit
             );
         }
+        
+        //
+        // Similar
+        //
+        if ($req->suggest) {
+            $this->query->addSuggestion(
+                $req->stringColumn, $req->string
+            );
+        }
     
         $this->performStringSearch($req);
         $this->performFilterSearch($req);
         
         #echo $this->query->getJson();#die;
         
+        $query = $this->query->getQuery($req->bool);
+        
         try {
             $res->setResults(
-                $this->search->search($req->indexes, 'search', $this->query) ?: []
+                $this->search->search($req->indexes, 'search', $query) ?: []
             );
         } catch (\Exception $ex) {
             // if this is an elastic exception, clean the error

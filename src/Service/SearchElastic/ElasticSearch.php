@@ -119,21 +119,21 @@ class ElasticSearch
         ]);
     }
 
-    public function search(string $index, string $type, ElasticQuery $elasticQuery)
+    public function search(string $index, string $type, array $query)
     {
         return $this->client->search([
             'index' => $index,
             'type'  => $type,
-            'body'  => $elasticQuery->getQuery()
+            'body'  => $query
         ]);
     }
 
-    public function count(string $index, string $type, ElasticQuery $elasticQuery)
+    public function count(string $index, string $type, array $query)
     {
         return $this->client->count([
             'index' => $index,
             'type'  => $type,
-            'body'  => $elasticQuery->getQuery()
+            'body'  => $query
         ]);
     }
 }

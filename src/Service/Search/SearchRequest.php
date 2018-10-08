@@ -44,7 +44,7 @@ class SearchRequest
     // the search string
     public $string = '';
     // the string query algorithm to use
-    public $stringAlgo = self::STRING_CUSTOM;
+    public $stringAlgo = self::STRING_WILDCARD_PLUS;
     // string search column
     public $stringColumn = 'NameCombined_%s';
     // list of filters
@@ -63,6 +63,10 @@ class SearchRequest
     public $language = Language::DEFAULT;
     // columns
     public $columns = '_,_Score,ID,Icon,Name,Url,UrlType';
+    // query group
+    public $bool = 'should';
+    // similar
+    public $suggest = false;
     
     /**
      * Build the search request from the http request
@@ -80,6 +84,8 @@ class SearchRequest
         $this->language         = $request->get('language',       $this->language);
         $this->filters          = $request->get('filters',        $this->filters);
         $this->columns          = $request->get('columns',        $this->columns);
+        $this->bool             = $request->get('bool',           $this->bool);
+        $this->suggest          = $request->get('suggest',        $this->suggest);
         
         // this ensures response handler will use default search columns
         $request->request->set('columns', $this->columns);
