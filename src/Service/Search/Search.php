@@ -151,7 +151,7 @@ class Search
         $filters = str_getcsv($searchRequest->filters);
 
         foreach ($filters as $filter) {
-            preg_match('/(?P<column>[A-Za-z\.]+)(?P<op>(?:=|[<>]=?))(?P<value>\w+)/', $filter, $matches);
+            preg_match('/(?P<column>[A-Za-z0-9\.]+)(?P<op>(?:=|[<>]=?))(?P<value>\w+)/', $filter, $matches);
 
             $column = $matches['column'] ?? null;
             $op     = $matches['op'] ?? null;
