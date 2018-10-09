@@ -64,7 +64,7 @@ class SearchRequest
     // columns
     public $columns = '_,_Score,ID,Icon,Name,Url,UrlType';
     // query group
-    public $bool = 'should';
+    public $bool = 'must';
     // similar
     public $suggest = false;
     

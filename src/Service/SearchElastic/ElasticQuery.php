@@ -18,7 +18,7 @@ class ElasticQuery
      * - should
      * - filter
      */
-    public function getQuery(string $type = 'should'): array
+    public function getQuery(string $type = 'must'): array
     {
         $response = [
             'query' => [
