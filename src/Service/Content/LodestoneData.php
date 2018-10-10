@@ -300,8 +300,10 @@ class LodestoneData
         $gcRank = self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID));
         
         // grab correct icon and quest and provide a simplier result
-        $gcRank->Icon  = $gcRank[ $gcRankIconKeyArray[$data->GrandCompany->NameID] ];
-        $gcRank->Quest = $gcRank[ $gcRankQuestKeyArray[$data->GrandCompany->NameID] ];
+        $gcIconField  = $gcRankIconKeyArray[$data->GrandCompany->NameID];
+        $gcQuestField = $gcRankQuestKeyArray[$data->GrandCompany->NameID];
+        $gcRank->Icon  = $gcRank->{$gcIconField};
+        $gcRank->Quest = $gcRank->{$gcQuestField};
         
         $data->GrandCompany = [
             'Company' => $gcName,
