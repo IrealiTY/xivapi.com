@@ -2,6 +2,7 @@
 
 namespace App\Service\Content;
 
+use App\Service\Common\Arrays;
 use App\Service\Redis\Cache;
 use Ramsey\Uuid\Uuid;
 
@@ -85,9 +86,7 @@ class LodestoneData
     
     public static function getContent($key)
     {
-        return ContentMinified::mini(
-            self::$cache->get($key)
-        );
+        return Arrays::minification(self::$cache->get($key));
     }
     
     public static function findContent($category, $string)
@@ -252,11 +251,9 @@ class LodestoneData
     }
     
     /**
-     * @deprecated
      * - This is not enabled at the moment, may consider deleting
      * Append on API data onto the character
      */
-    /*
     public static function extendCharacterData($data)
     {
         //
@@ -271,6 +268,7 @@ class LodestoneData
         //
         // Grand Company
         //
+        $data->GenderID = $data->Gender;
         $gcGender = $data->Gender == 2 ? 'Female' : 'Male';
         
         $gcRankKeyArray = [
@@ -353,5 +351,4 @@ class LodestoneData
             $data->Mounts[$i] = self::getContent("xiv_Mount_{$mountsId}");
         }
     }
-    */
 }

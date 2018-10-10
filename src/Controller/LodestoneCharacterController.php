@@ -107,6 +107,11 @@ class LodestoneCharacterController extends Controller
         
         if ($ent->getState() == Entity::STATE_CACHED) {
             $response->Character = $character;
+
+            // if we're to extend character info
+            if ($request->get('extended')) {
+                LodestoneData::extendCharacterData($response->Character);
+            }
             
             /** @var CharacterAchievements $ent */
             if ($content->AC) {
