@@ -28,7 +28,7 @@ sudo cp /vagrant/vm/VagrantfileNginxDefault /etc/nginx/sites-available/default
 sudo cp /vagrant/vm/VagrantfileNginx.conf /etc/nginx/nginx.conf
 
 #
-# PHP + Composer
+# PHP + Composer + Imagick
 #
 echo "Installing: PHP + Composer"
 sudo add-apt-repository ppa:ondrej/php -y
@@ -42,6 +42,7 @@ echo "- Installing composer"
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 chmod +x /usr/local/bin/composer
+sudo apt-get install php-imagick
 
 #
 # MySQL

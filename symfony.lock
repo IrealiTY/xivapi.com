@@ -131,6 +131,9 @@
     "guzzlehttp/streams": {
         "version": "3.0.0"
     },
+    "intervention/image": {
+        "version": "2.4.2"
+    },
     "jacobkiers/oauth": {
         "version": "1.0.12"
     },
