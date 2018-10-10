@@ -86,6 +86,10 @@ class LodestoneData
     
     public static function getContent($key)
     {
+        if (self::$cache === null) {
+            self::$cache = new Cache();
+        }
+
         return Arrays::minification(self::$cache->get($key));
     }
     
