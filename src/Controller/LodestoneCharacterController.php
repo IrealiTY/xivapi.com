@@ -21,6 +21,7 @@ use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Lodestone\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LodestoneCharacterController extends Controller
@@ -66,6 +67,10 @@ class LodestoneCharacterController extends Controller
      */
     public function index(Request $request, $id)
     {
+        if ($id < 0) {
+            throw new NotFoundHttpException('No, stop it.');
+        }
+
         $start = microtime(true);
         $this->appManager->fetch($request);
         

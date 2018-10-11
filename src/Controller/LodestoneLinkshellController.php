@@ -13,6 +13,7 @@ use App\Service\Lodestone\ServiceQueues;
 use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -55,6 +56,10 @@ class LodestoneLinkshellController extends Controller
      */
     public function index(Request $request, $id)
     {
+        if ($id < 0) {
+            throw new NotFoundHttpException('No, stop it.');
+        }
+
         $start = microtime(true);
         $this->appManager->fetch($request);
     

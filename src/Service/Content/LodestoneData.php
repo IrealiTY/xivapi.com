@@ -386,7 +386,7 @@ class LodestoneData
         );
 
         $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
-        $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->RankID]};
+        $gcRankName['Icon'] = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->NameID]};
         unset($gcRank);
         
         $data->GrandCompany = [
