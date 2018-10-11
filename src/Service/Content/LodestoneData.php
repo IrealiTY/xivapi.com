@@ -265,13 +265,23 @@ class LodestoneData
         $content = self::$cache->get("xiv_{$name}_". $data->{$name});
         $content = json_decode(json_encode($content), true);
 
+        if (!$content) {
+            die("no data for: ". $name ." ". $data->{$name});
+            return;
+        }
+
+        $data->{$name} = self::extendCharacterDataHandlerSimple($data, $content, $fields);
+    }
+
+    public static function extendCharacterDataHandlerSimple($data, $content, $fields): array
+    {
         // build new array using fields
         $arr = [];
         foreach ($fields as $field) {
             // replace gender and language tags
             $field = str_replace(
-                ['[GENDER]','[LANG]'],
-                [$data->Gender == 2 ? 'Female' : '', Language::current()],
+                [ '[GENDER]','[LANG]' ],
+                [ ($data->Gender == 2 ? 'Female' : ''), Language::current() ],
                 $field
             );
 
@@ -279,14 +289,14 @@ class LodestoneData
             $arr[$field] = Arrays::getArrayValueFromDotNotation($content, $field);
 
             // replace any _[lang] with non lang ones
-            if (substr_count($field, '_') > 1) {
+            if (substr_count($field, '_') > 0) {
                 $newfield = substr($field, 0, -3);
                 $arr[$newfield] = $arr[$field];
                 unset($arr[$field]);
             }
         }
 
-        $data->{$name} = $arr;
+        return $arr;
     }
     
     /**
@@ -296,27 +306,37 @@ class LodestoneData
     public static function extendCharacterData($data)
     {
         self::extendCharacterDataHandler('Title', $data, [
-            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
+            "ID",
+            "Icon",
+            "Url",
+            "Name[GENDER]_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Race', $data, [
-            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
+            "ID",
+            "Url",
+            "Name[GENDER]_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Tribe', $data, [
-            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
-        ]);
-
-        self::extendCharacterDataHandler('Tribe', $data, [
-            "ID", "Url", "Name[GENDER]_[LANG]"
+            "ID",
+            "Icon",
+            "Url",
+            "Name[GENDER]_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Town', $data, [
-            "ID", "Url", "Icon", "Name_[LANG]"
+            "ID",
+            "Url",
+            "Icon",
+            "Name_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('GuardianDeity', $data, [
-            "ID", "Url", "Icon", "Name_[LANG]"
+            "ID",
+            "Url",
+            "Icon",
+            "Name_[LANG]"
         ]);
 
         //
@@ -338,22 +358,29 @@ class LodestoneData
             "IconSerpents",
             "IconFlames"
         ];
-        
-        $gcRankQuestKeyArray = [
-            null,
-            "QuestMaelstrom",
-            "QuestSerpents",
-            "QuestFlames"
-        ];
-        
-        $gcName = self::getContent(sprintf('xiv_GrandCompany_%s', $data->GrandCompany->NameID));
-        $gcRank = self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID));
-        
+
+        $gcName = self::extendCharacterDataHandlerSimple(
+            $data,
+            self::getContent("xiv_GrandCompany_{$data->GrandCompany->NameID}"),
+            [
+                'ID',
+                'Url',
+                'Name_[LANG]',
+            ]
+        );
+
+        $gcRank = self::extendCharacterDataHandlerSimple(
+            $data,
+            self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
+            [
+                'ID',
+                'Url',
+                'Name_[LANG]',
+            ]
+        );
+
         // grab correct icon and quest and provide a simplier result
-        $gcIconField  = $gcRankIconKeyArray[$data->GrandCompany->NameID];
-        $gcQuestField = $gcRankQuestKeyArray[$data->GrandCompany->NameID];
-        $gcRank->Icon  = $gcRank->{$gcIconField};
-        $gcRank->Quest = $gcRank->{$gcQuestField};
+        $gcRank->Icon  = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->RankID]};
         
         $data->GrandCompany = [
             'Company' => $gcName,
@@ -364,36 +391,144 @@ class LodestoneData
         // Class Jobs
         //
         foreach ($data->ClassJobs as $key => $classJob) {
-            $classJob->Class = self::getContent("xiv_ClassJob_{$classJob->ClassID}");
-            $classJob->Job   = self::getContent("xiv_ClassJob_{$classJob->JobID}");
+            $classJob->Class = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_ClassJob_{$classJob->ClassID}"), [
+                    'ID',
+                    'Icon',
+                    'Url',
+                    'Name_[LANG]',
+                    'Abbreviation_[LANG]'
+                ]
+            );
+
+            $classJob->Job = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_ClassJob_{$classJob->JobID}"), [
+                    'ID',
+                    'Icon',
+                    'Url',
+                    'Name_[LANG]',
+                    'Abbreviation_[LANG]'
+                ]
+            );
+
+            unset($classJob->ClassID, $classJob->JobID);
         }
         
         // Active class job
-        $data->ActiveClassJob->Class = self::getContent("xiv_ClassJob_{$data->ActiveClassJob->ClassID}");
-        $data->ActiveClassJob->Job   = self::getContent("xiv_ClassJob_{$data->ActiveClassJob->JobID}");
-        
+        $data->ActiveClassJob->Class = self::extendCharacterDataHandlerSimple(
+            $data, self::getContent("xiv_ClassJob_{$data->ActiveClassJob->ClassID}"), [
+                'ID',
+                'Icon',
+                'Url',
+                'Name_[LANG]',
+                'Abbreviation_[LANG]'
+            ]
+        );
+        $data->ActiveClassJob->Job = self::extendCharacterDataHandlerSimple(
+            $data, self::getContent("xiv_ClassJob_{$data->ActiveClassJob->JobID}"), [
+                'ID',
+                'Icon',
+                'Url',
+                'Name_[LANG]',
+                'Abbreviation_[LANG]'
+            ]
+        );
+
+        unset($data->ActiveClassJob->ClassID, $data->ActiveClassJob->JobID);
+
         //
-        // Gear
+        // Gear ClassJob
         //
         foreach ($data->GearSet as $set) {
-            $set->Class = self::getContent("xiv_ClassJob_{$set->ClassID}");
-            $set->Job   = self::getContent("xiv_ClassJob_{$set->JobID}");
-            
-            unset($set->ClassID);
-            unset($set->JobID);
-            
-            foreach ($set->Gear as $gear) {
-                $gear->Item   = self::getContent("xiv_Item_{$gear->ID}");
-                $gear->Mirage = !$gear->Mirage ?: self::getContent("xiv_Item_{$gear->Mirage}");
-                $gear->Dye    = !$gear->Dye ?: self::getContent("xiv_Item_{$gear->Dye}");
-                
-                unset($gear->ID);
-                
-                if ($gear->Materia) {
-                    foreach ($gear->Materia as $i => $materiaId) {
-                        $gear->Materia[$i] = self::getContent("xiv_Item_{$materiaId}");
-                    }
-                }
+            $set->Class = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_ClassJob_{$set->ClassID}"), [
+                    'ID',
+                    'Icon',
+                    'Url',
+                    'Name_[LANG]',
+                    'Abbreviation_[LANG]'
+                ]
+            );
+            $set->Job = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_ClassJob_{$set->JobID}"), [
+                    'ID',
+                    'Icon',
+                    'Url',
+                    'Name_[LANG]',
+                    'Abbreviation_[LANG]'
+                ]
+            );
+            unset($set->ClassID, $set->JobID);
+        }
+
+        //
+        // Gear Attributes
+        //
+        foreach ($data->GearSet->Attributes as $id => $value) {
+            $attr = self::extendCharacterDataHandlerSimple(
+                $data,
+                self::getContent("xiv_BaseParam_{$id}"),
+                [
+                    'ID',
+                    'Name_[LANG]'
+                ]
+            );
+
+            $data->GearSet->Attributes[$id] = [
+                'Attribute' => $attr,
+                'Value' => $value
+            ];
+        }
+
+        $data->GearSet->Attributes = array_values($data->GearSet->Attributes);
+
+        //
+        // Gear Items
+        //
+        foreach ($data->GearSet->Gear as $slot => $gear) {
+            // item
+            $gear->Item = self::extendCharacterDataHandlerSimple(
+                $data,
+                self::getContent("xiv_Item_{$gear->ID}"),
+                [
+                    'ID',
+                    'Icon',
+                    'Name_[LANG]'
+                ]
+            );
+
+            // mirage
+            $gear->Mirage = !$gear->Mirage ?: self::extendCharacterDataHandlerSimple(
+                $data,
+                self::getContent("xiv_Item_{$gear->Mirage}"),
+                [
+                    'ID',
+                    'Icon',
+                    'Name_[LANG]'
+                ]
+            );
+
+            // dyes
+            $gear->Dye = !$gear->Dye ?: self::extendCharacterDataHandlerSimple(
+                $data,
+                self::getContent("xiv_Item_{$gear->Dye}"),
+                [
+                    'ID',
+                    'Icon',
+                    'Name_[LANG]'
+                ]
+            );
+
+            // materia
+            foreach ($gear->Materia as $i => $materia) {
+                $gear->Materia[$i] = self::extendCharacterDataHandlerSimple(
+                    $data, self::getContent("xiv_Item_{$materia}"), [
+                        'ID',
+                        'Icon',
+                        'Url',
+                        'Name_[LANG]',
+                    ]
+                );
             }
         }
         
@@ -401,10 +536,26 @@ class LodestoneData
         // Minions and Mounts
         //
         foreach ($data->Minions as $i => $minionId) {
-            $data->Minions[$i] = self::getContent("xiv_Companion_{$minionId}");
+            $data->Minions[$i] = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_Companion_{$minionId}"), [
+                    'ID',
+                    'Icon',
+                    'IconSmall',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
         }
         foreach ($data->Mounts as $i => $mountsId) {
-            $data->Mounts[$i] = self::getContent("xiv_Mount_{$mountsId}");
+            $data->Minions[$i] = self::extendCharacterDataHandlerSimple(
+                $data, self::getContent("xiv_Mount_{$mountsId}"), [
+                    'ID',
+                    'Icon',
+                    'IconSmall',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
         }
     }
 }
