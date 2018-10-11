@@ -96,7 +96,7 @@ class LodestoneData
     
     public static function findContent($category, $string)
     {
-        return self::$content->{$category}->{Hash::hash($string)} ?? null;
+        return self::$content->{$category}->{Hash::hash(trim($string))} ?? "[NOT FOUND]";
     }
     
     /**
@@ -505,7 +505,7 @@ class LodestoneData
             );
 
             // mirage
-            $gear->Mirage = !$gear->Mirage ?: self::extendCharacterDataHandlerSimple(
+            $gear->Mirage = $gear->Mirage ? self::extendCharacterDataHandlerSimple(
                 $data,
                 self::getContent("xiv_Item_{$gear->Mirage}"),
                 [
@@ -513,10 +513,10 @@ class LodestoneData
                     'Icon',
                     'Name_[LANG]'
                 ]
-            );
+            ) : null;
 
             // dyes
-            $gear->Dye = !$gear->Dye ?: self::extendCharacterDataHandlerSimple(
+            $gear->Dye = $gear->Dye ? self::extendCharacterDataHandlerSimple(
                 $data,
                 self::getContent("xiv_Item_{$gear->Dye}"),
                 [
@@ -524,7 +524,7 @@ class LodestoneData
                     'Icon',
                     'Name_[LANG]'
                 ]
-            );
+            ) : null;
 
             // materia
             foreach ($gear->Materia as $i => $materia) {
