@@ -3,6 +3,7 @@
 namespace App\Service\Content;
 
 use App\Service\Common\Arrays;
+use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 use Ramsey\Uuid\Uuid;
 
@@ -253,6 +254,40 @@ class LodestoneData
         $data->VerificationToken = 'XIV'. strtoupper(substr(sha1($data->VerificationToken), 10, -10)) .'API';
         $data->VerificationTokenPass = stripos($data->Bio, $data->VerificationToken) !== false;
     }
+
+    public static function extendCharacterDataHandler($name, $data, $fields): array
+    {
+        if (self::$cache === null) {
+            self::$cache = new Cache();
+        }
+
+        // grab content and ensure it's an array
+        $content = self::$cache->get("xiv_{$name}_". $data->{$name});
+        $content = json_decode(json_encode($content), true);
+
+        // build new array using fields
+        $arr = [];
+        foreach ($fields as $field) {
+            // replace gender and language tags
+            $field = str_replace(
+                ['[GENDER]','[LANG]'],
+                [$data->Gender == 2 ? 'Female' : '', Language::current()],
+                $field
+            );
+
+            // grab field
+            $arr[$field] = Arrays::getArrayValueFromDotNotation($content, $field);
+
+            // replace any _[lang] with non lang ones
+            if (substr_count($field, '_') > 1) {
+                $newfield = substr($field, 0, -3);
+                $arr[$newfield] = $arr[$field];
+                unset($arr[$field]);
+            }
+        }
+
+        $data->{$name} = $arr;
+    }
     
     /**
      * - This is not enabled at the moment, may consider deleting
@@ -260,15 +295,30 @@ class LodestoneData
      */
     public static function extendCharacterData($data)
     {
-        //
-        // Profile data
-        //
-        $data->Title = self::getContent("xiv_Title_{$data->Title}");
-        $data->Race  = self::getContent("xiv_Race_{$data->Race}");
-        $data->Tribe = self::getContent("xiv_Tribe_{$data->Tribe}");
-        $data->Town  = self::getContent("xiv_Town_{$data->Town}");
-        $data->GuardianDeity = self::getContent("xiv_GuardianDeity_{$data->GuardianDeity}");
-        
+        self::extendCharacterDataHandler('Title', $data, [
+            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
+        ]);
+
+        self::extendCharacterDataHandler('Race', $data, [
+            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
+        ]);
+
+        self::extendCharacterDataHandler('Tribe', $data, [
+            "ID", "Icon", "Url", "Name[GENDER]_[LANG]"
+        ]);
+
+        self::extendCharacterDataHandler('Tribe', $data, [
+            "ID", "Url", "Name[GENDER]_[LANG]"
+        ]);
+
+        self::extendCharacterDataHandler('Town', $data, [
+            "ID", "Url", "Icon", "Name_[LANG]"
+        ]);
+
+        self::extendCharacterDataHandler('GuardianDeity', $data, [
+            "ID", "Url", "Icon", "Name_[LANG]"
+        ]);
+
         //
         // Grand Company
         //
