@@ -375,25 +375,23 @@ class LodestoneData
             ]
         );
 
-        $gcRank = self::extendCharacterDataHandlerSimple(
+        $gcRankName = self::extendCharacterDataHandlerSimple(
             $data,
             self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
             [
                 'ID',
                 'Url',
                 'Name_[LANG]',
-                'IconMaelstrom',
-                'IconSerpents',
-                'IconFlames'
             ]
         );
 
-        // grab correct icon and quest and provide a simplier result
-        $gcRank->Icon  = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->RankID]};
+        $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
+        $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->RankID]};
+        unset($gcRank);
         
         $data->GrandCompany = [
             'Company' => $gcName,
-            'Rank'    => $gcRank
+            'Rank'    => $gcRankName
         ];
         
         //
