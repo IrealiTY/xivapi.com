@@ -583,5 +583,30 @@ class LodestoneData
                 ]
             );
         }
+
+        //
+        // STATZ
+        //
+        $totalMinions = 0;
+        $totalMounts = 0;
+        foreach (self::$cache->get("xiv_Companion") as $id) {
+            $content = self::$cache->get("xiv_Companion_{$id}");
+            if ($content->Icon > 0) {
+                $totalMinions++;
+            }
+        }
+        foreach (self::$cache->get("xiv_Mount") as $id) {
+            $content = self::$cache->get("xiv_Mount_{$id}");
+            if ($content->Icon > 0) {
+                $totalMounts++;
+            }
+        }
+
+        $data->MinionsTotal    = $totalMinions;
+        $data->MinionsCount    = count($data->Minions);
+        $data->MinionsProgress = round($data->MinionsCount / $data->MinionsTotal, 3) * 100;
+        $data->MountsTotal     = $totalMounts;
+        $data->MountsCount     = count($data->Mounts);
+        $data->MountsProgress  = round($data->MountsCount / $data->MountsTotal, 3) * 100;
     }
 }
