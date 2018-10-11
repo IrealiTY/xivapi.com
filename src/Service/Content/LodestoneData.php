@@ -285,11 +285,7 @@ class LodestoneData
         $arr = [];
         foreach ($fields as $field) {
             // replace gender and language tags
-            $field = str_replace(
-                [ '[GENDER]','[LANG]' ],
-                [ ($data->Gender == 2 ? 'Female' : ''), Language::current() ],
-                $field
-            );
+            $field = str_replace('[LANG]', Language::current(), $field);
 
             // grab field
             $arr[$field] = Arrays::getArrayValueFromDotNotation($content, $field);
@@ -315,20 +311,23 @@ class LodestoneData
             "ID",
             "Icon",
             "Url",
-            "Name[GENDER]_[LANG]"
+            "Name_[LANG]",
+            "NameFemale_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Race', $data, [
             "ID",
             "Url",
-            "Name[GENDER]_[LANG]"
+            "Name_[LANG]",
+            "NameFemale_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Tribe', $data, [
             "ID",
             "Icon",
             "Url",
-            "Name[GENDER]_[LANG]"
+            "Name_[LANG]",
+            "NameFemale_[LANG]"
         ]);
 
         self::extendCharacterDataHandler('Town', $data, [
@@ -345,6 +344,23 @@ class LodestoneData
             "Name_[LANG]",
             "GuardianDeity_[LANG]"
         ]);
+
+        //
+        // Fix some female specifics
+        //
+        if ($data->Gender == 2) {
+            // replace male with female value
+            $data->Title->Name = $data->Title->NameFemale;
+            $data->Race->Name = $data->Race->NameFemale;
+            $data->Tribe->Name = $data->Tribe->NameFemale;
+        }
+
+        // remove female values
+        unset(
+            $data->Title->NameFemale,
+            $data->Race->NameFemale,
+            $data->Tribe->NameFemale
+        );
 
         //
         // Grand Company
