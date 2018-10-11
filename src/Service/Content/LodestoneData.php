@@ -255,7 +255,7 @@ class LodestoneData
         $data->VerificationTokenPass = stripos($data->Bio, $data->VerificationToken) !== false;
     }
 
-    public static function extendCharacterDataHandler($name, $data, $fields): array
+    public static function extendCharacterDataHandler($name, $data, $fields)
     {
         if (self::$cache === null) {
             self::$cache = new Cache();
