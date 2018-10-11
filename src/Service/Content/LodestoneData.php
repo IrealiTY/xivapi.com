@@ -588,14 +588,14 @@ class LodestoneData
         // STATZ
         //
         $totalMinions = 0;
-        $totalMounts = 0;
-        foreach (self::$cache->get("xiv_Companion") as $id) {
+        $totalMounts  = 0;
+        foreach (self::$cache->get("ids_Companion") as $id) {
             $content = self::$cache->get("xiv_Companion_{$id}");
             if ($content->Icon > 0) {
                 $totalMinions++;
             }
         }
-        foreach (self::$cache->get("xiv_Mount") as $id) {
+        foreach (self::$cache->get("ids_Mount") as $id) {
             $content = self::$cache->get("xiv_Mount_{$id}");
             if ($content->Icon > 0) {
                 $totalMounts++;
@@ -604,9 +604,9 @@ class LodestoneData
 
         $data->MinionsTotal    = $totalMinions;
         $data->MinionsCount    = count($data->Minions);
-        $data->MinionsProgress = round($data->MinionsCount / $data->MinionsTotal, 3) * 100;
+        $data->MinionsProgress = $data->MinionsCount > 0 ? round($data->MinionsCount / $data->MinionsTotal, 3) * 100 : 0;
         $data->MountsTotal     = $totalMounts;
         $data->MountsCount     = count($data->Mounts);
-        $data->MountsProgress  = round($data->MountsCount / $data->MountsTotal, 3) * 100;
+        $data->MountsProgress  = $data->MountsCount > 0 ? round($data->MountsCount / $data->MountsTotal, 3) * 100 : 0;
     }
 }
