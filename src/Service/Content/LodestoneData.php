@@ -342,7 +342,8 @@ class LodestoneData
             "ID",
             "Url",
             "Icon",
-            "Name_[LANG]"
+            "Name_[LANG]",
+            "GuardianDeity_[LANG]"
         ]);
 
         //
