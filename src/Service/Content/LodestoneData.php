@@ -160,7 +160,7 @@ class LodestoneData
             // has materia?
             if (isset($item->Materia) && $item->Materia) {
                 foreach ($item->Materia as $m => $materia) {
-                    $item->Materia[$m] = self::findContent('Item', $item->Name);
+                    $item->Materia[$m] = self::findContent('Item', $materia);
                 }
             }
             
@@ -275,6 +275,12 @@ class LodestoneData
 
     public static function extendCharacterDataHandlerSimple($data, $content, $fields): array
     {
+        $content = json_decode(json_encode($content), true);
+
+        if (!$content) {
+            return [];
+        }
+
         // build new array using fields
         $arr = [];
         foreach ($fields as $field) {
@@ -376,6 +382,9 @@ class LodestoneData
                 'ID',
                 'Url',
                 'Name_[LANG]',
+                'IconMaelstrom',
+                'IconSerpents',
+                'IconFlames'
             ]
         );
 
@@ -474,13 +483,13 @@ class LodestoneData
                 ]
             );
 
-            $data->GearSet->Attributes[$id] = [
+            $data->GearSet->Attributes->{$id} = [
                 'Attribute' => $attr,
                 'Value' => $value
             ];
         }
 
-        $data->GearSet->Attributes = array_values($data->GearSet->Attributes);
+        $data->GearSet->Attributes = array_values((array)$data->GearSet->Attributes);
 
         //
         // Gear Items
@@ -530,6 +539,8 @@ class LodestoneData
                     ]
                 );
             }
+
+            unset($gear->ID);
         }
         
         //
@@ -547,7 +558,7 @@ class LodestoneData
             );
         }
         foreach ($data->Mounts as $i => $mountsId) {
-            $data->Minions[$i] = self::extendCharacterDataHandlerSimple(
+            $data->Mounts[$i] = self::extendCharacterDataHandlerSimple(
                 $data, self::getContent("xiv_Mount_{$mountsId}"), [
                     'ID',
                     'Icon',
