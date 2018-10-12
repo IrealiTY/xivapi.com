@@ -59,6 +59,7 @@ class BuildCharacterGameCacheCommand extends Command
         $this->cacheGeneric('GCRankUldahMaleText');
 
         // cache for 100 days!
+        file_put_contents(__DIR__.'/resources/lodestone_data.json', json_encode($this->data, JSON_PRETTY_PRINT));
         $this->cache->set(LodestoneData::CACHE_KEY, $this->data, (60*60*24*100));
         $this->complete();
     }
@@ -98,19 +99,22 @@ class BuildCharacterGameCacheCommand extends Command
             }
         
             // soul Stones
-            if ($item->ItemUICategory->ID === 62) {
+            if ($item->ItemUICategory->ID == 62) {
+                $this->io->text('Adding: Soul Stones');
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }
         
             // materia
-            if ($item->ItemUICategory->ID === 58) {
+            if ($item->ItemUICategory->ID == 58) {
+                $this->io->text("Adding: Materia: {$item->Name_en}");
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }
         
             // dyes
-            if ($item->ItemUICategory->ID === 55) {
+            if ($item->ItemUICategory->ID == 55) {
+                $this->io->text("Adding: Dyes: {$item->Name_en}");
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }

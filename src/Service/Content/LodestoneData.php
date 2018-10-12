@@ -160,7 +160,7 @@ class LodestoneData
             // has materia?
             if (isset($item->Materia) && $item->Materia) {
                 foreach ($item->Materia as $m => $materia) {
-                    $item->Materia[$m] = self::findContent('Item', $materia);
+                    $item->Materia[$m] = self::findContent('Item', $materia->Name);
                 }
             }
             
