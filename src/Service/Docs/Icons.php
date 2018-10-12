@@ -23,6 +23,7 @@ class Icons
         'grandcompany'  => [ 'Grand Company Ranks', '/img-misc/gc' ],
         'gear'          => [ 'Gear Slot Icons', '/img-misc/gear' ],
         'lodestone'     => [ 'Lodestone UI', '/img-misc/lodestone' ],
+        'mappy'         => [ 'Mappy Icons', '/img-misc/mappy' ],
         'misc'          => [ 'Misc', '/img-misc'],
 
         '---',
