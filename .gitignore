@@ -5,6 +5,8 @@
 /public/i
 !/public/m/.gitkeep
 /public/m
+!/public/mp/.gitkeep
+/public/mp
 !/public/downloads/.gitkeep
 /public/downloads
 /mnt
