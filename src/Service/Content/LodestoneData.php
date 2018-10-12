@@ -438,7 +438,9 @@ class LodestoneData
             unset($classJob->ClassID, $classJob->JobID);
         }
         
+        //
         // Active class job
+        //
         $data->ActiveClassJob->Class = self::extendCharacterDataHandlerSimple(
             $data, self::getContent("xiv_ClassJob_{$data->ActiveClassJob->ClassID}"), [
                 'ID',
@@ -517,7 +519,12 @@ class LodestoneData
                 [
                     'ID',
                     'Icon',
-                    'Name_[LANG]'
+                    'Name_[LANG]',
+                    'LevelEquip',
+                    'LevelItem',
+                    'Rarity',
+                    'ItemUICategory.Name_[LANG]',
+                    'ClassJobCategory.Name_[LANG]'
                 ]
             );
 
