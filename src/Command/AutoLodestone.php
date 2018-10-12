@@ -123,10 +123,36 @@ class AutoLodestone extends Command
                 $this->handle('parsePvpTeam', ServiceQueues::CACHE_PVPTEAM_QUEUE .'_add');
                 $this->handle('parsePvpTeam', ServiceQueues::CACHE_PVPTEAM_QUEUE);
                 break;
+    
+            case 'CLEAR':
+                $this->clear(ServiceQueues::CACHE_CHARACTER_QUEUE .'_add');
+                $this->clear(ServiceQueues::CACHE_CHARACTER_QUEUE);
+                $this->clear(ServiceQueues::CACHE_ACHIEVEMENTS_QUEUE);
+                $this->clear(ServiceQueues::CACHE_FRIENDS_QUEUE);
+                $this->clear(ServiceQueues::CACHE_FREECOMPANY_QUEUE .'_add');
+                $this->clear(ServiceQueues::CACHE_FREECOMPANY_QUEUE);
+                $this->clear(ServiceQueues::CACHE_FREECOMPANY_MEMBERS_QUEUE);
+                $this->clear(ServiceQueues::CACHE_LINKSHELL_QUEUE .'_add');
+                $this->clear(ServiceQueues::CACHE_LINKSHELL_QUEUE);
+                $this->clear(ServiceQueues::CACHE_PVPTEAM_QUEUE .'_add');
+                $this->clear(ServiceQueues::CACHE_PVPTEAM_QUEUE);
+                break;
         }
 
         $duration = time() - $start;
         $this->io->text("<comment>Finished: {$duration}s</comment>");
+    }
+    
+    private function clear($queue)
+    {
+        $keys = (Object)[
+            'request'  => "{$queue}_req",
+            'response' => "{$queue}_res",
+        ];
+        
+        $this->cache->delete($keys->request);
+        $this->cache->delete($keys->response);
+        $this->io->text("Deleted req/res for: {$queue}");
     }
 
     /**
@@ -142,6 +168,7 @@ class AutoLodestone extends Command
         $request = $this->cache->get($keys->request);
 
         if (!$request) {
+            $this->io->text("No request data for key: {$keys->request}");
             return;
         }
 
@@ -160,7 +187,7 @@ class AutoLodestone extends Command
         // delete request queue and set response queue
         $this->cache
             ->delete($keys->request)
-            ->set($keys->response, $request);
+            ->set($keys->response, $request, (60*60));
     }
 
     /**
