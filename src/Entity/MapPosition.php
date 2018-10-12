@@ -127,7 +127,7 @@ class MapPosition
     private $PixelY;
     /**
      * @var bool
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" : 0})
      */
     private $Managed = false;
     
