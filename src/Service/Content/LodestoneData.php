@@ -266,7 +266,6 @@ class LodestoneData
         $content = json_decode(json_encode($content), true);
 
         if (!$content) {
-            die("no data for: ". $name ." ". $data->{$name});
             return;
         }
 
