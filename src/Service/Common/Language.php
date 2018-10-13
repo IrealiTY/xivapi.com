@@ -69,12 +69,11 @@ class Language
         foreach ($data as $i => $value) {
             if (is_array($value)) {
                 $data[$i] = self::handle($value);
-            } else {
-                $postfix = '_'. $language;
-    
-                if (strpos($i, $postfix) !== false) {
-                    $data[str_ireplace($postfix, null, $i)] = $value;
-                }
+            }
+            
+            $postfix = '_'. $language;
+            if (strpos($i, $postfix) !== false) {
+                $data[str_ireplace($postfix, null, $i)] = $value;
             }
         }
         
