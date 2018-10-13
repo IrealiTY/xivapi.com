@@ -263,7 +263,6 @@ class LodestoneData
 
         // grab content and ensure it's an array
         $content = self::$cache->get("xiv_{$name}_". $data->{$name});
-        $content = json_decode(json_encode($content), true);
 
         if (!$content) {
             return;
@@ -357,7 +356,7 @@ class LodestoneData
         if ($data->Gender == 2) {
             // replace male with female value
             $data->Title->Name = $data->Title->NameFemale;
-            $data->Race->Name = $data->Race->NameFemale;
+            $data->Race->Name  = $data->Race->NameFemale;
             $data->Tribe->Name = $data->Tribe->NameFemale;
         }
 
