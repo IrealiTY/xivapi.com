@@ -37,8 +37,6 @@ class Transient extends ManualHelper
 
     public function handle()
     {
-        $this->io->text(__METHOD__);
-        
         foreach (self::TRANSIENT_TABLES as $contentName) {
             // Grab transient keys
             $transientKeys = $this->redis->get("ids_{$contentName}Transient");

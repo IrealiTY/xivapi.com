@@ -10,7 +10,6 @@ class Fate extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         foreach ($this->getContentIds('Fate') as $id) {
             $key = "xiv_Fate_{$id}";
             $fate = $this->redis->get($key);

@@ -2,12 +2,12 @@
 
 namespace App\Command;
 
+use App\Service\Common\Arrays;
 use App\Service\Redis\Cache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Data\FileSystemCache;
 use App\Service\Data\DataHelper;
 use App\Service\Data\FileSystem;
@@ -19,13 +19,13 @@ use App\Service\GamePatch\Patch;
 class SaintCoinachRedisCommand extends Command
 {
     use CommandHelperTrait;
-    use ArrayHelper;
     
     const MAX_DEPTH = 3;
     const SAVE_TO_REDIS = true;
     const REDIS_DURATION = (60 * 60 * 24 * 365 * 10); // 10 years
     const ZERO_CONTENT = [
         'GatheringType',
+        'CraftType',
         'Cabinet',
         'World'
     ];
@@ -44,7 +44,7 @@ class SaintCoinachRedisCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:update')
+            ->setName('SaintCoinachRedisCommand')
             ->setDescription('Build content data from the CSV files and detect content links')
             ->addArgument('file_start', InputArgument::REQUIRED, 'The required starting position for the data')
             ->addArgument('file_count', InputArgument::REQUIRED, 'The amount of files to process in 1 go')
@@ -112,7 +112,7 @@ class SaintCoinachRedisCommand extends Command
             $count++;
             
             if ($focusName && $focusName != $contentName) {
-                #$this->io->text("Sheet: {$count}/{$total}    <info>SKIPPED {$contentName}</info>");
+                # $this->io->text("Sheet: {$count}/{$total}    <info>SKIPPED {$contentName}</info>");
                 continue;
             }
             
@@ -122,7 +122,6 @@ class SaintCoinachRedisCommand extends Command
             $allContentData = FileSystem::load($contentName, 'json');
 
             // build content (this saves it)
-            $idTotal = count((array)$allContentData);
             $idCount = 0;
             foreach ($allContentData as $contentId => $contentData) {
                 $idCount++;
@@ -132,7 +131,6 @@ class SaintCoinachRedisCommand extends Command
                 }
    
                 # $this->io->text("Build: #{$contentId} - {$idCount} / {$idTotal}");
-                $this->saveContentId($contentId, $contentName);
                 $this->buildContent($contentId, $contentName, $contentSchema, clone $contentData, 0, true);
             }
             
@@ -149,8 +147,12 @@ class SaintCoinachRedisCommand extends Command
                     // Set content url and some placeholders
                     $data->Url = "/{$contentName}/{$data->ID}";
                     $data->GameContentLinks = null;
-                    
+
+                    // add sorting
+                    Arrays::sortObjectByKey($data);
+    
                     // save
+                    $this->saveContentId($data->ID, $contentName);
                     $this->redis->set($key, $data, self::REDIS_DURATION);
                 }
                 
@@ -344,6 +346,14 @@ class SaintCoinachRedisCommand extends Command
         if (isset($definition->converter) && $definition->converter->type == 'link') {
             // id of linked data
             $linkId = $content->{$definition->name} ?? null;
+    
+            // target name of linked data
+            $linkTarget = $definition->converter->target;
+    
+            // add link target and target id
+            $content->{$definition->name} = null;
+            $content->{$definition->name ."Target"} = $linkTarget;
+            $content->{$definition->name ."TargetID"} = $linkId;
             
             // if link id is an object, it has already been managed
             if (is_object($linkId)) {
@@ -353,6 +363,8 @@ class SaintCoinachRedisCommand extends Command
             // if link id is null, something wrong with the content and definition
             // this shouldn't happen ...
             if ($linkId === null) {
+                return $content;
+                /*
                 $this->io->error([
                     "LINK ID ERROR",
                     "This happens when the definition 'name' is not an index in the CSV content row, this is likely because the ex.json does not match the CSV file headers.",
@@ -368,29 +380,28 @@ class SaintCoinachRedisCommand extends Command
                             $linkId,
                             $contentId,
                             $contentName,
-                            //json_encode($content, JSON_PRETTY_PRINT),
+                            json_encode($content, JSON_PRETTY_PRINT),
                             json_encode($definition, JSON_PRETTY_PRINT),
                             $depth
                         ]
                     ]
                 );
-    
-                return $content;
+                die;
+                */
             }
             
-            // target name of linked data
-            $linkTarget = $definition->converter->target;
-            
             // if the depth limit has been met or the link id is too low, end now.
-            if ($depth >= self::MAX_DEPTH || ($linkId < 1 && !in_array($contentName, self::ZERO_CONTENT))) {
+            if ($depth >= self::MAX_DEPTH || ($linkId < 1
+                && !in_array($contentName, self::ZERO_CONTENT)
+                && !in_array($linkTarget, self::ZERO_CONTENT))) {
                 return null;
             }
             
             //$this->io->text("<info>[LINK {$depth}]</info> {$contentId} {$contentName} : {$definition->name} ---> {$linkId} {$linkTarget}");
             
             // if the content links to itself, then return back
-            if ($contentName == $linkTarget && $contentId == $linkId) {
-                return $content;
+            if ($contentName == $linkTarget && (int)$contentId == (int)$linkId) {
+                return null;
             }
             
             // grab linked data
@@ -398,8 +409,6 @@ class SaintCoinachRedisCommand extends Command
             
             // append on linked data if it exists
             $content->{$definition->name} = $linkData ?: $content->{$definition->name};
-            $content->{$definition->name ."Target"} = $linkTarget;
-            $content->{$definition->name ."TargetID"} = $linkId;
             
             // save connection
             if ($linkData) {

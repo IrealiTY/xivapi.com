@@ -6,7 +6,7 @@ class CompanionResponse
 {
     public $response = [];
 
-    public function __construct($data, bool $cached, int $cacheExpires, int $speedms, int $queryCalls)
+    public function __construct($data, bool $cached = false, int $cacheExpires = 0, int $speedms = 0, int $queryCalls = 0)
     {
         $this->response = [
             'Note' => 'THIS IS BETA, FOR PHOENIX (EU) SERVER ONLY, 10 MINUTE CACHE',

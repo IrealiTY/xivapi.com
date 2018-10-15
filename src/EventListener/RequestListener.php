@@ -2,9 +2,10 @@
 
 namespace App\EventListener;
 
-use App\Exception\MaintenanceException;
-use App\Service\Language\Language;
-use App\Service\User\Time;
+use App\Service\Common\Environment;
+use App\Service\Common\Language;
+use App\Service\Common\Maintenance;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class RequestListener
@@ -15,19 +16,12 @@ class RequestListener
             return;
         }
 
-        $path = explode('/', $event->getRequest()->getPathInfo());
-        if ($event->getRequest()->getHost() == 'lodestone.xivapi.com' && $path[1] !== 'japan') {
-            die('not allowed');
-        }
-        
-        // check for maintenance
-        if ($event->getRequest()->getPathInfo() !== '/maintenance' && file_exists(__DIR__.'/../offline.txt')) {
-            throw new MaintenanceException(
-                MaintenanceException::CODE,
-                file_get_contents(__DIR__.'/../offline.txt')
-            );
-        }
+        /** @var Request $request */
+        $request = $event->getRequest();
 
-        Language::set($event->getRequest());
+        Environment::set($request);
+        Environment::ensureValidHost($request);
+        Maintenance::check($request);
+        Language::set($request);
     }
 }

@@ -32,7 +32,7 @@ class AutoCharacterManager extends LodestoneManager
         if ($obj->response->data) {
             foreach ($obj->response->data as $row) {
                 $ent = $repo->find($row->id);
-    
+                
                 // skip borked stuff
                 if (!$ent) {
                     continue;
@@ -60,8 +60,9 @@ class AutoCharacterManager extends LodestoneManager
                 $this->persist((new CharacterFriends($row->id))->setState(Entity::STATE_CACHED));
             }
         }
-        
-        $this->cache->set($obj->request->key, $repo->findNewCharacters(), 300);
+
+        $this->io->text("Updated queue: {$obj->request->key}");
+        $this->cache->set($obj->request->key, $repo->findNewCharacters(), (60*60));
         return $this;
     }
     
@@ -104,8 +105,8 @@ class AutoCharacterManager extends LodestoneManager
             }
         }
     
-        // register new characters
-        $this->cache->set($obj->request->key, $repo->findCharactersToUpdate(), 300);
+        $this->io->text("Updated queue: {$obj->request->key}");
+        $this->cache->set($obj->request->key, $repo->findCharactersToUpdate(), (60*60));
         return $this;
     }
     
@@ -154,8 +155,8 @@ class AutoCharacterManager extends LodestoneManager
             }
         }
     
-        // register new characters
-        $this->cache->set($obj->request->key, $repo->findCharacterAchievementsToUpdate(), 300);
+        $this->io->text("Updated queue: {$obj->request->key}");
+        $this->cache->set($obj->request->key, $repo->findCharacterAchievementsToUpdate(), (60*60));
         return $this;
     }
     
@@ -205,8 +206,8 @@ class AutoCharacterManager extends LodestoneManager
             }
         }
     
-        // register new characters
-        $this->cache->set($obj->request->key, $repo->findCharacterFriendsToUpdate(), 300);
+        $this->io->text("Updated queue: {$obj->request->key}");
+        $this->cache->set($obj->request->key, $repo->findCharacterFriendsToUpdate(), (60*60));
         return $this;
     }
 }

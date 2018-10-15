@@ -2,7 +2,7 @@
 
 namespace App\Service\Japan;
 
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Redis\Cache;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -38,7 +38,7 @@ class Japan
         $cache->set($key, $data, (60*60*3));
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->event('lodestone', 'get', 'duration', $duration);
+        GoogleAnalytics::event('lodestone', 'get', 'duration', $duration);
         
         return $data;
     }

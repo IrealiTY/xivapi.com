@@ -2,30 +2,30 @@
 
 namespace App\Service\SearchElastic;
 
+use App\Service\Common\Environment;
 use Elasticsearch\ClientBuilder;
 
 class ElasticSearch
 {
-    const NUMBER_OF_SHARDS   = 1;
-    const NUMBER_OF_REPLICAS = 0;
-    const MAX_RESULT_WINDOW  = 100000;
-    const MAX_BULK_DOCUMENTS = 1000;
+    const NUMBER_OF_SHARDS    = 1;
+    const NUMBER_OF_REPLICAS  = 0;
+    const MAX_RESULT_WINDOW   = 100000;
+    const MAX_BULK_DOCUMENTS  = 1000;
+    const MAX_FIELDS          = 10000;
 
     /** @var \Elasticsearch\Client */
     private $client;
 
-    public function __construct()
+    public function __construct(string $ip = null, int $port = null)
     {
-        if (!getenv('ELASTIC_IP') || !getenv('ELASTIC_PORT')) {
-            //return;
+        $ip   = $ip ?: getenv('ELASTIC_IP');
+        $port = $port ?: getenv('ELASTIC_PORT');
+        
+        if (!$ip || !$port) {
+            throw new \Exception('No ElasticSearch IP or PORT configured in env file');
         }
 
-        $hosts = sprintf(
-            "%s:%s",
-            '127.0.0.1', // getenv('ELASTIC_IP'),
-            '9200' // getenv('ELASTIC_PORT')
-        );
-
+        $hosts = sprintf("%s:%s", $ip, $port);
         $this->client = ClientBuilder::create()->setHosts([ $hosts ])->build();
 
         if (!$this->client) {
@@ -39,6 +39,7 @@ class ElasticSearch
             'number_of_shards'   => self::NUMBER_OF_SHARDS,
             'number_of_replicas' => self::NUMBER_OF_REPLICAS,
             'max_result_window'  => self::MAX_RESULT_WINDOW,
+            'index.mapping.total_fields.limit' => self::MAX_FIELDS,
         ]);
 
         $this->client->indices()->create([
@@ -66,7 +67,7 @@ class ElasticSearch
         ]);
     }
 
-    public function addDocument(string $index, string $type, string $id, array $document): void
+    public function addDocument(string $index, string $type, string $id, $document): void
     {
         $this->client->index([
             'index' => $index,
@@ -95,7 +96,7 @@ class ElasticSearch
                 $params['body'][] = $base;
                 $params['body'][] = $doc;
             }
-
+    
             $this->client->bulk($params);
         }
     }
@@ -118,21 +119,21 @@ class ElasticSearch
         ]);
     }
 
-    public function search(string $index, string $type, ElasticQuery $elasticQuery)
+    public function search(string $index, string $type, array $query)
     {
         return $this->client->search([
             'index' => $index,
             'type'  => $type,
-            'body'  => $elasticQuery->getQuery()
+            'body'  => $query
         ]);
     }
 
-    public function count(string $index, string $type, ElasticQuery $elasticQuery)
+    public function count(string $index, string $type, array $query)
     {
         return $this->client->count([
             'index' => $index,
             'type'  => $type,
-            'body'  => $elasticQuery->getQuery()
+            'body'  => $query
         ]);
     }
 }

@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # high spec for data importing, realistically would be low
     vb.memory = 8000
     vb.cpus = 4
-  end
+       end
 
   # network
   config.vm.network "private_network", ip: "69.69.69.69"

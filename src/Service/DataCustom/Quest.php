@@ -2,9 +2,9 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
-use App\Service\Language\LanguageList;
+use App\Service\Common\Language;
 
 class Quest extends ManualHelper
 {
@@ -15,13 +15,12 @@ class Quest extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         // todo - JournalSection
         
         // pre-warm NPCs
         $this->io->text("Warming ENpcResidents");
         foreach ($this->redis->get('ids_ENpcResident') as $id) {
-            $npc  = ContentMinified::mini(
+            $npc  = Arrays::minification(
                 $this->redis->get("xiv_ENpcResident_{$id}")
             );
             $name = preg_replace('/[0-9]+/', null, str_ireplace(' ', null, strtolower($npc->Name_en)));
@@ -77,7 +76,7 @@ class Quest extends ManualHelper
         $quest->TextData_kr  = null;
     
         // loop through languages
-        foreach (LanguageList::LANGUAGES as $language) {
+        foreach (Language::LANGUAGES as $language) {
             $filename = sprintf($quest->TextFilename, $language);
             $textdata = $this->getCsv($filename);
             if (!$textdata) {

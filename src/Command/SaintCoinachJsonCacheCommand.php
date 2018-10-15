@@ -2,14 +2,14 @@
 
 namespace App\Command;
 
-use App\Service\DataCustom\Pre\PreHandler;
-use App\Service\Redis\Cache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Service\Data\FileSystem;
 use App\Service\Data\FileReader;
+use App\Service\DataCustom\Pre\PreHandler;
+use App\Service\Redis\Cache;
 
 class SaintCoinachJsonCacheCommand extends Command
 {
@@ -18,7 +18,7 @@ class SaintCoinachJsonCacheCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:cache')
+            ->setName('SaintCoinachJsonCacheCommand')
             ->setDescription('Converts all CSV files into JSON documents for easier access during the update stage.')
             ->addArgument('fast', InputArgument::OPTIONAL, 'Skip all questions and use default values');
         ;

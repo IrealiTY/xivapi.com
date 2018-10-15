@@ -13,7 +13,6 @@ class ItemAction extends ManualHelper
      */
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('ItemAction');
         
         foreach ($ids as $id) {

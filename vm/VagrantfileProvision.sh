@@ -11,7 +11,7 @@ echo "- Updating"
 sudo apt-get update -y -qq
 sudo apt-get upgrade -y -qq
 echo "- Installing: python-software-properties, software-properties-common, acl, htop, unzip, curl, git"
-sudo apt-get install -y -qq python-software-properties software-properties-common acl htop unzip curl git
+sudo apt-get install -y -qq python-software-properties software-properties-common acl htop unzip curl git dos2unix
 
 
 #
@@ -28,7 +28,7 @@ sudo cp /vagrant/vm/VagrantfileNginxDefault /etc/nginx/sites-available/default
 sudo cp /vagrant/vm/VagrantfileNginx.conf /etc/nginx/nginx.conf
 
 #
-# PHP + Composer
+# PHP + Composer + Imagick
 #
 echo "Installing: PHP + Composer"
 sudo add-apt-repository ppa:ondrej/php -y
@@ -42,6 +42,7 @@ echo "- Installing composer"
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
 chmod +x /usr/local/bin/composer
+sudo apt-get install php-imagick
 
 #
 # MySQL
@@ -97,6 +98,9 @@ echo "- Auto removing and cleaning up services"
 sudo apt-get autoremove -y -qq
 sudo apt-get update -y -qq
 sudo apt-get upgrade -y -qq
+echo "- Updating db"
+php /vagrant/bin/console doctrine:schema:update --force --dump-sql
+bash /vagrant/bin/version
 
 echo "- Testing ElasticSearch in 10 seconds ..."
 sleep 10

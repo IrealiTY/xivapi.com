@@ -15,7 +15,7 @@ class SaintCoinachRedisCustomCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:custom')
+            ->setName('SaintCoinachRedisCustomCommand')
             ->setDescription('Build custom data edits')
             ->addArgument('content_name', InputArgument::OPTIONAL, 'Run a specific content name')
         ;

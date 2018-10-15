@@ -265,7 +265,6 @@ class AppManager
 
         $this->em->persist($app);
         $this->em->flush();
-
         return $app;
     }
 }

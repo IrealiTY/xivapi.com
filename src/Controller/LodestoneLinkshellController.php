@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\Linkshell;
 use App\Service\Apps\AppManager;
-use App\Service\Google\GoogleAnalytics;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Helpers\ArrayHelper;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\LinkshellService;
@@ -13,6 +13,7 @@ use App\Service\Lodestone\ServiceQueues;
 use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,9 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LodestoneLinkshellController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var LinkshellService */
@@ -41,7 +39,7 @@ class LodestoneLinkshellController extends Controller
     public function search(Request $request)
     {
         $this->appManager->fetch($request);
-        (new GoogleAnalytics())->hit(['Linkshell','Search']);
+        GoogleAnalytics::hit(['Linkshell','Search']);
         
         return $this->json(
             Japan::query('/japan/search/linkshell', [
@@ -58,6 +56,10 @@ class LodestoneLinkshellController extends Controller
      */
     public function index(Request $request, $id)
     {
+        if ($id < 0) {
+            throw new NotFoundHttpException('No, stop it.');
+        }
+
         $start = microtime(true);
         $this->appManager->fetch($request);
     
@@ -81,7 +83,8 @@ class LodestoneLinkshellController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['Linkshell',$id])->event('Linkshell', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['Linkshell',$id]);
+        GoogleAnalytics::event('Linkshell', 'get', 'duration', $duration);
         return $this->json($response);
     }
     
@@ -104,8 +107,8 @@ class LodestoneLinkshellController extends Controller
         if ($ent->getState() === Linkshell::STATE_NOT_FOUND) {
             return $this->json($this->service->delete($ent));
         }
-    
-        (new GoogleAnalytics())->hit(['Linkshell',$id,'Delete']);
+
+        GoogleAnalytics::hit(['Linkshell',$id,'Delete']);
         return $this->json(false);
     }
     
@@ -128,7 +131,7 @@ class LodestoneLinkshellController extends Controller
         $this->service->persist($ent);
     
         $this->service->cache->set(__METHOD__.$id, ServiceQueues::LINKSHELL_UPDATE_TIMEOUT);
-        (new GoogleAnalytics())->hit(['Linkshell',$id,'Update']);
+        GoogleAnalytics::hit(['Linkshell',$id,'Update']);
         return $this->json(1);
     }
 }

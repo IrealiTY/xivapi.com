@@ -5,14 +5,14 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\FreeCompany;
 use App\Service\Apps\AppManager;
-use App\Service\Google\GoogleAnalytics;
-use App\Service\Helpers\ArrayHelper;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\FreeCompanyService;
 use App\Service\Lodestone\ServiceQueues;
 use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -20,9 +20,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LodestoneFreeCompanyController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var FreeCompanyService */
@@ -41,7 +38,7 @@ class LodestoneFreeCompanyController extends Controller
     public function search(Request $request)
     {
         $this->appManager->fetch($request);
-        (new GoogleAnalytics())->hit(['FreeCompany','Search']);
+        GoogleAnalytics::hit(['FreeCompany','Search']);
         
         return $this->json(
             Japan::query('/japan/search/freecompany', [
@@ -58,6 +55,10 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function index(Request $request, $id)
     {
+        if ($id < 0) {
+            throw new NotFoundHttpException('No, stop it.');
+        }
+
         $start = microtime(true);
         $this->appManager->fetch($request);
     
@@ -100,7 +101,8 @@ class LodestoneFreeCompanyController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['FreeCompany',$id])->event('FreeCompany', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['FreeCompany',$id]);
+        GoogleAnalytics::event('FreeCompany', 'get', 'duration', $duration);
         return $this->json($response);
     }
     
@@ -124,7 +126,7 @@ class LodestoneFreeCompanyController extends Controller
             return $this->json($this->service->delete($ent));
         }
     
-        (new GoogleAnalytics())->hit(['FreeCompany',$id,'Delete']);
+        GoogleAnalytics::hit(['FreeCompany',$id,'Delete']);
         return $this->json(false);
     }
     
@@ -147,7 +149,7 @@ class LodestoneFreeCompanyController extends Controller
         $this->service->persist($ent);
     
         $this->service->cache->set(__METHOD__.$id, ServiceQueues::FREECOMPANY_UPDATE_TIMEOUT);
-        (new GoogleAnalytics())->hit(['FreeCompany',$id,'Update']);
+        GoogleAnalytics::hit(['FreeCompany',$id,'Update']);
         return $this->json(1);
     }
 }

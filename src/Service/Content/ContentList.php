@@ -2,21 +2,14 @@
 
 namespace App\Service\Content;
 
-use App\Controller\ControllerTrait;
 use App\Entity\App;
-use App\Service\Language\Language;
 use App\Service\Redis\Cache;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Apps\AppManager;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ContentList
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var Request */
     private $request;
     /** @var Cache */
@@ -98,7 +91,11 @@ class ContentList
         // get list data
         $data = [];
         foreach ($this->ids as $id) {
-            $data[] = $this->cache->get("xiv_{$this->name}_{$id}");
+            $content = $this->cache->get("xiv_{$this->name}_{$id}");
+            
+            if ($content) {
+                $data[] = $content;
+            }
         }
        
         return [

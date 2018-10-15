@@ -2,41 +2,67 @@
 
 namespace App\Service\Search;
 
-use App\Service\ElasticSearch\ElasticClient;
+use App\Service\SearchElastic\ElasticSearch;
+use App\Service\SearchElastic\ElasticQuery;
 
 class Search
 {
-    use TraitStringSearch;
-    use TraitFilterSearch;
-    
-    /** @var ElasticClient */
-    private $elasticClient;
+    /** @var ElasticSearch $search */
+    protected $search;
+    /** @var ElasticQuery $query */
+    protected $query;
 
     function __construct()
     {
-        // connect to production redis
         [$ip, $port] = explode(',', getenv('ELASTIC_SERVER_LOCAL'));
-        $this->elasticClient = new ElasticClient($ip, $port);
+        $this->search = new ElasticSearch($ip, $port);
+
+        // create elastic query
+        $this->query = new ElasticQuery();
     }
     
     /**
      * @throws \Exception
      */
-    public function handleRequest(SearchRequest $searchRequest, SearchResponse $searchResponse)
+    public function handleRequest(SearchRequest $req, SearchResponse $res)
     {
-        $this->elasticClient->QueryBuilder
-            ->reset()
-            ->sort($searchRequest->sortField, $searchRequest->sortOrder)
-            ->limit($searchRequest->limitStart, $searchRequest->limit);
-    
-        $this->performStringSearch($searchRequest);
-        $this->performFilterSearch($searchRequest);
+        //
+        // Sorting
+        //
+        if ($req->sortField) {
+            $this->query->sort([
+                [ $req->sortField, $req->sortOrder ]
+            ]);
+        }
+
+        //
+        // Limiting
+        //
+        if ($req->limit > 0) {
+            $this->query->limit(
+                $req->limitStart, $req->limit
+            );
+        }
         
-        #$this->elasticClient->QueryBuilder->build(true);die;
+        //
+        // Similar
+        //
+        if ($req->suggest) {
+            $this->query->addSuggestion(
+                $req->stringColumn, $req->string
+            );
+        }
+    
+        $this->performStringSearch($req);
+        $this->performFilterSearch($req);
+        
+        #echo $this->query->getJson();#die;
+        
+        $query = $this->query->getQuery($req->bool);
         
         try {
-            $searchResponse->setResults(
-                $this->elasticClient->search($searchRequest->indexes ?: SearchData::indexes(), 'search') ?: []
+            $res->setResults(
+                $this->search->search($req->indexes, 'search', $query) ?: []
             );
         } catch (\Exception $ex) {
             // if this is an elastic exception, clean the error
@@ -47,6 +73,108 @@ class Search
             }
             
             throw $ex;
+        }
+    }
+
+    /**
+     * Perform query searches
+     */
+    private function performStringSearch(SearchRequest $req)
+    {
+        // do nothing if no string
+        if (strlen($req->string) < 1) {
+            return;
+        }
+
+        switch($req->stringAlgo) {
+            case SearchRequest::STRING_CUSTOM:
+                $this->query->queryCustom($req->stringColumn, $req->string);
+                break;
+    
+            case SearchRequest::STRING_WILDCARD:
+                $this->query->queryWildcard($req->stringColumn, $req->string);
+                break;
+    
+            case SearchRequest::STRING_WILDCARD_PLUS:
+                $this->query->queryWildcardPlus($req->stringColumn, $req->string);
+                break;
+                
+            case SearchRequest::STRING_FUZZY:
+                $this->query->queryFuzzy($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_TERM:
+                $this->query->queryTerm($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_PREFIX:
+                $this->query->queryPrefix($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_MATCH:
+                $this->query->queryMatch($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_MATCH_PHRASE:
+                $this->query->queryMatchPhrase($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_MATCH_PHRASE_PREFIX:
+                $this->query->queryMatchPhrasePrefix($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_MULTI_MATCH:
+                $this->query->queryMultiMatch(
+                    [ explode(',', $req->stringColumn) ], $req->string
+                );
+                break;
+
+            case SearchRequest::STRING_QUERY_STRING:
+                $this->query->queryString($req->stringColumn, $req->string);
+                break;
+
+            case SearchRequest::STRING_SIMILAR:
+                $this->query->querySimilar($req->stringColumn, $req->string);
+                break;
+        }
+    }
+
+    /**
+     * Perform filter searches
+     */
+    private function performFilterSearch(SearchRequest $searchRequest)
+    {
+        if (!$searchRequest->filters) {
+            return;
+        }
+
+        $filters = str_getcsv($searchRequest->filters);
+
+        foreach ($filters as $filter) {
+            preg_match('/(?P<column>[A-Za-z0-9_\.]+)(?P<op>(?:=|[<>]=?))(?P<value>\w+)/', $filter, $matches);
+
+            $column = $matches['column'] ?? null;
+            $op     = $matches['op'] ?? null;
+            $value  = $matches['value'] ?? null;
+
+            if (!$column || !$op) {
+                throw new \Exception("Invalid search filter: {$filter} - It must be: [COLUMN][OPERATOR][VALUE]");
+            }
+
+            if (in_array($op, ['='])) {
+                $this->query->filterTerm($column, $value);
+            } else if (in_array($op, ['>','<','>=','<='])) {
+                $opConversion = [
+                    '>=' => 'gte',
+                    '<=' => 'lte',
+                    '>' => 'gt',
+                    '<' => 'lt'
+                ];
+
+                $this->query->filterRange($column, (int)$value, $opConversion[$op]);
+            } else {
+                throw new \Exception("Invalid operand provided: {$op}, please provide either: >, >=, <, <=, or =");
+            }
         }
     }
 }

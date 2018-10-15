@@ -8,6 +8,8 @@ class ElasticQuery
     private $body = [];
     private $filters = [];
     private $suggestions = [];
+    private $limit;
+    private $sorting;
 
     /**
      * Types: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
@@ -16,13 +18,22 @@ class ElasticQuery
      * - should
      * - filter
      */
-    public function getQuery(string $type = 'should'): array
+    public function getQuery(string $type = 'must'): array
     {
         $response = [
             'query' => [
                 'bool' => []
             ]
         ];
+        
+        if ($this->limit) {
+            $response['from'] = $this->limit[0];
+            $response['size'] = $this->limit[1];
+        }
+        
+        if ($this->sorting) {
+            $response['sort'] = $this->sorting;
+        }
 
         if ($this->body) {
             $response['query']['bool'][$type] = $this->body;
@@ -39,12 +50,19 @@ class ElasticQuery
         return $response;
     }
 
+    /**
+     * Get JSON payload that is sent to ElasticSearch
+     */
+    public function getJson(string $type = 'should'): string
+    {
+        return json_encode($this->getQuery($type), JSON_PRETTY_PRINT);
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     public function limit(int $from, int $size): self
     {
-        $this->body['from'] = $from;
-        $this->body['size'] = $size;
+        $this->limit = [$from, $size];
         return $this;
     }
 
@@ -52,7 +70,7 @@ class ElasticQuery
     {
         foreach ($sorting as $sort) {
             [$field, $order] = $sort;
-            $this->body['sort'][] = [
+            $this->sorting[] = [
                 $field => $order
             ];
         }
@@ -65,8 +83,6 @@ class ElasticQuery
         $this->body['min_score'] = $score;
         return $this;
     }
-
-    //------------------------------------------------------------------------------------------------------------------
 
     public function all(): self
     {

@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Watch any kind of exception and decide if it needs to be handled via an API response
+ */
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
@@ -20,7 +23,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            return;
+            return null;
         }
     
         $ex         = $event->getException();
@@ -32,9 +35,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         file_put_contents(__DIR__.'/Exceptions.txt', $message, FILE_APPEND);
         
         if (isset($pathinfo['extension'])) {
-            return $event->setResponse(
-                new Response("File not found: ". $path, 404)
-            );
+            $event->setResponse(new Response("File not found: ". $path, 404));
+            return null;
         }
         
         $file = str_ireplace('/home/dalamud/dalamud', '', $ex->getFile());
@@ -56,7 +58,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $response = new JsonResponse($json, $json['Debug']['Code']);
         $response->headers->set('Content-Type','application/json');
         $response->headers->set('Access-Control-Allow-Origin','*');
-
         $event->setResponse($response);
     }
 }

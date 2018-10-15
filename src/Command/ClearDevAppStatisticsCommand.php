@@ -3,10 +3,7 @@
 namespace App\Command;
 
 use App\Service\Apps\AppManager;
-use App\Service\Companion\CompanionMarket;
-use App\Service\Companion\CompanionResponse;
 use App\Service\Redis\Cache;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

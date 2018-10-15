@@ -76,6 +76,7 @@
         <table>
             <thead>
                 <tr>
+                    <th width="5%">#</th>
                     <th width="5%">Quantity</th>
                     <th width="15%">Prices</th>
                     <th width="20%">Retainer</th>
@@ -88,6 +89,7 @@
             <tbody>
             {% for listing in item.Payload.Market.Listings %}
             <tr>
+                <td align="center">{{ loop.index }}</td>
                 <td align="right">{{ listing.Quantity|number_format }}</td>
                 <td><span><img src="/img-misc/061575.png"> &nbsp;{{ listing.Price|number_format }}</span></td>
                 <td><em>{{ listing.RetainerName }}</em></td>

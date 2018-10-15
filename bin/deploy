@@ -5,13 +5,13 @@ START_TIME=$SECONDS
 ## -------------------------------------------------------------------------------------
 
 # Deploy Data
-/usr/bin/php /vagrant/bin/console app:deploy:data
+/usr/bin/php /vagrant/bin/console ProductionDeploymentCommand
 
 # Deploy search
 sleep 5
-/usr/bin/php /vagrant/bin/console app:search prod
-## -----------------------------------------------------------------------
---------------
+#/usr/bin/php /vagrant/bin/console UpdateSearchCommand prod
+
+## -------------------------------------------------------------------------------------
 
 end=`date +%s`
 

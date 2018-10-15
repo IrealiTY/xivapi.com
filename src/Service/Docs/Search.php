@@ -2,10 +2,19 @@
 
 namespace App\Service\Docs;
 
+use App\Service\Search\SearchContent;
+
 class Search extends DocBuilder implements DocInterface
 {
     public function build()
     {
+        $indexes = [];
+        foreach (SearchContent::LIST as $name) {
+            $index      = strtolower($name);
+            $default    = in_array($name, SearchContent::LIST_DEFAULT) ? '*(Default)*' : '';
+            $indexes[]  = "`{$index}` {$name} {$default}";
+        }
+        
         return $this
             ->text('XIVAPI provides the ability to quickly search all game content via ElasticSearch. 
                 This search endpoint only searches game content and not: characters, free companies, 
@@ -39,30 +48,8 @@ class Search extends DocBuilder implements DocInterface
             // indexes=a,b,c
             ->h3('indexes')
             ->usage("{endpoint}/search?indexes=achievement,item,action")
-            ->text('Search a specific series of indexes separated by commas, by default it will search all indexes.')
-            ->list([
-                '`achievement`',
-                '`action`',
-                '`bnpcname` - Enemies',
-                '`companion` - Minions',
-                '`enpcresident` - NPCs',
-                '`emote`',
-                '`fate`',
-                '`instancecontent` - Instances; Raids, Dungeons, etc.',
-                '`item`',
-                '`leve` - GuildLeves',
-                '`mount`',
-                '`placename` - Zones, Regions',
-                '`quest`',
-                '`recipe`',
-                '`status` - eg; Ailment status affects',
-                '`title`',
-                '`weather`',
-                
-                // new
-                '`buddyequip` - Chocobo companion gear',
-                '`orchestrion`'
-            ])
+            ->text('Search a specific series of indexes separated by commas.')
+            ->list($indexes)
             ->gap()
         
         
@@ -84,29 +71,29 @@ class Search extends DocBuilder implements DocInterface
         
             // string algo
             ->h3('string_algo')
-            ->text('**Default:** `wildcard_plus`')
+            ->text('**Default:** `custom`')
             ->text('Here are some examples of expected outcomes when searching for: **Mother Miounne**')
             ->table(
                 [ 'string', 'string_algo', 'Found?', 'Result Number', 'Notes' ],
                 [
-                    [ 'mother', 'wildcard', 'Y', '1', '' ],
-                    [ 'mother+miounn', 'wildcard', 'Y', '1', '' ],
-                    [ 'other+mi', 'wildcard', 'N', '', '' ],
-                    [ 'other+mi', 'wildcard_plus', 'Y', '1', '' ],
-                    [ 'mo????+miounne', 'wildcard_plus', 'Y', '1', '`?` will figure out what you mean' ],
-                    [ 'mother', 'prefix', 'Y', '3', '**mother horbill** is #1' ],
-                    [ 'mother', 'term', 'N', '', '' ],
-                    [ 'mother+miounne', 'match_phrase_prefix', 'Y', '3', '' ],
-                    [ 'mother', 'match_phrase_prefix', 'Y', '3', '', '' ],
-                    [ 'mother+m', 'match_phrase_prefix', 'Y', '3', '' ],
-                    [ 'other+m', 'match_phrase_prefix', 'N', '', '' ],
+                    [ 'mother', '`custom`', 'Y', '1', '' ],
+                    [ 'mother+miounn', '`custom`', 'Y', '1', '' ],
+                    [ 'other+mi', '`custom`', 'Y', '1', '' ],
+                    
+                    [ 'mother', '`wildcard`', 'Y', '1', '' ],
+                    [ 'mother+miounn', '`wildcard`', 'Y', '1', '' ],
+                    [ 'other+mi', '`wildcard`', 'N', '', '' ],
+                    [ 'other+mi', '`wildcard_plus`', 'Y', '1', '' ],
+                    [ 'mo????+miounne', '`wildcard_plus`', 'Y', '1', '`?` will figure out what you mean' ],
+                    
+                    [ 'mother', '`prefix`', 'Y', '3', '**mother horbill** is #1' ],
+                    [ 'mother', '`term`', 'N', '', '' ],
+                    [ 'mother+miounne', '`match_phrase_prefix`', 'Y', '3', '' ],
+                    [ 'mother', '`match_phrase_prefix`', 'Y', '3', '', '' ],
+                    [ 'mother+m', '`match_phrase_prefix`', 'Y', '3', '' ],
+                    [ 'other+m', '`match_phrase_prefix`', 'N', '', '' ],
                 ]
             )
-            ->text('As you can see, varing results, I highly recommend the following `string_algo`:')
-            ->list([
-                '`wildcard_plus` **(default)** - no scoring',
-                '`match_phrase_prefix` - includes scoring'
-            ])
             ->note('These are all based on what ElasticSearch can do, if you do not get the desired result 
                 then hop onto Discord and custom search algorithm could be implemented. For high level details 
                 you could read the [Elastic Search Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/term-level-queries.html).')
@@ -114,21 +101,82 @@ class Search extends DocBuilder implements DocInterface
             
             ->h5('String Algorithms')
             ->table(
-                [ 'Option', 'Scoring?', 'Details' ],
+                [ 'Option', 'Scoring?', 'Details', 'ElasticSearch Docs' ],
                 [
-                    [ '`wildcard`', 'N', 'Basic, searches post string, eg: `Aim` would match `|Aim|ing` however `ing` would not match `Aiming`' ],
-                    [ '`wildcard_plus`', 'N', '**(Default)** Very similar to `wildcard` but searches pre and <br> post string, eg: `*X*`, `ing` would match `Aim|ing|`, think of this as MySQL `%like%`' ],
-                    [ '`match_phrase_prefix`', 'Y', 'Very similar to `wildcard` will match post strings, <br> eg: `Aim` matches `|Aim|ing`. The benefit is that it has weighting and returns scores.' ],
-                    [ '`multi_match`', 'Y', 'Attempts to match multiple words, this would be really good <br> for a "Lore Finder" eg: `mother miounne` would match with a high score, but it has <br> to be exact, `mother mio` would not match and you would just end up with noise.' ],
-                    [ '`query_string`', 'Y', 'Must be exact, the `X=Y` has to match 100%, eg: `mother+miounne` <br> will only return results that contain that exact phrase.' ],
-                    [ '`term`', 'Y', '*(unstable)* Similar to `query_string`, must match exactly. ' ],
-                    [ '`fuzzy`', 'Y', '*(unstable)* Does not support spaces and can return some really funky stuff...' ],
+                    [
+                        '`custom`',
+                        'Y',
+                        'Performs `wildcard_plus` and a `fuzzy` at the same time, this allows you to search <br> split non-full words, eg: `Ifrit Axe` = `Ifrit\'s Battleaxe`.',
+                        '`wildcard` + `fuzzy`',
+                    ],
+                    [
+                        '`wildcard`',
+                        'N',
+                        'Searches post string, eg: `Aim` would match `*Aim*ing`',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)'
+                    ],
+                    [
+                        '`wildcard_plus`',
+                        'N',
+                        'Will search each word individually, eg: "Ifrit Axe" searched as: `*ifrit* *axe*`',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)'
+                    ],
+                    [
+                        '`fuzzy`',
+                        'Y',
+                        'Perform a fuzzy search. Fuzziness = 5',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html)'
+                    ],
+                    [
+                        '`term`',
+                        'Y',
+                        'Match whole words by keyword terms.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html)'
+                    ],
+                    [
+                        '`prefix`',
+                        'Y',
+                        'Match a prefix, like a cheap auto-complete',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html)'
+                    ],
+                    [
+                        '`match`',
+                        'Y',
+                        'Perform a match query.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html)'
+                    ],
+                    [
+                        '`match_phrase`',
+                        'Y',
+                        'Perform a match phrase query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase.html)'
+                    ],
+                    [
+                        '`match_phrase_prefix`',
+                        'Y',
+                        'Perform a match phrase prefix query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html)'
+                    ],
+                    [
+                        '`multi_match`',
+                        'Y',
+                        'Match against multiple string columns, seperated by a comma.',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html)'
+                    ],
+                    [
+                        '`query_string`',
+                        'Y',
+                        'Perform a query string, this has lots of logic!',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)'
+                    ],
+                    [
+                        '`similar`',
+                        'Y',
+                        'Perform a "more like this" similar query',
+                        '[Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html)'
+                    ],
                 ]
             )
-            ->text('- *unstable* = I can\'t guarantee these have any use until the implementation has been
-                improved. If you\'re really good with ElasticSearch be sure to jump into Discord :D')
-            
-        
             ->line()
             // other stuff
         
@@ -153,6 +201,14 @@ class Search extends DocBuilder implements DocInterface
             ->text('Limit the number of results, this cannot go higher than the current max')
             ->text('Current max: `100`')
             ->list([ 'As some point increased values will be allowed via app keys.' ])
+            
+            ->h3('columns')
+            ->text('You can use the global `columns` query parameter to select what fields you want in the search. To help
+                make building models easier any column you request will be returned even if that column does not exist
+                for the specified content, eg `LevelEquip` will appear on `instantcontent` as `null`. This is to ensure
+                responses are consistent with what you ask for.')
+            ->text('The default columns are: `_`(index), `_Score`(ElasticSearch Score), `ID`,
+                `Name`, `Icon`, `Url`, `UrlType`. All content contains these fields.')
         
             ->line()
         
@@ -160,7 +216,7 @@ class Search extends DocBuilder implements DocInterface
 
             ->h3('filters')
             ->usage('{endpoint}/search?string=bow&indexes=item&pretty=1&filters=LevelItem%3E35,LevelItem%3C50&sort_field=LevelItem&sort_order=desc')
-            ->h6('Breakdown')
+            ->text('Breakdown example of usage link:')
             ->table(
                 [ 'Field', 'Operator', 'Value',' Notes' ],
                 [
@@ -168,30 +224,39 @@ class Search extends DocBuilder implements DocInterface
                     [ 'LevelItem', '<', '50', 'Items that are i.level below 50' ]
                 ]
             )
-            ->code('filters=Field>=Value,A<B,Field=1337')
+            ->code('filters = Field >= Value, A < B, Field = 1337')
 
             ->h5('How it works')
             ->text('Provide a comma separated list of filters. The format of the filters is:')
             ->list([
                 '`[ column ][ operator ][ value ]`',
-                '`LevelItem>50` = Items that are i.level 50 or above.'
+                '`LevelItem > 50` - Items that are i.level 50 or above.',
             ])
+            
             ->h5('Operators')
+            ->text('You can perform filters against all non-text & non-array columns on any searchable content.')
             ->table(
                 [ 'Operator', 'Information' ],
                 [
-                    [ '=',  'Performs a match, eg: LevelItem=50 means only items that are level 50' ],
-                    [ '>',  'Performs a "Greater than" range query' ],
-                    [ '>=', 'Performs a "Greater than or equal to" range query' ],
-                    [ '<',  'Performs a "Less than" range query' ],
-                    [ '<=', 'Performs a "Less than or equal to" range query' ]
+                    [ '=',  'Performs a `match`, eg: LevelItem=50 means only items that are level 50.' ],
+                    [ '>',  'Performs a "Greater than" `range` query. (gt)' ],
+                    [ '>=', 'Performs a "Greater than or equal to" `range` query. (gte)' ],
+                    [ '<',  'Performs a "Less than" `range` query. (lt)' ],
+                    [ '<=', 'Performs a "Less than or equal to" `range` query. (lte)' ]
                 ]
             )
-            ->text('You can find all possible content filters here: https://xivapi.com/search/schema?pretty=1')
-            ->note('Where you see `[LANGUAGE]` change this to the language you would prefer, eg: `Name_en` 
+            ->note('Where you see `[LANGUAGE]` change this to the language you would prefer, eg: `Name_en`
                 or omit it completely to use query language, eg: `Name` would be whatever `language=X` 
                 query is (English if omitted)')
-            ->line()
+            ->gap()
+            
+            ->h6('Examples')
+            ->list([
+                '[LevelItem > 200, LevelItem < 210, LevelEquip > 50]({endpoint}/search?pretty=1&filters=LevelItem>200,LevelItem<210,LevelEquip>50&columns=ID,Name,Icon,LevelItem,LevelEquip,ItemUICategory.Name,ClassJobUse.ClassJobCategory.Name&sort_field=LevelItem&sort_order=asc)',
+                '["Ifrit Axe" will find "Ifrit\'s Battleaxe" with a high score]({endpoint}/search?pretty=1&string=Ifrit+Axe&columns=ID,Name,Icon,LevelItem,LevelEquip,ItemUICategory.Name,ClassJobUse.ClassJobCategory.Name)',
+                '["rakshasa casting" finds expected items]({endpoint}/search?pretty=1&string=rakshasa+casting&columns=_Score,ID,Name,Icon,LevelItem,LevelEquip)',
+            ])
+            ->gap()
             
             ->h6('Notes')
             ->text('The search response is in the format:')
@@ -205,7 +270,6 @@ class Search extends DocBuilder implements DocInterface
                 be a field called `_` this is the index for that result (look at indexes further up in the 
                 docs for more information on this).')
             ->text('The field `_Score` is the weight score for the `string_algo` used and is decided by ElasticSearch')
-        
         
             ->get();
     }

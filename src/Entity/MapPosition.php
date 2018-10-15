@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          @ORM\Index(name="map_territory_id", columns={"map_territory_id"}),
  *          @ORM\Index(name="place_name_id", columns={"place_name_id"}),
  *          @ORM\Index(name="content_index", columns={"content_index"}),
+ *          @ORM\Index(name="managed", columns={"managed"}),
  *          @ORM\Index(name="added", columns={"added"})
  *     }
  * )
@@ -124,6 +125,11 @@ class MapPosition
      * @ORM\Column(type="integer")
      */
     private $PixelY;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $Managed = false;
     
     public function __construct()
     {
@@ -152,6 +158,7 @@ class MapPosition
             'PosY'              => $this->PosY,
             'PixelX'            => $this->PixelX,
             'PixelY'            => $this->PixelY,
+            'Managed'           => $this->Managed,
         ];
     }
     
@@ -372,6 +379,17 @@ class MapPosition
     public function setPixelY(int $PixelY)
     {
         $this->PixelY = $PixelY;
+        return $this;
+    }
+
+    public function getManaged()
+    {
+        return $this->Managed;
+    }
+
+    public function setManaged($Managed)
+    {
+        $this->Managed = $Managed;
         return $this;
     }
 }

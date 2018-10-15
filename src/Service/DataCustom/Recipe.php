@@ -2,18 +2,18 @@
 
 namespace App\Service\DataCustom;
 
+use App\Service\Common\Arrays;
 use App\Service\Content\ContentMinified;
 use App\Service\Helpers\ManualHelper;
 
 class Recipe extends ManualHelper
 {
-    const PRIORITY = 20;
+    const PRIORITY = 15;
     
     private $itemToRecipe = [];
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $this->warmRecipeData();
         
         $ids = $this->getContentIds('Recipe');
@@ -97,9 +97,9 @@ class Recipe extends ManualHelper
         //
         // Set on main recipe
         //
-        if (isset($recipe->CraftType->ID) && $recipe->CraftType->ID) {
-            $recipe->ClassJob = ContentMinified::mini(
-                $this->redis->get("xiv_ClassJob_{$arr[$recipe->CraftType->ID]}")
+        if (isset($recipe->CraftType->ID)) {
+            $recipe->ClassJob = Arrays::minification(
+                $this->redis->get("xiv_ClassJob_{$arr[(int)$recipe->CraftType->ID]}")
             );
         }
         
@@ -111,9 +111,9 @@ class Recipe extends ManualHelper
             
             if ($recipe->{$column}) {
                 foreach ($recipe->{$column} as $subRecipe) {
-                    if (isset($subRecipe->CraftType->ID) && $subRecipe->CraftType->ID) {
-                        $subRecipe->ClassJob = ContentMinified::mini(
-                            $this->redis->get("xiv_ClassJob_{$arr[$subRecipe->CraftType->ID]}")
+                    if (isset($subRecipe->CraftType->ID)) {
+                        $subRecipe->ClassJob = Arrays::minification(
+                            $this->redis->get("xiv_ClassJob_{$arr[(int)$subRecipe->CraftType->ID]}")
                         );
                     }
                 }

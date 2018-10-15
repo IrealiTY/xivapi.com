@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Common\GitHub;
 use App\Service\Docs\Docs;
 use App\Service\Docs\ChangeLogs;
 use App\Service\Docs\Icons;
@@ -35,7 +36,7 @@ class DocumentationController extends Controller
         // change logs
         if (strtolower($filename) == 'changelogs') {
             return $this->render('docs/docs_changelog.html.twig', [
-                'commits' => (new ChangeLogs())->get(),
+                'commits'    => GitHub::getGithubCommitHistory(),
                 'filename'   => $filename,
                 'navigation' => Docs::LIST
             ]);

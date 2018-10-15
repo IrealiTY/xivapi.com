@@ -75,7 +75,12 @@
                         <tr>
                             <td><code>{{ place.ID }}</code></td>
                             <td>
-                                <strong>{{ mapsCompleted[place.ID] ? '✔' : '' }}</strong> <a href="{{ path('app_manage_map_view', { id: app.id, map: place.ID }) }}">{{ place.PlaceName.Name }}</a>
+                                {% if  place.Positions > 0 %}
+                                    <strong>[IN-PROGRESS]</strong>
+                                    &nbsp;&nbsp;
+                                {% endif %}
+                                <strong>{{ mapsCompleted[place.ID] ? '✔' : '' }}</strong>
+                                <a href="{{ path('app_manage_map_view', { id: app.id, map: place.ID }) }}">{{ place.PlaceName.Name }}</a>
                             </td>
                             <td>
                                 {{ place.PlaceNameSub.Name ? place.PlaceNameSub.Name ~ ", " : '' }} {{ place.Zone.Name }}

@@ -11,26 +11,21 @@ use App\Entity\PvPTeam;
 use App\Exception\ContentGoneException;
 use App\Service\Apps\AppManager;
 use App\Service\Content\LodestoneData;
-use App\Service\Google\GoogleAnalytics;
-use App\Service\Helpers\ArrayHelper;
+use App\Service\Common\GoogleAnalytics;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\CharacterService;
 use App\Service\Lodestone\FreeCompanyService;
 use App\Service\Lodestone\PvPTeamService;
 use App\Service\Lodestone\ServiceQueues;
 use Elasticsearch\Common\Exceptions\Forbidden403Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
 use Lodestone\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LodestoneCharacterController extends Controller
 {
-    use ControllerTrait;
-    use ArrayHelper;
-
     /** @var AppManager */
     private $appManager;
     /** @var CharacterService */
@@ -55,7 +50,7 @@ class LodestoneCharacterController extends Controller
     public function search(Request $request)
     {
         $this->appManager->fetch($request);
-        (new GoogleAnalytics())->hit(['Character','Search']);
+        GoogleAnalytics::hit(['Character','Search']);
         
         return $this->json(
             Japan::query('/japan/search/character', [
@@ -72,6 +67,10 @@ class LodestoneCharacterController extends Controller
      */
     public function index(Request $request, $id)
     {
+        if ($id < 0) {
+            throw new NotFoundHttpException('No, stop it.');
+        }
+
         $start = microtime(true);
         $this->appManager->fetch($request);
         
@@ -113,6 +112,11 @@ class LodestoneCharacterController extends Controller
         
         if ($ent->getState() == Entity::STATE_CACHED) {
             $response->Character = $character;
+
+            // if we're to extend character info
+            if ($request->get('extended')) {
+                LodestoneData::extendCharacterData($response->Character);
+            }
             
             /** @var CharacterAchievements $ent */
             if ($content->AC) {
@@ -177,7 +181,8 @@ class LodestoneCharacterController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        (new GoogleAnalytics())->hit(['Character',$id])->event('Character', 'get', 'duration', $duration);
+        GoogleAnalytics::hit(['Character',$id]);
+        GoogleAnalytics::event('Character', 'get', 'duration', $duration);
         return $this->json($response);
     }
 
@@ -210,7 +215,7 @@ class LodestoneCharacterController extends Controller
 
         // small cache time as it's just to prevent "spam"
         $this->service->cache->set($key, $data, 15);
-        (new GoogleAnalytics())->hit(['Character',$id,'Verification']);
+        GoogleAnalytics::hit(['Character',$id,'Verification']);
         
         return $this->json($data);
     }
@@ -249,7 +254,7 @@ class LodestoneCharacterController extends Controller
             return $this->json(1);
         }
     
-        (new GoogleAnalytics())->hit(['Character',$id,'Delete']);
+        GoogleAnalytics::hit(['Character',$id,'Delete']);
         return $this->json(false);
     }
 
@@ -299,7 +304,7 @@ class LodestoneCharacterController extends Controller
         $this->service->persist($entAchievements);
 
         $this->service->cache->set(__METHOD__.$id, ServiceQueues::CHARACTER_UPDATE_TIMEOUT);
-        (new GoogleAnalytics())->hit(['Character',$id,'Update']);
+        GoogleAnalytics::hit(['Character',$id,'Update']);
         
         return $this->json(1);
     }

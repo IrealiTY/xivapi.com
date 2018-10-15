@@ -2,24 +2,44 @@
 
 namespace App\Service\DataCustom;
 
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Arrays;
 use App\Service\Helpers\ManualHelper;
 
 class InstanceContent extends ManualHelper
 {
     const PRIORITY = 20;
-    
-    private $contentFinderConditions = [];
+
+    const CONTENT_LINK_TYPES = [
+        1 => 'InstanceContent',
+        2 => 'PartyContent',
+        3 => 'PublicContent',
+        4 => 'GoldSaucerContent',
+        5 => 'Unknown',
+    ];
+
+    private $contentFinderConditions = [
+        'InstanceContent'   => [],
+        'PartyContent'      => [],
+        'PublicContent'     => [],
+        'GoldSaucerContent' => [],
+        'Unknown'           => [],
+    ];
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
-        
-        // Warm-Up
+        // store content finder conditions against their instance content id
         foreach ($this->redis->get('ids_ContentFinderCondition') as $id) {
-            $this->contentFinderConditions[$id] = ContentMinified::mini(
-                $this->redis->get("xiv_ContentFinderCondition_{$id}")
-            );
+            $cfc  = $this->redis->get("xiv_ContentFinderCondition_{$id}");
+
+            // skip dummy rows
+            if ((int)$cfc->ContentLinkType === 0) {
+                continue;
+            }
+
+            $id   = $cfc->Content;
+            $type = self::CONTENT_LINK_TYPES[$cfc->ContentLinkType];
+
+            $this->contentFinderConditions[$type][$id] = $cfc;
         }
         
         $ids = $this->getContentIds('InstanceContent');
@@ -36,10 +56,7 @@ class InstanceContent extends ManualHelper
             
             $this->addContentFinderCondition($instanceContent);
             $this->addInstanceBosses($instanceContent);
-            
-            #$this->setCombinedCurrency($instanceContent);
-            #$this->setAdditionalData($instanceContent);
-    
+
             // save
             $this->redis->set($key, $instanceContent, self::REDIS_DURATION);
         }
@@ -50,18 +67,21 @@ class InstanceContent extends ManualHelper
      */
     private function addContentFinderCondition($instanceContent)
     {
-        // Content finder condition
-        foreach ($this->contentFinderConditions as $condition) {
-            if ($condition->InstanceContent === $instanceContent->ID) {
-                $instanceContent->ContentFinderCondition = $condition;
-                break;
-            }
-        }
-        
+        // ensure the fields exist, even if no data
+        $instanceContent->Description_en    = null;
+        $instanceContent->Description_ja    = null;
+        $instanceContent->Description_de    = null;
+        $instanceContent->Description_fr    = null;
+        $instanceContent->ContentMemberType = null;
+        $instanceContent->ContentType       = null;
+        $instanceContent->Icon              = null;
+        $instanceContent->Banner            = null;
+
+        $instanceContent->ContentFinderCondition = $this->contentFinderConditions[self::CONTENT_LINK_TYPES[1]][$instanceContent->ID] ?? null;
         if (!$instanceContent->ContentFinderCondition) {
             return;
         }
-        
+
         // Descriptions
         $descriptions = $this->redis->get("xiv_ContentFinderConditionTransient_{$instanceContent->ContentFinderCondition->ID}");
         $instanceContent->Description_en = $descriptions->Description_en;
@@ -70,12 +90,12 @@ class InstanceContent extends ManualHelper
         $instanceContent->Description_fr = $descriptions->Description_fr;
         
         // Content Member Type
-        $instanceContent->ContentMemberType = $this->redis->get("xiv_ContentMemberType_{$instanceContent->ContentFinderCondition->ContentMemberType}");
+        $instanceContent->ContentMemberType = $instanceContent->ContentFinderCondition->ContentMemberType;
         
         // ContentType
-        $instanceContent->ContentType = $this->redis->get("xiv_ContentType_{$instanceContent->ContentFinderCondition->ContentType}");
-        $instanceContent->Icon = $instanceContent->ContentType->Icon;
-        $instanceContent->Banner = $instanceContent->ContentFinderCondition->Icon;
+        $instanceContent->ContentType   = $instanceContent->ContentFinderCondition->ContentType;
+        $instanceContent->Icon          = $instanceContent->ContentType->Icon;
+        $instanceContent->Banner        = $instanceContent->ContentFinderCondition->Image;
     }
     
     /**

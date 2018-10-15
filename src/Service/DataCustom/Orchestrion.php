@@ -10,7 +10,6 @@ class Orchestrion extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('Orchestrion');
     
         foreach ($ids as $id) {

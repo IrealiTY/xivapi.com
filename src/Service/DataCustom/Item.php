@@ -11,7 +11,6 @@ class Item extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('Item');
     
         foreach ($ids as $id) {
@@ -23,7 +22,6 @@ class Item extends ManualHelper
             
             // do stuff
             $this->itemLinkItemUiCategoryToItemKind($item);
-
             $this->redis->set($key, $item, self::REDIS_DURATION);
         }
     }
@@ -74,9 +72,9 @@ class Item extends ManualHelper
         }
         
         // 7 = other
-        $itemKindId = $itemKindId ?: 7;
-        $itemKindCsv = CsvReader::Get(__DIR__.'/Csv/ItemKind.csv');
-        $itemKindCsv = $itemKindCsv[$itemKindId];
+        $itemKindId     = $itemKindId ?: 7;
+        $itemKindCsv    = CsvReader::Get(__DIR__.'/Csv/ItemKind.csv');
+        $itemKindCsv    = $itemKindCsv[$itemKindId];
         $item->ItemKind = $itemKindCsv;
     }
 }

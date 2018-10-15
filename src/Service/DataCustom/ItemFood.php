@@ -10,7 +10,6 @@ class ItemFood extends ManualHelper
     
     public function handle()
     {
-        $this->io->text(__METHOD__);
         $ids = $this->getContentIds('ItemFood');
     
         foreach ($ids as $id) {

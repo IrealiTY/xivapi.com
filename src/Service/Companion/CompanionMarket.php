@@ -2,8 +2,7 @@
 
 namespace App\Service\Companion;
 
-use App\Service\Content\ContentMinified;
-use App\Service\Language\Language;
+use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 
 class CompanionMarket extends Companion
@@ -57,30 +56,12 @@ class CompanionMarket extends Companion
      */
     public function getItemMarketData(int $itemId): ?CompanionResponse
     {
-        $key = "xiv_Item_{$itemId}";
-
         // grab item
-        $item = $this->cache->get($key);
-        $market = $this->cache->get("{$key}_market");
-
+        $item = $this->cache->get("xiv_Item_{$itemId}");
         if (!$item) {
-            return null;
+            die('No item for: '. $itemId);
         }
-
-        // if cached
-        if ($market) {
-            return new CompanionResponse(
-                [
-                    'Market' => $market,
-                    'Item'   => $item,
-                ],
-                true,
-                $this->cache->getTtl("{$key}_market"),
-                0,
-                0
-            );
-        }
-
+  
         // request market data
         [$data, $speed, $attempts] = $this->request(
             new CompanionRequest(Companion::ENDPOINT_DC, "/market/items/catalog/{$itemId}")
@@ -89,14 +70,11 @@ class CompanionMarket extends Companion
         // enrich the market response
         $data = $this->enrichMarketResponse($data);
 
-        // cache market data
-        $this->cache->set("{$key}_market", $data, Companion::CACHE_TIME);
-
         // build response
         return new CompanionResponse(
             [
-                'Market' => $data,
-                'Item'   => $item,
+                'Market' => Language::handle($data),
+                'Item'   => Language::handle($item),
             ],
             false,
             0,

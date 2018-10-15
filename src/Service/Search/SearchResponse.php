@@ -30,8 +30,8 @@ class SearchResponse
             return;
         }
     
-        $this->response->SpeedMs    = $results['took'];
-        $this->response->Results    = $this->formatResults($results['hits']['hits']);
+        $this->response->SpeedMs = $results['took'];
+        $this->response->Results = $this->formatResults($results['hits']['hits']);
     
         // Pagination
         $totalResults = (int)$results['hits']['total'];
@@ -59,38 +59,13 @@ class SearchResponse
     {
         $results = [];
         foreach ($hits as $hit) {
-            $results[] = $this->buildView($hit);
+            $data            = $hit['_source'];
+            $data['_']       = $hit['_index'];
+            $data['_Score']  = $hit['_score'];
+            $data['UrlType'] = explode('/', $data['Url'])[1];
+            $results[] = $data;
         }
         
         return $results;
-    }
-    
-    /**
-     * Build the search view
-     */
-    public function buildView($hit)
-    {
-        $index  = $hit['_index'];
-        $source = $hit['_source'];
-        
-        $row = [ '_' => $index ];
-        $view = array_merge(SearchData::views($index), [
-            'ID',
-            'Icon',
-            'Url',
-            'GamePatch.ID'
-        ]);
-        
-        foreach ($view as $field) {
-            $column = str_ireplace('_%s', null, $field);
-            $field  = sprintf($field, $this->request->language);
-            $row[$column] = $source[$field] ?? null;
-        }
-        
-        $row['GameType'] = explode('/', $row['Url'])[1];
-        $row['_Score'] = $hit['_score'];
-        
-        ksort($row);
-        return $row;
     }
 }

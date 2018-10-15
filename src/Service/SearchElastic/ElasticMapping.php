@@ -60,6 +60,12 @@ class ElasticMapping
     const TEXT = [
         'type' => 'text',
         'index' => true,
+        'fields' => [
+            'raw' => [
+                'type' => 'keyword',
+                'ignore_above' => 256,
+            ]
+        ]
     ];
 
     const NESTED = [

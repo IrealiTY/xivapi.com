@@ -19,15 +19,13 @@ class ProductionDeploymentCommand extends Command
     
     public function __construct()
     {
-        $this->redis = new Cache();
-        $this->redisProduction = (new Cache())->connect('REDIS_SERVER_PROD', true);
         parent::__construct();
     }
     
     protected function configure()
     {
         $this
-            ->setName('app:deploy:data')
+            ->setName('ProductionDeploymentCommand')
             ->setDescription('Deploy all content data to live!')
             ->addArgument('redis_key', InputArgument::OPTIONAL, 'Deploy a specific redis key')
         ;
@@ -35,6 +33,9 @@ class ProductionDeploymentCommand extends Command
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->redis = new Cache();
+        $this->redisProduction = (new Cache())->connect('REDIS_SERVER_PROD', true);
+
         $this->setSymfonyStyle($input, $output);
         $this->title('DEPLOY TO PRODUCTION (GAME DATA)');
         $this->startClock();

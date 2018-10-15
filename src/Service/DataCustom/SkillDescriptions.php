@@ -4,7 +4,7 @@ namespace App\Service\DataCustom;
 
 use App\Service\Helpers\DescriptionFormatter;
 use App\Service\Helpers\ManualHelper;
-use App\Service\Language\LanguageList;
+use App\Service\Common\Language;
 
 class SkillDescriptions extends ManualHelper
 {
@@ -80,7 +80,7 @@ class SkillDescriptions extends ManualHelper
         $formatter = new DescriptionFormatter();
         
         // loop through each language and format them into JSON + Simple
-        foreach (LanguageList::LANGUAGES as $lang) {
+        foreach (Language::LANGUAGES as $lang) {
             if (!isset($object->{'Description_'. $lang})) {
                 $object->{'Description_'. $lang}     = null;
                 $object->{'DescriptionJSON_'. $lang} = null;

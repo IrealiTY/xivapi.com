@@ -2,44 +2,51 @@
 
 namespace App\Service\Search;
 
-use App\Service\Language\LanguageList;
+use App\Service\Common\Language;
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchRequest
 {
-    const STRING_WILDCARD       = 'wildcard';
-    const STRING_WILDCARD_PLUS  = 'wildcard_plus';
-    const STRING_MULTI_MATCH    = 'multi_match';
-    const STRING_QUERY_STRING   = 'query_string';
-    const STRING_PREFIX         = 'prefix';
-    const STRING_TERM           = 'term';
-    const STRING_PHRASE_PREFIX  = 'match_phrase_prefix';
-    const STRING_PHRASE         = 'match_phrase';
-    const STRING_FUZZY          = 'fuzzy';
-    
+    const STRING_CUSTOM              = 'custom';
+    const STRING_WILDCARD            = 'wildcard';
+    const STRING_WILDCARD_PLUS       = 'wildcard_plus';
+    const STRING_FUZZY               = 'fuzzy';
+    const STRING_TERM                = 'term';
+    const STRING_PREFIX              = 'prefix';
+    const STRING_MATCH               = 'match';
+    const STRING_MATCH_PHRASE        = 'match_phrase';
+    const STRING_MATCH_PHRASE_PREFIX = 'match_phrase_prefix';
+    const STRING_MULTI_MATCH         = 'multi_match';
+    const STRING_QUERY_STRING        = 'query_string';
+    const STRING_SIMILAR             = 'similar';
+
     const MIN_LIMIT = 1;
     const MAX_LIMIT = 500;
     
     const STRING_ALGORITHMS = [
+        self::STRING_CUSTOM,
         self::STRING_WILDCARD,
         self::STRING_WILDCARD_PLUS,
+        self::STRING_FUZZY,
+        self::STRING_TERM,
+        self::STRING_PREFIX,
+        self::STRING_MATCH,
+        self::STRING_MATCH_PHRASE,
+        self::STRING_MATCH_PHRASE_PREFIX,
         self::STRING_MULTI_MATCH,
         self::STRING_QUERY_STRING,
-        self::STRING_PREFIX,
-        self::STRING_TERM,
-        self::STRING_PHRASE_PREFIX,
-        self::STRING_PHRASE,
-        self::STRING_FUZZY,
+        self::STRING_SIMILAR,
     ];
     
     // specific indexes
-    public $indexes = '';
+    /** @var string|array */
+    public $indexes = SearchContent::LIST_DEFAULT;
     // the search string
     public $string = '';
     // the string query algorithm to use
-    public $stringAlgo = 'wildcard_plus';
+    public $stringAlgo = self::STRING_WILDCARD;
     // string search column
-    public $stringColumn = 'Name_%s';
+    public $stringColumn = 'NameCombined_%s';
     // list of filters
     public $filters = '';
     // sort field
@@ -53,7 +60,13 @@ class SearchRequest
     // page to start from
     public $page = 1;
     // language
-    public $language = LanguageList::DEFAULT;
+    public $language = Language::DEFAULT;
+    // columns
+    public $columns = '_,_Score,ID,Icon,Name,Url,UrlType';
+    // query group
+    public $bool = 'must';
+    // similar
+    public $suggest = false;
     
     /**
      * Build the search request from the http request
@@ -70,21 +83,19 @@ class SearchRequest
         $this->limit            = $request->get('limit',          $this->limit);
         $this->language         = $request->get('language',       $this->language);
         $this->filters          = $request->get('filters',        $this->filters);
+        $this->columns          = $request->get('columns',        $this->columns);
+        $this->bool             = $request->get('bool',           $this->bool);
+        $this->suggest          = $request->get('suggest',        $this->suggest);
         
-        // validate provided indexes
-        if ($this->indexes) {
-            $this->indexes = explode(',', $this->indexes);
-            $validIndexes = explode(',', SearchData::indexes());
-            
-            // remove non valid ones
-            foreach ($this->indexes as $i => $index) {
-                if (!in_array($index, $validIndexes)) {
-                    unset($this->indexes[$i]);
-                }
-            }
-            
-            $this->indexes = implode(',', $this->indexes);
-        }
+        // this ensures response handler will use default search columns
+        $request->request->set('columns', $this->columns);
+        
+        // validate indexes
+        $this->indexes = is_array($this->indexes) ? $this->indexes : explode(',', $this->indexes);
+        $this->indexes = array_map('strtolower', $this->indexes);
+        $this->indexes = SearchContent::validate($this->indexes);
+        $this->indexes = SearchContent::prefix($this->indexes);
+        $this->indexes = implode(',', $this->indexes);
         
         // check limit
         $this->limit = $this->limit >= self::MIN_LIMIT ? $this->limit : self::MIN_LIMIT;
@@ -95,19 +106,11 @@ class SearchRequest
         $this->limitStart       = ($this->limit * ($this->page - 1));
         
         // override by what is allowed
-        $this->language         = LanguageList::get($this->language);
+        $this->language         = Language::confirm($this->language);
         
         // lower case it for the sake of performance and analyzer matching
-        $this->string           = strtolower($this->string);
-        $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_WILDCARD;
+        $this->string           = str_ireplace('+', ' ', strtolower($this->string));
+        $this->stringAlgo       = in_array($this->stringAlgo, self::STRING_ALGORITHMS) ? $this->stringAlgo : self::STRING_CUSTOM;
         $this->stringColumn     = sprintf($this->stringColumn, $this->language);
-    }
-    
-    /**
-     * Build from WebSocket message
-     */
-    public function buildFromMessage($message)
-    {
-    
     }
 }

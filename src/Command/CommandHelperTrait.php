@@ -32,17 +32,18 @@ trait CommandHelperTrait
     /**
      * Setup the input and output variables
      */
-    protected function setSymfonyStyle(InputInterface $input, OutputInterface $output): void
+    protected function setSymfonyStyle(InputInterface $input, OutputInterface $output): self
     {
-        $this->input = $input;
+        $this->input  = $input;
         $this->output = $output;
-        $this->io = new SymfonyStyle($input, $output);
+        $this->io     = new SymfonyStyle($input, $output);
+        return $this;
     }
 
     /**
      * Provide a nice title
      */
-    protected function title($title): void
+    protected function title($title): self
     {
         $bar     = str_pad('', 50, '-', STR_PAD_LEFT);
         $titleA  = str_pad('xivapi.com', 50, ' ', STR_PAD_BOTH);
@@ -55,27 +56,29 @@ trait CommandHelperTrait
             "<fg=yellow>+{$bar}+</>",
             ''
         ]);
+        
+        return $this;
     }
 
     /**
      * Start a clock
      */
-    protected function startClock(): void
+    protected function startClock(): self
     {
         $this->startTime = Carbon::now();
+        return $this;
     }
 
     /**
      * End the clock!
      */
-    protected function endClock(): void
+    protected function endClock(): self
     {
         $duration = $this->startTime->diff(Carbon::now())->format('%y year, %m months, %d days, %h hours, %i minutes and %s seconds');
         $this->io->text([
-            "",
-            "Duration: <info>{$duration}</info>",
-            "",
+            "", "Duration: <info>{$duration}</info>", "",
         ]);
+        return $this;
     }
 
     /**
@@ -95,14 +98,13 @@ trait CommandHelperTrait
         $this->io->write("\x0D");
         $this->io->write("\x1B[2K");
         $this->io->write(str_repeat("\x1B[1A\x1B[2K", $lines));
-        
         return $this;
     }
 
     /**
      * Checks the content schema
      */
-    protected function checkSchema(): void
+    protected function checkSchema(): self
     {
         $this->io->text("<fg=cyan>Checking: ex.json ...</>");
 
@@ -118,7 +120,7 @@ trait CommandHelperTrait
             if (!$this->input->getArgument('fast')) {
                 if ($this->io->confirm("Schema version ({$schema->version}) does not match game version ({$this->version}), stop importing? Y/N", false)) {
                     $this->io->error('Build stopped due to schema version mismatch');
-                    return;
+                    return $this;
                 }
             }
         }
@@ -129,12 +131,14 @@ trait CommandHelperTrait
         }
         unset($schema);
         $this->complete();
+        
+        return $this;
     }
 
     /**
      * Check game version (or ask for it)
      */
-    protected function checkVersion(): void
+    protected function checkVersion(): self
     {
         // grab version from ex file
         $json = json_decode(file_get_contents($this->schemaFilename));
@@ -145,12 +149,14 @@ trait CommandHelperTrait
         $this->io->text([
             "Version: <comment>{$this->version}</comment>", ""
         ]);
+        
+        return $this;
     }
 
     /**
      * Checks the cache is built
      */
-    protected function checkCache(): void
+    protected function checkCache(): self
     {
         $this->io->text("<fg=cyan>Building memory cache ...</>");
         foreach (FileSystem::list($this->version) as $type => $files) {
@@ -163,5 +169,7 @@ trait CommandHelperTrait
                 );
             }
         }
+        
+        return $this;
     }
 }
