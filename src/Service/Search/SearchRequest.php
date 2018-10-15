@@ -44,7 +44,7 @@ class SearchRequest
     // the search string
     public $string = '';
     // the string query algorithm to use
-    public $stringAlgo = self::STRING_WILDCARD_PLUS;
+    public $stringAlgo = self::STRING_WILDCARD;
     // string search column
     public $stringColumn = 'NameCombined_%s';
     // list of filters
