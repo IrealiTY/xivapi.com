@@ -8,10 +8,8 @@ Other service commands:
 - Stop: `sudo service elasticsearch stop`
 - Start: `sudo service elasticsearch start`
 - Test: `curl -X GET 'http://localhost:9200'`
-
-Delete all documents of a type:
-- `curl -XDELETE 'http://localhost:9200/playground/?pretty=true'`
--
+- Delete all indexes: `curl -XDELETE 'http://localhost:9200/*'`
+- list all indexes: `curl -X GET 'http://localhost:9200/_cat/indices?v'`
 ---
 
 ### Initialise
