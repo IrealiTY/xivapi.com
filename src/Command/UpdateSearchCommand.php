@@ -39,9 +39,6 @@ class UpdateSearchCommand extends Command
             ->setSymfonyStyle($input, $output)
             ->title('SEARCH')
             ->startClock();
-        
-        // set environment for indexes
-        define(Environment::CONSTANT, $input->getArgument('environment'));
 
         // connect to production cache
         [$ip, $port] = (in_array($input->getArgument('environment'), ['prod','staging']))

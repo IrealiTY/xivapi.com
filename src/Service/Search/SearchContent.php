@@ -2,8 +2,6 @@
 
 namespace App\Service\Search;
 
-use App\Service\Common\Environment;
-
 class SearchContent
 {
     const LIST_DEFAULT = [
@@ -66,6 +64,6 @@ class SearchContent
             return $index;
         }
         
-        return sprintf('%s_%s', constant(Environment::CONSTANT), $index);
+        return $index;
     }
 }
