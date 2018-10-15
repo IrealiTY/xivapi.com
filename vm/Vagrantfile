@@ -13,9 +13,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 
     # high spec for data importing, realistically would be low
-    vb.memory = 2400
-    vb.cpus = 2
-  end
+    vb.memory = 8000
+    vb.cpus = 4
+       end
 
   # network
   config.vm.network "private_network", ip: "69.69.69.69"
