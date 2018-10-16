@@ -22,14 +22,15 @@ class Search extends DocBuilder implements DocInterface
                 linkshells or pvp teams. Those have their own dedicated search endpoints as they 
                 relay to Lodestone.')
             ->gap()
-        
-        
+
+            ->note("A `string` or `filter` is required to search.")
+
             //
             // Search
             //
             ->h6('Search')
             ->route('/Search', true)
-            ->usage("{endpoint}/search?string=allagan")
+            ->usage("{endpoint}/search?string=allagan+visor&pretty=1")
             ->text('Search for something! The Search is multi-content and contains combined data, 
                 this means your search request covers a vast amount of selected content 
                 (which you can further extend via filters) and results are combined based on best-case matching.')
@@ -48,7 +49,7 @@ class Search extends DocBuilder implements DocInterface
 
             // indexes=a,b,c
             ->h3('indexes')
-            ->usage("{endpoint}/search?indexes=achievement,item,action")
+            ->usage("{endpoint}/search?indexes=achievement,item,companion&string=ifrit&pretty=1")
             ->text('Search a specific series of indexes separated by commas.')
             ->list($indexes)
             ->gap()
@@ -56,7 +57,7 @@ class Search extends DocBuilder implements DocInterface
         
             // string=hello
             ->h3('string')
-            ->usage('{endpoint}/search?string=allagan')
+            ->usage('{endpoint}/search?string=allagan&pretty=1')
             ->text('Search the default string column for the value "hello". You can get very different 
                 results based on what search column you choose and what string algorithm is currently 
                 active. Please read the `string_algo` param for detailed information how this works')
@@ -64,7 +65,7 @@ class Search extends DocBuilder implements DocInterface
         
             // string column
             ->h3('string_column')
-            ->usage('{endpoint}/search?string_column=Description&string=the+end+is+neigh')
+            ->usage('{endpoint}/search?string_column=Description_en&string=the+end+is+nigh&pretty=1')
             ->text('Adjust which column the string search is performed on, by default this is the `Name` 
                 column. This can be changed to things like descriptions or even lore columns.  It can only 
                 be changed to one of the filterable columns.')
@@ -178,7 +179,7 @@ class Search extends DocBuilder implements DocInterface
                     ],
                 ]
             )
-            ->line()
+            ->gap()
             // other stuff
         
             ->h6('Minor Parameters')
