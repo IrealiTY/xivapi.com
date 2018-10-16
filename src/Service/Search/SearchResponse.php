@@ -30,6 +30,7 @@ class SearchResponse
             return;
         }
     
+        // add some stats
         $this->response->SpeedMs = $results['took'];
         $this->response->Results = $this->formatResults($results['hits']['hits']);
     

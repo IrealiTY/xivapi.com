@@ -3,6 +3,7 @@
 namespace App\Service\Docs;
 
 use App\Service\Search\SearchContent;
+use App\Service\Search\SearchRequest;
 
 class Search extends DocBuilder implements DocInterface
 {
@@ -71,7 +72,7 @@ class Search extends DocBuilder implements DocInterface
         
             // string algo
             ->h3('string_algo')
-            ->text('**Default:** `custom`')
+            ->text('**Default:** `'. SearchRequest::defaults()->stringAlgo .'`')
             ->text('Here are some examples of expected outcomes when searching for: **Mother Miounne**')
             ->table(
                 [ 'string', 'string_algo', 'Found?', 'Result Number', 'Notes' ],
@@ -199,8 +200,8 @@ class Search extends DocBuilder implements DocInterface
             
             ->h3('limit')
             ->text('Limit the number of results, this cannot go higher than the current max')
-            ->text('Current max: `100`')
-            ->list([ 'As some point increased values will be allowed via app keys.' ])
+            ->text('Current max: `500`')
+            ->gap()
             
             ->h3('columns')
             ->text('You can use the global `columns` query parameter to select what fields you want in the search. To help
@@ -209,6 +210,13 @@ class Search extends DocBuilder implements DocInterface
                 responses are consistent with what you ask for.')
             ->text('The default columns are: `_`(index), `_Score`(ElasticSearch Score), `ID`,
                 `Name`, `Icon`, `Url`, `UrlType`. All content contains these fields.')
+            ->gap()
+            
+            ->h3('bool')
+            ->text('Define how the condition for each filter and string query should be performed, these
+                can be: `must`, `should`, `must_not` and `filter`')
+            ->text('Info can be found [on the ElasticSearch Docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)')
+            ->gap()
         
             ->line()
         

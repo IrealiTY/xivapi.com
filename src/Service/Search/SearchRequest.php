@@ -68,6 +68,15 @@ class SearchRequest
     // similar
     public $suggest = false;
     
+    public static function defaults()
+    {
+        $obj = new SearchRequest();
+        
+        return (Object)[
+            'stringAlgo' => $obj->stringAlgo,
+        ];
+    }
+    
     /**
      * Build the search request from the http request
      */
