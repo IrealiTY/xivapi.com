@@ -28,25 +28,6 @@ class GitHub
             $cache->set($key, $commits, 60*60);
         }
 
-        //
-        // Attempt to find the current master or staging commit
-        //
-
-        $commits->current = null;
-        foreach ($commits->master as $commit) {
-            if ($commit->sha == SiteVersion::get()->hash) {
-                $commits->current = $commit;
-                break;
-            }
-        }
-
-        foreach ($commits->staging as $commit) {
-            if ($commit->sha == SiteVersion::get()->hash) {
-                $commits->current = $commit;
-                break;
-            }
-        }
-
         return $commits;
     }
 }
