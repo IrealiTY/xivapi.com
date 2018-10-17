@@ -471,33 +471,44 @@ small {
         position: absolute;
         display: inline-block;
         z-index: 5;
-        width: 8px;
-        height: 8px;
         border-radius: 50px;
-        margin: -4px 0 0 -4px;
-
         background-image: url("/img-misc/mappy/object_2x.png");
-        background-size: 8px;
+        width: 6px;
+        height: 6px;
+        margin: -3px 0 0 -3px;
+        background-size: 6px;
 
         &.pos-Monster {
             background-image: url("/img-misc/mappy/enemy_2x.png");
+            width: 6px;
+            height: 6px;
+            margin: -3px 0 0 -3px;
+            background-size: 6px;
         }
 
         &.pos-NPC {
             background-image: url("/img-misc/mappy/npc_2x.png");
+            width: 6px;
+            height: 6px;
+            margin: -3px 0 0 -3px;
+            background-size: 6px;
         }
 
         &.pos-Aetheryte {
             background-image: url("/img-misc/mappy/aetheryte.png");
             z-index: 10;
-            width: 16px;
-            height: 16px;
-            background-size: 16px;
-            margin: -8px 0 0 -8px;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            background-size: 24px;
         }
 
         &.pos-Gathering {
             background-image: url("/img-misc/mappy/gathering_2x.png");
+            width: 12px;
+            height: 12px;
+            margin: -6px 0 0 -6px;
+            background-size: 12px;
         }
 
         &.pos-coverage {
