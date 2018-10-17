@@ -190,7 +190,7 @@
                 count++;
                 offset++;
 
-                let span = '<span class="pos-'+ pos[1] +' '+ (coverage ? 'pos-coverage' : '') +'" style="left:'+ (pos[2]-10) +'px;top:'+ (pos[3]-10) +'px;"></span>';
+                let span = '<span class="pos-'+ pos[1] +' '+ (coverage ? 'pos-coverage' : '') +'" style="left:'+ (pos[2]) +'px;top:'+ (pos[3]) +'px;"></span>';
                 $('.pos-map').append(span);
                 $('.pos-count').html(count);
 

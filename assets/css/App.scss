@@ -471,12 +471,13 @@ small {
         position: absolute;
         display: inline-block;
         z-index: 5;
-        width: 20px;
-        height: 20px;
+        width: 8px;
+        height: 8px;
         border-radius: 50px;
+        margin: -4px 0 0 -4px;
 
         background-image: url("/img-misc/mappy/object_2x.png");
-        background-size: 20px;
+        background-size: 8px;
 
         &.pos-Monster {
             background-image: url("/img-misc/mappy/enemy_2x.png");
@@ -489,6 +490,10 @@ small {
         &.pos-Aetheryte {
             background-image: url("/img-misc/mappy/aetheryte.png");
             z-index: 10;
+            width: 16px;
+            height: 16px;
+            background-size: 16px;
+            margin: -8px 0 0 -8px;
         }
 
         &.pos-Gathering {
