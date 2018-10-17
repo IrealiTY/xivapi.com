@@ -475,24 +475,24 @@ small {
         height: 20px;
         border-radius: 50px;
 
-        background-image: url("/img-map/object.png");
+        background-image: url("/img-misc/mappy/object_2x.png");
         background-size: 20px;
 
         &.pos-Monster {
-            background-image: url("/img-map/enemy.png");
+            background-image: url("/img-misc/mappy/enemy_2x.png");
         }
 
         &.pos-NPC {
-            background-image: url("/img-map/npc.png");
+            background-image: url("/img-misc/mappy/npc_2x.png");
         }
 
         &.pos-Aetheryte {
-            background-image: url("/img-map/aetheryte.png");
+            background-image: url("/img-misc/mappy/aetheryte.png");
             z-index: 10;
         }
 
         &.pos-Gathering {
-            background-image: url("/img-map/gathering.png");
+            background-image: url("/img-misc/mappy/gathering_2x.png");
         }
 
         &.pos-coverage {
