@@ -33,10 +33,10 @@ class ApplicationsMappyController extends Controller
      */
     public function verify(Request $request)
     {
-        $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request);
         
         return $this->json([
-            'allowed' => in_array($request->get('key'), Mappy::KEYS)
+            'allowed' => $app->hasMappyAccess()
         ]);
     }
     
@@ -47,7 +47,7 @@ class ApplicationsMappyController extends Controller
     {
         $app = $this->appManager->fetch($request);
         
-        if (!in_array($app->getApiKey(), Mappy::KEYS)) {
+        if (!$app->hasMappyAccess()) {
             throw new UnauthorizedHttpException("You are not allowed!");
         }
         
@@ -74,7 +74,7 @@ class ApplicationsMappyController extends Controller
     {
         $app = $this->appManager->fetch($request);
     
-        if (!in_array($app->getApiKey(), Mappy::KEYS)) {
+        if (!$app->hasMappyAccess()) {
             throw new UnauthorizedHttpException("You are not allowed!");
         }
         
@@ -94,7 +94,7 @@ class ApplicationsMappyController extends Controller
         
         $json = json_decode($request->getContent());
         
-        if ($request->getMethod() !== 'POST' || !in_array($app->getApiKey(), Mappy::KEYS) || empty($json)) {
+        if ($request->getMethod() !== 'POST' || !$app->hasMappyAccess() || empty($json)) {
             throw new UnauthorizedHttpException("You are not allowed!");
         }
         
