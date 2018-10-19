@@ -79,11 +79,11 @@
                     </tr>
                     <tr>
                         <td colspan="6">
-                            Default: <img src="/img-map/object.png">
-                            Monster: <img src="/img-map/enemy.png">
-                            NPC: <img src="/img-map/npc.png">
-                            Aetheryte: <img src="/img-map/aetheryte.png">
-                            Gathering: <img src="/img-map/gathering.png">
+                            Default: <img src="/img-misc/mappy/object_2x.png" height="12">
+                            Monster: <img src="/img-misc/mappy/enemy_2x.png" height="12">
+                            NPC: <img src="/img-misc/mappy/npc_2x.png" height="12">
+                            Aetheryte: <img src="/img-misc/mappy/aetheryte.png" height="12">
+                            Gathering: <img src="/img-misc/mappy/gathering_2x.png" height="12">
                         </td>
                     </tr>
                     <tr class="table-bg">
@@ -190,7 +190,7 @@
                 count++;
                 offset++;
 
-                let span = '<span class="pos-'+ pos[1] +' '+ (coverage ? 'pos-coverage' : '') +'" style="left:'+ (pos[2]-10) +'px;top:'+ (pos[3]-10) +'px;"></span>';
+                let span = '<span class="pos-'+ pos[1] +' '+ (coverage ? 'pos-coverage' : '') +'" style="left:'+ (pos[2]) +'px;top:'+ (pos[3]) +'px;"></span>';
                 $('.pos-map').append(span);
                 $('.pos-count').html(count);
 

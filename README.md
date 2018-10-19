@@ -67,3 +67,5 @@ Maybe online API's are not your jam, maybe you're sick of the responses and how 
 - Stop: `sudo systemctl stop elasticsearch`
 - Start: `sudo systemctl start elasticsearch`
 - Test: `curl -X GET 'http://localhost:9200'`
+- Delete all indexes: `curl -XDELETE 'http://localhost:9200/*'`
+- list all indexes: `curl -X GET 'http://localhost:9200/_cat/indices?v'`

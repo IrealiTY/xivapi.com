@@ -61,6 +61,11 @@ class App
      * @ORM\Column(type="integer", length=4)
      */
     private $apiRateLimit = 5;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", options={"default" : 0})
+     */
+    private $toolAccessMappy = false;
     
     public function __construct()
     {
@@ -164,5 +169,21 @@ class App
     {
         $this->apiRateLimit = $apiRateLimit;
         return $this;
+    }
+
+    public function isToolAccessMappy(): bool
+    {
+        return $this->toolAccessMappy;
+    }
+
+    public function setToolAccessMappy(bool $toolAccessMappy)
+    {
+        $this->toolAccessMappy = $toolAccessMappy;
+        return $this;
+    }
+
+    public function hasMappyAccess(): bool
+    {
+        return $this->toolAccessMappy;
     }
 }
