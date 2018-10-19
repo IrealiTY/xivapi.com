@@ -102,6 +102,7 @@ class Welcome extends DocBuilder implements DocInterface
 
             ->gap()
 
+            // pretty printing
             ->h3('pretty')
             ->usage('{endpoint}/Item/1675?pretty=1')
             ->text('This will provide a nice pretty JSON response, this is intended for debugging 
@@ -115,6 +116,15 @@ class Welcome extends DocBuilder implements DocInterface
                 "Icon": "\/img\/ui\/game\/icon4\/1\/1675.png", "Name":
                 "Curtana"
             }')
+            ->gap()
+
+            // snake_case
+            ->h3('snake_case')
+            ->usage('{endpoint}/Item/1675?snake_case=1')
+            ->text('All API responses by default are UpperCase as this is the format the game
+                data is extracted, to maintain consistency all endpoints will return data
+                 in UpperCase format, however if you prefer snake case this will convert all 
+                 UpperCaseFields into lower_snake_case_fields.')
             ->gap()
     
             // columns
