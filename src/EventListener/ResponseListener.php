@@ -79,6 +79,13 @@ class ResponseListener
                 $json = Arrays::sortArrayByKey($json);
             }
 
+            //
+            // Snake case check
+            //
+            if ($request->get('snake_case')) {
+                Arrays::snakeCase($json);
+            }
+
             // save
             $response->setContent(
                 json_encode($json, JSON_BIGINT_AS_STRING | JSON_PRESERVE_ZERO_FRACTION)
