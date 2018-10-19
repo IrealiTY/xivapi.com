@@ -86,6 +86,13 @@ class ResponseListener
                 Arrays::snakeCase($json);
             }
 
+            //
+            // Remove keys check
+            //
+            if ($request->get('remove_keys')) {
+                Arrays::removeKeys($json);
+            }
+
             // save
             $response->setContent(
                 json_encode($json, JSON_BIGINT_AS_STRING | JSON_PRESERVE_ZERO_FRACTION)
