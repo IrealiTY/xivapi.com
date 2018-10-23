@@ -34,6 +34,9 @@ class ApplicationsMappyController extends Controller
     public function verify(Request $request)
     {
         $app = $this->appManager->fetch($request);
+        $app->setToolAccessMappy(true);
+        $this->em->persist($app);
+        $this->em->flush();
         
         return $this->json([
             'allowed' => $app->hasMappyAccess()
