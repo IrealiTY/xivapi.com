@@ -291,7 +291,7 @@ class LodestoneCharacterController extends Controller
         [$entAchievements, $data] = $this->service->getAchievements($id);
 
         if ($this->service->cache->get(__METHOD__.$id)) {
-            return $this->json(0);
+            // return $this->json(0);
         }
 
         // Bump to front
