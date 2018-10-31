@@ -626,5 +626,20 @@
         "Name_kr": "Patch 4.4: Prelude In Violet",
         "ReleaseDate": 1537264800,
         "Version": "4.4"
+    },
+	{
+        "Banner": null,
+        "ID": 50,
+        "Url": "\/patch+4.41",
+        "ExVersion": 2,
+        "IsExpansion": false,
+        "Name_ja": "Patch 4.41",
+        "Name_en": "Patch 4.41",
+        "Name_fr": "Patch 4.41",
+        "Name_de": "Patch 4.41",
+        "Name_cn": "Patch 4.41",
+        "Name_kr": "Patch 4.41",
+        "ReleaseDate": 1538467200,
+        "Version": "4.41"
     }
 ]
