@@ -2,27 +2,33 @@
 
 namespace App\Service\Companion;
 
+use App\Service\Redis\Cache;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 
 class Companion
 {
+    const TOKEN_CACHE   = 'companion_app_token';
+    const TOKEN_LENGTH  = (60*60*24*5);
     const ENDPOINT      = 'https://companion.finalfantasyxiv.com';
     const ENDPOINT_DC   = 'https://companion-eu.finalfantasyxiv.com';
     const VERSION_PATH  = '/sight-v060/sight';
-    const CACHE_TIME    = 600; // 10 minutes
     const TIMEOUT_SEC   = 15; // 15 seconds
     const MAX_TRIES     = 15;
-    const DELAY_MS      = 250000; // 250ms
+    const DELAY_MS      = 500000; // 0.5s
     
-    public static function setToken($token)
+    /** @var Cache */
+    protected $cache;
+    
+    public function __construct()
     {
-        file_put_contents(__DIR__.'/token', trim($token));
+        $this->cache = new Cache();
     }
     
     public static function getToken()
     {
-        return trim(file_get_contents(__DIR__.'/token'));
+        return (new Cache())->get(self::TOKEN_CACHE);
     }
 
     /**
@@ -45,23 +51,26 @@ class Companion
             if ($request->json) {
                 $options[RequestOptions::JSON] = $request->json;
             }
-
+            
             $start = $this->getTimestamp();
             foreach (range(0, self::MAX_TRIES) as $attempts) {
-                $response = $client->get($request->apiRoute, $options);
+                /** @var Response $response */
+                $response = $client->{$request->getMethod()}($request->apiRoute, $options);
 
                 // if the response is 202, then we wait and try again
                 if ($response->getStatusCode() == 202) {
                     usleep(self::DELAY_MS);
                     continue;
                 }
-
-                // get response
-                $data  = json_decode((string)$response->getBody(), true);
-                $speed = $this->getTimestamp() - $start;
-
-                // return to API call
-                return [ $data, $speed, $attempts ];
+    
+                if ($response->getStatusCode() == 200) {
+                    // get response
+                    $data = json_decode((string)$response->getBody(), true);
+                    $speed = $this->getTimestamp() - $start;
+    
+                    // return to API call
+                    return [$data, $speed, $attempts];
+                }
             }
             
             throw new \Exception('Could not fetch data from Companion API');
