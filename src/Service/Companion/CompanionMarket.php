@@ -3,18 +3,9 @@
 namespace App\Service\Companion;
 
 use App\Service\Common\Language;
-use App\Service\Redis\Cache;
 
 class CompanionMarket extends Companion
 {
-    /** @var Cache */
-    private $cache;
-
-    public function __construct(Cache $cache)
-    {
-        $this->cache = $cache;
-    }
-    
     /**
      * Return search categories
      */
@@ -64,7 +55,7 @@ class CompanionMarket extends Companion
   
         // request market data
         [$data, $speed, $attempts] = $this->request(
-            new CompanionRequest(Companion::ENDPOINT_DC, "/market/items/catalog/{$itemId}")
+            new CompanionRequest('GET', Companion::ENDPOINT_DC, "/market/items/catalog/{$itemId}")
         );
         
         // enrich the market response

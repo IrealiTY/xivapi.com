@@ -39,20 +39,6 @@ class ConceptMarketBoardController extends Controller
     }
 
     /**
-     * @Route("/Market/token")
-     * @Route("/market/token")
-     */
-    public function setToken(Request $request)
-    {
-        if ($request->get('pass') !== getenv('COMPANION_TOKEN_PASS')) {
-            throw new UnauthorizedHttpException('Go away');
-        }
-
-        Companion::setToken($request->get('token'));
-        return $this->json(1);
-    }
-    
-    /**
      * @Route("/Market/Categories")
      * @Route("/market/categories")
      */

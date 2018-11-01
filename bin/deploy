@@ -9,7 +9,7 @@ START_TIME=$SECONDS
 
 # Deploy search
 sleep 5
-#/usr/bin/php /vagrant/bin/console UpdateSearchCommand prod
+/usr/bin/php /vagrant/bin/console UpdateSearchCommand prod
 
 ## -------------------------------------------------------------------------------------
 

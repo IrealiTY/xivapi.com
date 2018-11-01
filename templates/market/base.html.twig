@@ -16,7 +16,7 @@ Join: https://discord.gg/MFFVHWC
 <style>
     html, body {
         font-family: 'Roboto', sans-serif;
-        background-color: #111;
+        background-color: #222;
         color: #eee;
         font-size: 16px;
     }
@@ -57,22 +57,24 @@ Join: https://discord.gg/MFFVHWC
     }
     .search {
         text-align: center;
+        margin-bottom: 30px;
     }
     .search input {
-        padding: 12px 15px 10px 15px;
+        padding: 15px 20px;
         background-color: #444;
         color: #fff;
-        border-radius: 10px;
-        border: solid 3px #222;
-        box-shadow: 0 1px 15px #000;
+        border-radius: 3px;
+        border: solid 1px #000;
+        box-shadow: 0 1px 8px rgba(15,15,15,0.8);
         outline: none;
-        font-size: 22px;
-        font-weight: 400;
-        min-width: 500px;
+        font-size: 24px;
+        font-weight: 300;
+        width: 100%;
+        max-width: 800px;
     }
     .search-results {
-        width: 600px;
-        margin: 20px auto;
+        width: 800px;
+        margin: 10px auto;
     }
     .search-results small {
         margin-bottom: 5px;
@@ -111,8 +113,7 @@ Join: https://discord.gg/MFFVHWC
 <header>
     <h1><img src="/img-misc/payment_currency_coin.png" height="32"><em>Market</em> Board<img src="/img-misc/payment_currency_point.png" height="32"></h1>
     <small>For <strong>Phoenix(EU)</strong> only, sorry!</small>
-    <small> - Market prices are cached for 10 minutes</small>
-    <div>(concept xivapi.com)</div>
+    <br><br><br>
 </header>
 
 <main>
@@ -125,7 +126,7 @@ Join: https://discord.gg/MFFVHWC
 
             // on clicking a search result
             $('html').on('click', '.search-results a', function () {
-                $ui.html('<br><br><br><br><h4>Loading market prices</h4><br><small>Wakey wakey companion app ...</small><br><br><br><br>');
+                $ui.html('<br><br><br><br><h4>Loading market prices</h4><br><small>Wakey wakey companion app (2-3 seconds) ...</small><br><br><br><br>');
             });
 
             // run a search
@@ -138,7 +139,8 @@ Join: https://discord.gg/MFFVHWC
                         indexes: 'item',
                         filters: 'ItemSearchCategory.ID>0',
                         limit:   50,
-                        string:  $('#search').val()
+                        string:  $('#search').val(),
+                        columns: ['ID', 'Name', 'Icon', 'ItemUICategory.Name'].join(',')
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -153,12 +155,14 @@ Join: https://discord.gg/MFFVHWC
                         for(let i in response.Results) {
                             let item = response.Results[i];
 
+                            console.log(item);
+
                             let template = '<a href="{url}"><img src="{icon}">{name} <span>{cat}</span></a>';
                             template = template
                                 .replace('{url}', "/market/" + item.ID)
                                 .replace('{icon}', item.Icon)
                                 .replace('{name}', item.Name)
-                                .replace('{cat}', item['ItemUICategory.Name']);
+                                .replace('{cat}',  item.ItemUICategory.Name);
 
                             $ui.append(template);
                         }
