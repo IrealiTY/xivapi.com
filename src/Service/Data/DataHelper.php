@@ -36,6 +36,24 @@ class DataHelper
         'Quest' => [
             'Id' => 'TextFile',
         ],
+        'GCRankGridaniaFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankGridaniaMaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankLimsaFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankLimsaMaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankUldahFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankUldahMaleText' => [
+            'Singular' => 'Name'
+        ],
     ];
 
     /**
