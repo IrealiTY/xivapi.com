@@ -56,6 +56,7 @@ class CompanionTokenManager
             
             // initialize API
             $api = new CompanionApi("xivapi_{$server}");
+            $api->Profile()->setSavePath(Companion::PROFILE_FILENAME);
             $api->Account()->login($username, $password);
             
             // get character list

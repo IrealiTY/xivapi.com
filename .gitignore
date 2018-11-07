@@ -15,8 +15,8 @@
 /src/offline.txt
 /src/Controller/MapData.csv
 /src/Controller/MemoryData.csv
-/src/Service/Companion/token
 /src/EventListener/Exceptions.txt
+/src/Service/Companion/accounts.json
 
 #
 # Symfony

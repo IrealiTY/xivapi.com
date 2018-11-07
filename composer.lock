@@ -7003,16 +7003,16 @@
         },
         {
             "name": "xivapi/companion-php",
-            "version": "0.1.4",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/companion-php.git",
-                "reference": "99e1b0dc210dac13b8370d6bcee71ab5ab493b7b"
+                "reference": "fadfa965132befd0dda4a06e3c5ac62a94a2b981"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/99e1b0dc210dac13b8370d6bcee71ab5ab493b7b",
-                "reference": "99e1b0dc210dac13b8370d6bcee71ab5ab493b7b",
+                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/fadfa965132befd0dda4a06e3c5ac62a94a2b981",
+                "reference": "fadfa965132befd0dda4a06e3c5ac62a94a2b981",
                 "shasum": ""
             },
             "require": {
@@ -7038,7 +7038,7 @@
                 "ffxiv",
                 "php"
             ],
-            "time": "2018-11-07T22:28:59+00:00"
+            "time": "2018-11-07T23:00:20+00:00"
         },
         {
             "name": "xivapi/lodestone-parser",

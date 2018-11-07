@@ -9,6 +9,8 @@ class Companion
 {
     use CompanionEnrich;
     
+    const PROFILE_FILENAME = __DIR__.'/accounts.json';
+    
     /** @var CompanionApi */
     private $api;
     
@@ -26,6 +28,7 @@ class Companion
         }
         
         $this->api = new CompanionApi("xivapi_{$server}");
+        $this->api->Profile()->setSavePath(self::PROFILE_FILENAME);
         return $this;
     }
     
