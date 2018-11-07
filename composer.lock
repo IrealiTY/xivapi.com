@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "94542546a94ed30b1edf8704c0c519e4",
@@ -7003,16 +7003,16 @@
         },
         {
             "name": "xivapi/companion-php",
-            "version": "0.1.2",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/companion-php.git",
-                "reference": "3b42d66cc2814c5c9d1f21ae4e0aefedeed0ad03"
+                "reference": "99e1b0dc210dac13b8370d6bcee71ab5ab493b7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/3b42d66cc2814c5c9d1f21ae4e0aefedeed0ad03",
-                "reference": "3b42d66cc2814c5c9d1f21ae4e0aefedeed0ad03",
+                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/99e1b0dc210dac13b8370d6bcee71ab5ab493b7b",
+                "reference": "99e1b0dc210dac13b8370d6bcee71ab5ab493b7b",
                 "shasum": ""
             },
             "require": {
@@ -7038,7 +7038,7 @@
                 "ffxiv",
                 "php"
             ],
-            "time": "2018-11-06T23:25:14+00:00"
+            "time": "2018-11-07T22:28:59+00:00"
         },
         {
             "name": "xivapi/lodestone-parser",

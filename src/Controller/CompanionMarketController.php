@@ -27,7 +27,7 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/{server}/items/{itemId}")
      */
-    public function itemPrices(Request $request, string $server, int $itemId)
+    public function itemPrices(string $server, int $itemId)
     {
         return $this->json(
             $this->companion->setServer($server)->getItemPrices($itemId)
@@ -37,16 +37,30 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/{server}/items/{itemId}/history")
      */
-    public function itemHistory(Request $request, string $server, int $itemId)
+    public function itemHistory(string $server, int $itemId)
     {
-    
+        return $this->json(
+            $this->companion->setServer($server)->getItemHistory($itemId)
+        );
     }
     
     /**
-     * @Route("/market/{server}/category/{catalog}")
+     * @Route("/market/{server}/category/{category}")
      */
-    public function categoryList(Request $request, string $server, int $itemId)
+    public function categoryList(string $server, int $category)
     {
+        return $this->json(
+            $this->companion->setServer($server)->getCategoryList($category)
+        );
+    }
     
+    /**
+     * @Route("/market/categories")
+     */
+    public function categories()
+    {
+        return $this->json(
+            $this->companion->getCategories()
+        );
     }
 }
