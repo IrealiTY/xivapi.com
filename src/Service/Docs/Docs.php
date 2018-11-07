@@ -24,6 +24,8 @@ class Docs
         'Linkshell'     => Linkshell::class,
         'PvPTeam'       => PvPTeam::class,
 
+        'Market'        => Market::class,
+
         'MapData'       => MapData::class,
         
         'Lodestone'     => Lodestone::class,

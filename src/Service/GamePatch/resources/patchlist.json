@@ -641,5 +641,20 @@
         "Name_kr": "Patch 4.41",
         "ReleaseDate": 1538467200,
         "Version": "4.41"
+    },
+    {
+        "Banner": null,
+        "ID": 51,
+        "Url": "\/patch+4.45",
+        "ExVersion": 2,
+        "IsExpansion": false,
+        "Name_ja": "Patch 4.45",
+        "Name_en": "Patch 4.45",
+        "Name_fr": "Patch 4.45",
+        "Name_de": "Patch 4.45",
+        "Name_cn": "Patch 4.45",
+        "Name_kr": "Patch 4.45",
+        "ReleaseDate": 1541498400,
+        "Version": "4.45"
     }
 ]
