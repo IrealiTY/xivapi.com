@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Service\Companion\CompanionTokenManager;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,6 +18,7 @@ class CompanionAppLoginCommand extends Command
         $this
             ->setName('CompanionAppLoginCommand')
             ->setDescription('Re-login to each character')
+            ->addArgument('account', InputArgument::REQUIRED, 'Which account to login to, A or B')
         ;
     }
     
@@ -27,6 +29,13 @@ class CompanionAppLoginCommand extends Command
             new SymfonyStyle($input, $output)
         );
         
-        $manager->go();
+        $accounts = [
+            'A' => 'COMPANION_APP_ACCOUNT_A',
+            'B' => 'COMPANION_APP_ACCOUNT_B'
+        ];
+
+        // grab account and process logins, go, go, go!
+        $account = $accounts[$input->getArgument('account')];
+        $manager->go($account);
     }
 }

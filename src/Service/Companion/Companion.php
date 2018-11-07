@@ -23,6 +23,13 @@ class Companion
     public function setServer(string $server): Companion
     {
         $server    = ucwords($server);
+        
+        // validate
+        $validServers = CompanionTokenManager::SERVERS;
+        if (!isset($validServers[$server])) {
+            throw new \Exception("Sorry! At this time we do not support the server: {$server} - This is likely due to world congestion preventing new characters");
+        }
+        
         $this->api = new CompanionApi("xivapi_{$server}");
         
         return $this;

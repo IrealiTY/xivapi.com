@@ -18,25 +18,34 @@ class CompanionTokenManager
         'Lich'      => 'COMPANION_APP_ACCOUNT_A',
         'Zodiark'   => 'COMPANION_APP_ACCOUNT_A',
         'Phoenix'   => 'COMPANION_APP_ACCOUNT_A',
+
+        // JP Servers
+        'Kujata'   => 'COMPANION_APP_ACCOUNT_B',
     ];
     
     /** @var SymfonyStyle */
     private $io;
     
-    public function setSymfonyStyle(SymfonyStyle $io)
+    public function setSymfonyStyle(SymfonyStyle $io): void
     {
         $this->io = $io;
     }
     
-    public function go()
+    public function go(string $account): void
     {
         $this->io->title('Companion App API Token Manager');
+    
+        [$username, $password] = explode(',', getenv($account));
         
-        foreach (self::SERVERS as $server => $account) {
+        foreach (self::SERVERS as $server => $accountRegistered) {
+            // skip characters not for this account
+            if ($account != $accountRegistered) {
+                continue;
+            }
+            
             $this->io->section("Server: {$server}");
             
             // grab username and password
-            [$username, $password] = explode(',', getenv($account));
             $this->io->text("Logging into account: {$username}");
             
             // initialize API
