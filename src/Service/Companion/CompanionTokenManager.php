@@ -20,7 +20,13 @@ class CompanionTokenManager
         'Phoenix'   => 'COMPANION_APP_ACCOUNT_A',
 
         // JP Servers
-        'Kujata'   => 'COMPANION_APP_ACCOUNT_B',
+        'Kujata'    => 'COMPANION_APP_ACCOUNT_B',
+        'Aegis'     => 'COMPANION_APP_ACCOUNT_B',
+        'Atomos'    => 'COMPANION_APP_ACCOUNT_B',
+        'Unicorn'   => 'COMPANION_APP_ACCOUNT_B',
+        'Typhon'    => 'COMPANION_APP_ACCOUNT_B',
+        'Ramuh'     => 'COMPANION_APP_ACCOUNT_B',
+        'Garuda'    => 'COMPANION_APP_ACCOUNT_B',
     ];
     
     /** @var SymfonyStyle */
