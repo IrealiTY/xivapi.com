@@ -18,6 +18,23 @@ class CompanionTokenManager
         'Lich'      => 'COMPANION_APP_ACCOUNT_A',
         'Zodiark'   => 'COMPANION_APP_ACCOUNT_A',
         'Phoenix'   => 'COMPANION_APP_ACCOUNT_A',
+        'Louisoix'  => 'COMPANION_APP_ACCOUNT_A',
+        'Moogle'    => 'COMPANION_APP_ACCOUNT_A',
+        'Omega'     => 'COMPANION_APP_ACCOUNT_A',
+        'Cerberus'  => 'COMPANION_APP_ACCOUNT_A',
+        'Odin'      => 'COMPANION_APP_ACCOUNT_A',
+        'Ragnarok'  => 'COMPANION_APP_ACCOUNT_A',
+        'Shiva'     => 'COMPANION_APP_ACCOUNT_A',
+        
+        // NA servers
+        'Hyperion'  => 'COMPANION_APP_ACCOUNT_A',
+        'Famfrit'   => 'COMPANION_APP_ACCOUNT_A',
+        'Exodus'    => 'COMPANION_APP_ACCOUNT_A',
+        'Ultros'    => 'COMPANION_APP_ACCOUNT_A',
+        'Excalibur' => 'COMPANION_APP_ACCOUNT_A',
+        'Brynhildr' => 'COMPANION_APP_ACCOUNT_A',
+        'Behemoth'  => 'COMPANION_APP_ACCOUNT_A',
+        'Malboro'   => 'COMPANION_APP_ACCOUNT_A',
 
         // JP Servers
         'Kujata'    => 'COMPANION_APP_ACCOUNT_B',

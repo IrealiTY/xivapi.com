@@ -11,7 +11,6 @@ class Market extends DocBuilder implements DocInterface
             ->text('Get market price information from FFXIV for any server, at any time.')
             
             // beta notes
-            ->gap()
             ->h4('*beta* note:')
             ->note('This feature is in BETA as it is a very unknown territory for developers, SE have not provided
                 an open API and could break/change things at any time. I highly recommend just building ideas and
