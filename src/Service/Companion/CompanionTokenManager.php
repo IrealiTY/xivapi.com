@@ -49,7 +49,7 @@ class CompanionTokenManager
         'Ridill'    => 'COMPANION_APP_ACCOUNT_B',
         'Durandal'  => 'COMPANION_APP_ACCOUNT_B',
         'Ifrit'     => 'COMPANION_APP_ACCOUNT_B',
-        'Yojimbo'   => 'COMPANION_APP_ACCOUNT_B', 
+        'Yojimbo'   => 'COMPANION_APP_ACCOUNT_B',
         'Fenrir'    => 'COMPANION_APP_ACCOUNT_B',
         'Valefor'   => 'COMPANION_APP_ACCOUNT_B',
     ];

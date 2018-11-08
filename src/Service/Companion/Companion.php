@@ -52,7 +52,8 @@ class Companion
                 'CraftSignature' => $row->signatureName,
                 'IsHQ'           => $row->hq,
                 'Stain'          => $row->stain,
-                'Price'          => $row->sellPrice,
+                'PricePerUnit'   => $row->sellPrice,
+                'PriceTotal'     => $row->sellPrice * $row->stack,
                 'RetainerName'   => $row->sellRetainerName,
             ];
         }
@@ -82,7 +83,8 @@ class Companion
         foreach ($response->history as $row) {
             $history[] = [
                 'Quantity'      => $row->stack,
-                'Price'         => $row->sellPrice,
+                'PricePerUnit'  => $row->sellPrice,
+                'PriceTotal'    => $row->sellPrice * $row->stack,
                 'CharacterName' => $row->buyCharacterName,
                 'PurchaseDate'  => $row->buyRealDate/1000,
                 'IsHQ'          => $row->hq,
