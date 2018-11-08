@@ -44,6 +44,14 @@ class CompanionTokenManager
         'Typhon'    => 'COMPANION_APP_ACCOUNT_B',
         'Ramuh'     => 'COMPANION_APP_ACCOUNT_B',
         'Garuda'    => 'COMPANION_APP_ACCOUNT_B',
+        'Carbuncle' => 'COMPANION_APP_ACCOUNT_B',
+        'Tonberry'  => 'COMPANION_APP_ACCOUNT_B',
+        'Ridill'    => 'COMPANION_APP_ACCOUNT_B',
+        'Durandal'  => 'COMPANION_APP_ACCOUNT_B',
+        'Ifrit'     => 'COMPANION_APP_ACCOUNT_B',
+        'Yojimbo'   => 'COMPANION_APP_ACCOUNT_B', 
+        'Fenrir'    => 'COMPANION_APP_ACCOUNT_B',
+        'Valefor'   => 'COMPANION_APP_ACCOUNT_B',
     ];
     
     /** @var SymfonyStyle */
