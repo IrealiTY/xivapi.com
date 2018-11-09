@@ -27,8 +27,7 @@ class Companion
             throw new \Exception("Sorry! At this time we do not support the server: {$server} - This is likely due to world congestion preventing new characters");
         }
         
-        $this->api = new CompanionApi("xivapi_{$server}");
-        $this->api->Profile()->setSavePath(self::PROFILE_FILENAME);
+        $this->api = new CompanionApi("xivapi_{$server}", self::PROFILE_FILENAME);
         return $this;
     }
     
