@@ -21,13 +21,20 @@ class Companion
     {
         $server = ucwords($server);
         
+        // initialize api
+        $this->api = new CompanionApi("xivapi_{$server}", self::PROFILE_FILENAME);
+    
         // validate
         $validServers = CompanionTokenManager::SERVERS;
         if (!isset($validServers[$server])) {
+            throw new \Exception("Sorry! {$server} is not a valid server.");
+        }
+        
+        // if no token, error
+        if (empty($this->api->Profile()->getToken())) {
             throw new \Exception("Sorry! At this time we do not support the server: {$server} - This is likely due to world congestion preventing new characters");
         }
         
-        $this->api = new CompanionApi("xivapi_{$server}", self::PROFILE_FILENAME);
         return $this;
     }
     
