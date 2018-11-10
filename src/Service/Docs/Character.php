@@ -9,6 +9,8 @@ class Character extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Characters')
+            
             ->text('Search and retrieve character data from The Lodestone. Providing useful information
             such as character profile data, minions and mounts obtained, achievements obtained and their relative
             dates. Character friends, their free company, pvp team and much more!')
@@ -23,7 +25,7 @@ class Character extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/Character/Search *', true)
+            ->route('/character/search *', true)
             ->usage("{endpoint}/character/search?name=premium+virtue&server=Phoenix")
             ->text('Search for a character on **The Lodestone**. This does not search XIVAPI but instead 
             it goes directly to lodestone so the response will be "real-time". Responses are cached for 1 hour,
@@ -45,7 +47,7 @@ class Character extends DocBuilder implements DocInterface
             // Get
             //
             ->h6('Character')
-            ->route('/Character/[lodestone_id]', true)
+            ->route('/character/[lodestone_id]', true)
             ->usage('{endpoint}/character/730968')
             ->text('Get Character data, due to the nature of availability on the service this endpoint 
                 will return either populated data or nothing, you will have to check the `Info` response to 
@@ -110,9 +112,9 @@ class Character extends DocBuilder implements DocInterface
             // Verification
             //
             ->h6('Verification')
-            ->route('/Character/[lodestone_id]/Verification *', true)
+            ->route('/character/[lodestone_id]/verification *', true)
             ->usage('{endpoint}/character/730968/verification')
-            ->note('These fields are present on the route `/Character/<lodestone_id>` however do not update 
+            ->note('These fields are present on the route `/character/<lodestone_id>` however do not update
                 in real-time and you should use the `/Verification` endpoint for a real-time check.')
             ->h5('Example response')
             ->json('{  
@@ -130,7 +132,7 @@ class Character extends DocBuilder implements DocInterface
                 visible in the `Bio` section and the `VerificationTokenPass` field will return true. This endpoint 
                 will cache for **15 seconds** at a time so please consider this when implementing your logic; eg, do 
                 not check verification endpoint before asking the player to add the code to their profile page, you can 
-                get the code from the `/Character/<lodestone_id>` endpoint prior to this action.')
+                get the code from the `/character/<lodestone_id>` endpoint prior to this action.')
             ->h5('Frequently asked questions')
             ->list([
                 '**Does the code have to stay on the profile?** - No, it only needs to be there until you 
@@ -152,7 +154,7 @@ class Character extends DocBuilder implements DocInterface
             // Update
             //
             ->h6('Update')
-            ->route('/Character/[lodestone_id]/Update', true)
+            ->route('/character/[lodestone_id]/update', true)
             ->usage('{endpoint}/character/730968/update')
             ->text('Request a character to be prioritised to update. If you hit this endpoint then the supplied 
                 character should be updated within the next few minutes. A character can be manually updated 
@@ -174,7 +176,7 @@ class Character extends DocBuilder implements DocInterface
             // Delete
             //
             ->h6('Delete')
-            ->route('/Character/[lodestone_id]/Delete', true)
+            ->route('/character/[lodestone_id]/delete', true)
             ->usage('{endpoint}/character/730968/delete')
             ->text('Request a character to be deleted.')
             ->text('A character can only be deleted if it is in State 3 (cannot be found on Lodestone) or it 

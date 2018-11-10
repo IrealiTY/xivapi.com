@@ -11,6 +11,7 @@ use App\Service\Data\CsvReader;
 use App\Service\GamePatch\Patch;
 use App\Service\Common\GoogleAnalytics;
 use App\Service\Redis\Cache;
+use App\Utils\ContentNameCaseConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
@@ -166,7 +167,10 @@ class XivGameContentController extends Controller
     }
 
     /**
+     * todo - deprecate /colors endpoint
      * @Route("/Colors")
+     * @Route("/colors")
+     * @Route("/misc/colors")
      */
     public function colors()
     {
@@ -194,25 +198,23 @@ class XivGameContentController extends Controller
 
         return $this->json($colors);
     }
-
+    
     /**
      * @Route("/{name}")
      */
     public function contentList(Request $request, $name)
     {
-        $start = microtime(true);
-        $app = $this->appManager->fetch($request);
-
-        // if showing schema
-        if ($request->get('schema')) {
-            $content = $this->cache->get("schema_{$name}");
-        } else {
-            $content = $this->contentList->get($request, $name, $app);
-        }
-
-        if (!$content) {
+        $name = ContentNameCaseConverter::toUpperCase($name);
+        if (!$name) {
             throw new NotFoundHttpException("No content data found for: {$name}");
         }
+        
+        $start = microtime(true);
+        $app = $this->appManager->fetch($request);
+        
+        $content = $request->get('schema')
+            ? $this->cache->get("schema_{$name}")
+            : $this->contentList->get($request, $name, $app);
         
         $duration = microtime(true) - $start;
         GoogleAnalytics::hit([$name]);
@@ -226,18 +228,20 @@ class XivGameContentController extends Controller
      */
     public function contentData(Request $request, $name, $id, $seo = null)
     {
+        $name = ContentNameCaseConverter::toUpperCase($name);
+        if (!$name) {
+            throw new NotFoundHttpException("No content data found for: {$name}");
+        }
+        
         $start = microtime(true);
         $this->appManager->fetch($request);
+    
+        $content = $request->get('schema')
+            ? $this->cache->get("schema_{$name}")
+            : $this->cache->get("xiv_{$name}_{$id}");
 
-        // if showing schema
-        if ($request->get('schema')) {
-            $content = $this->cache->get("schema_{$name}");
-        } else {
-            // grab content
-            $content = $this->cache->get("xiv_{$name}_{$id}");
-            if (!$content) {
-                throw new NotFoundHttpException("FFXIV Game Content not found for; ID = {$id}, Name = {$name}");
-            }
+        if (!$content) {
+            throw new NotFoundHttpException("FFXIV Game Content not found for; ID = {$id}, Name = {$name}");
         }
     
         $duration = microtime(true) - $start;

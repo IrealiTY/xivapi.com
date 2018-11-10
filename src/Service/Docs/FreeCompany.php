@@ -9,6 +9,7 @@ class FreeCompany extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Free Companies')
             ->text('Search and retrieve Free Company data from The Lodestone, provides useful information such
                 as profile information and member lists.')
 
@@ -22,7 +23,7 @@ class FreeCompany extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/FreeCompany/Search *', true)
+            ->route('/freecompany/search *', true)
             ->usage("{endpoint}/freecompany/search?name=LeAwesome&server=Phoenix")
             ->text('Search for free companies on The Lodestone. This parses the lodestone in real time 
                 so it will be slow for non-cached responses. All search queries are cached for 1 hour,
@@ -43,7 +44,7 @@ class FreeCompany extends DocBuilder implements DocInterface
             // Get
             //
             ->h6('Free Company')
-            ->route('/FreeCompany/[lodestone_id]', true)
+            ->route('/freecompany/[lodestone_id]', true)
             ->usage('{endpoint}/freecompany/9231253336202687179')
             ->text('Get Free Company data, due to the nature of availability on the service this endpoint will 
                 return either populated data or nothing, you will have to check the `Info` response to 

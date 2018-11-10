@@ -7,6 +7,7 @@ class Lodestone extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Lodestone')
             ->text('Returns information from the official "The Lodestone" website: 
                 https://na.finalfantasyxiv.com/lodestone/')
             ->note('At this time (August 2018) only the NA Lodestone is being parsed, 
@@ -16,7 +17,7 @@ class Lodestone extends DocBuilder implements DocInterface
             ->gap()
             
             // Lodestone
-            ->route('/Lodestone')
+            ->route('/lodestone')
             ->usage('{endpoint}/lodestone')
             ->text('WORK IN PROGRESS')
             ->text('Returns a collection of information from the Lodestone endpoints, included is:')
@@ -38,56 +39,56 @@ class Lodestone extends DocBuilder implements DocInterface
             
             // News
             ->h6('News')
-            ->route('/Lodestone/News')
+            ->route('/lodestone/news')
             ->usage('{endpoint}/lodestone/news')
             ->text('Gets the latest news information from the homepage.')
             ->gap()
     
             // Notices
             ->h6('Notices')
-            ->route('/Lodestone/Notices')
+            ->route('/lodestone/notices')
             ->usage('{endpoint}/lodestone/notices')
             ->text('Gets the latest notices.')
             ->gap()
     
             // Maintenance
             ->h6('Maintenance')
-            ->route('/Lodestone/Maintenance')
+            ->route('/lodestone/maintenance')
             ->usage('{endpoint}/lodestone/maintenance')
             ->text('Gets the latest maintenance posts (Does not contain specific details such as times).')
             ->gap()
     
             // Updates
             ->h6('Updates')
-            ->route('/Lodestone/Updates')
+            ->route('/lodestone/updates')
             ->usage('{endpoint}/lodestone/updates')
             ->text('Get a list of update posts.')
             ->gap()
     
             // Status
             ->h6('Status')
-            ->route('/Lodestone/Status')
+            ->route('/lodestone/status')
             ->usage('{endpoint}/lodestone/status')
             ->text('Get a list of status posts.')
             ->gap()
     
             // WorldStatus
             ->h6('World Status')
-            ->route('/Lodestone/WorldStatus')
+            ->route('/lodestone/worldstatus')
             ->usage('{endpoint}/lodestone/worldstatus')
             ->text('Get world status information on the FFXIV Servers.')
             ->gap()
     
             // DevBlogs
             ->h6('Dev Blogs')
-            ->route('/Lodestone/DevBlogs')
+            ->route('/lodestone/devblogs')
             ->usage('{endpoint}/lodestone/devblogs')
             ->text('Get the latest DevBlogs information, this is pulled from an XML feed.')
             ->gap()
     
             // Feats
             ->h6('Feasts')
-            ->route('/Lodestone/Feasts')
+            ->route('/lodestone/feasts')
             ->usage('{endpoint}/lodestone/feasts')
             ->text('Get information on Feasts leaderboards')
             ->text('- `season=X` Pass along the season number to parse')
@@ -97,7 +98,7 @@ class Lodestone extends DocBuilder implements DocInterface
     
             // DeepDungeon
             ->h6('Deep Dungeon')
-            ->route('/Lodestone/DeepDungeon')
+            ->route('/lodestone/deepdungeon')
             ->usage('{endpoint}/lodestone/deepdungeon')
             ->text('Get information on DeepDungeon rankings')
             ->text('- You can find more parameters on the deep dungeon page: 

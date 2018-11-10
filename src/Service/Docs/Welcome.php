@@ -15,11 +15,6 @@ class Welcome extends DocBuilder implements DocInterface
                 a REST API. You can fetch information on all sorts of game content that has been discovered and 
                 mapped in the SaintCoinach Schema. In addition it provides Character, Free Company, Linkshell, PvPTeams 
                 and Lodestone information!')
-            ->note('
-                <strong>BETA</strong> <br>
-                Please consider the current version "BETA", it is still been heavily developed and things
-                may change quite drastically. I highly recommend getting on Discord and helping shape the API :)
-            ')
             ->gap()
 
             //
@@ -27,15 +22,9 @@ class Welcome extends DocBuilder implements DocInterface
             //
             ->h6("Endpoints")
             ->table(['Production', 'Staging', 'Local'], [
-                [ 'https://xivapi.com', 'http://xivapi.staging.com', 'http://xivapi.local' ]
+                [ 'https://xivapi.com', 'https://xivapi.staging.com', 'http://xivapi.local' ]
             ])
-            ->text('All routes except game content can be accessed both by UpperCasing and lowercase. 
-                This is intentional, the game content endpoints are Case-Sensitive UpperCasing, thus: 
-                `AchievementCategory` will work, but `achievementcategory` will not as this is how they 
-                are in the in-game files. The API provides endpoints in the same style for anything custom, 
-                eg: `Characters`, `Lodestone/WorldStatus`')
-            ->text('As game content is provided by datamining tools that have UpperCasing names, all responses
-            provide UpperCase variables, this is also true for all custom endpoints to ensure consistency.')
+            ->gap()
 
             //
             // Open source
@@ -51,22 +40,32 @@ class Welcome extends DocBuilder implements DocInterface
                 functionality is being moved to micro services.')
             ->gap()
 
-            ->h6('Microservices')
-            ->text('Splitting up the XIVAPI tools to provide libraries any developer can use!')
+            ->h6('Other libraries')
+            ->text('Other cool stuff for you!')
             ->table(
                 [
-                    'Name', 'Repository',' Info'
+                    'Name', 'Info'
                 ],
                 [
                     [
+                        'Angular-Client',
+                        '[https://github.com/xivapi/angular-client](https://github.com/xivapi/angular-client)<br>An Angular client for interacting with the XIVAPI'
+                    ],
+                    [
+                        'Lodestone Parser PHP',
+                        '[https://github.com/xivapi/lodestone-parser](https://github.com/xivapi/lodestone-parser)<br>A Lodestone Parser written in PHP',
+                    ],
+                    [
                         'Game Data',
-                        'https://github.com/xivapi/xivapi-data',
-                        'Extracting game data using SaintCoinach and automatically building content documents for the REST API'
+                        '[https://github.com/xivapi/xivapi-data](https://github.com/xivapi/xivapi-data)<br>Extracting game data using SaintCoinach and automatically building content documents for the REST API'
                     ],
                     [
                         'Mappy',
-                        'https://github.com/xivapi/xivapi-mappy',
-                        'Parse map information from FFXIV via the games memory'
+                        '[https://github.com/xivapi/xivapi-mappy](https://github.com/xivapi/xivapi-mappy)<br>Parse map information from FFXIV via the games memory'
+                    ],
+                    [
+                        'Companion PHP',
+                        '[https://github.com/xivapi/companion-php](https://github.com/xivapi/companion-php)<br>A PHP library that exposes the FFXIV Companion App API'
                     ]
                 ]
             )
@@ -249,7 +248,7 @@ class Welcome extends DocBuilder implements DocInterface
             ->text('The API will return `ints` as `strings` whenever an numeric value is a length of 10 or more,
                 this means that unix timestamps, FC/LS IDs and any other long numbers will return as string
                 and not cause overflow issues.')
-            ->gap(2)
+            ->line()
 
             //
             // SaintCoinach

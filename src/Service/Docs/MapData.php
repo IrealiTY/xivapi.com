@@ -12,7 +12,7 @@ class MapData extends DocBuilder implements DocInterface
         $totalMapPositions = $this->em->getRepository(MapPosition::class)->getTotal();
 
         return $this
-    
+            ->h1('Map Information')
             ->note('At this time (September 2018) there is no caching on the Map Data and any positions will
                 be available in real-time. This is because so much needs mapping and it is still in beta testing.
                 Once all maps are "mapped", a cache will be placed infront of Map Data endpoints.')
