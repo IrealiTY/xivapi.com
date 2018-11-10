@@ -8,7 +8,7 @@ class Market extends DocBuilder implements DocInterface
     {
         return $this
             ->h1('Market *(beta)*')
-            ->text('Get market price information from FFXIV for any server, at any time.')
+            ->text('Get in-game market board information for any server, at any time.')
             ->text('If you need any help, please hop on **Discord**: https://discord.gg/MFFVHWC')
             
             // beta notes
