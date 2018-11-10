@@ -68,6 +68,17 @@ class XivGameContentController extends Controller
         GoogleAnalytics::hit(['Servers']);
         return $this->json(GameServers::LIST);
     }
+    
+    /**
+     * @Route("/Servers/DC")
+     * @Route("/servers/dc")
+     */
+    public function serversByDataCenter(Request $request)
+    {
+        $this->appManager->fetch($request);
+        GoogleAnalytics::hit(['Servers']);
+        return $this->json(GameServers::LIST_DC);
+    }
 
     /**
      * @Route("/Content")

@@ -125,9 +125,13 @@ class Content extends DocBuilder implements DocInterface
             // Server List
             //
             ->h6('Server List')
-            ->route('/servers', true)
+            ->route('/servers')
             ->usage('{endpoint}/servers')
             ->text('A list of servers on the official servers (JA, EN, FR, DE)')
+    
+            ->route('/servers/dc')
+            ->usage('{endpoint}/servers/dc')
+            ->text('Another list of servers grouped by their data center.')
             
             ->get();
     }
