@@ -44,7 +44,7 @@ class CompanionMarketController extends Controller
             $this->cache->set($key, $data, 60);
         }
         
-        return $this->json($key);
+        return $this->json($data);
     }
     
     /**
@@ -62,7 +62,7 @@ class CompanionMarketController extends Controller
             $this->cache->set($key, $data, 60);
         }
     
-        return $this->json($key);
+        return $this->json($data);
     }
     
     /**
@@ -80,7 +80,7 @@ class CompanionMarketController extends Controller
             $this->cache->set($key, $data, 60);
         }
     
-        return $this->json($key);
+        return $this->json($data);
     }
     
     /**
