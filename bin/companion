@@ -5,12 +5,12 @@ START_TIME=$SECONDS
 ## -------------------------------------------------------------------------------------
 
 echo "Logging into account A"
-/usr/bin/php /vagrant/bin/console CompanionAppLoginCommand A
+/usr/bin/php /home/dalamud/dalamud/bin/console CompanionAppLoginCommand A
 
 sleep 5
 
 echo "Logging into account B"
-/usr/bin/php /vagrant/bin/console CompanionAppLoginCommand B
+/usr/bin/php /home/dalamud/dalamud/bin/console CompanionAppLoginCommand B
 
 ## -------------------------------------------------------------------------------------
 
