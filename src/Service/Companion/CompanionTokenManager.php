@@ -3,6 +3,7 @@
 namespace App\Service\Companion;
 
 use Companion\CompanionApi;
+use Companion\Http\Cookies;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -94,30 +95,45 @@ class CompanionTokenManager
         $this->io = $io;
     }
     
+    /**
+     * This will login to each character on each server, it will
+     * first attempt to login using a `xivapi_[server]_temp` profile,
+     * if this succeeds it will be copied to the main login `xivapi_[server]
+     * otherwise it wil lbe marked with an error.
+     */
     public function go(string $account): void
     {
         $this->io->title('Companion App API Token Manager');
     
         [$username, $password] = explode(',', getenv($account));
         
+        $table = [];
         foreach (self::SERVERS as $server => $accountRegistered) {
             // skip characters not for this account
             if ($account != $accountRegistered) {
                 continue;
             }
-            
-            $this->io->section("Server: {$server}");
-            
-            // grab username and password
-            $this->io->text("Logging into account: {$username}");
+    
+            $this->io->text("Server: {$server}");
+            $tableRow = [$server];
+            $date     = date('F j, Y, g:i a') .' (UTC)';
             
             // initialize API
-            $api = new CompanionApi("xivapi_{$server}", Companion::PROFILE_FILENAME);
-            $api->Account()->login($username, $password);
+            Cookies::clear();
+            $api = new CompanionApi("xivapi_{$server}_temp", Companion::PROFILE_FILENAME);
+            
+            try {
+                $api->Account()->login($username, $password);
+            } catch (\Exception $ex) {
+                $tableRow[] = 'Could not login to account, reason: '. $ex->getMessage();
+                $table[] = $tableRow;
+                $this->setAccountValue($server, 'status', "{$date} - Account login failure");
+                $this->setAccountValue($server, 'ok', false);
+                continue;
+            }
             
             // get character list
             $characterId = null;
-            $this->io->text("Looking for a character on this server ...");
             foreach ($api->login()->getCharacters()->accounts[0]->characters as $character) {
                 if ($character->world == $server) {
                     $characterId = $character->cid;
@@ -127,42 +143,131 @@ class CompanionTokenManager
             
             // if not found, error
             if ($characterId === null) {
-                $this->io->error("Could not find a character for this server.");
+                $tableRow[] = 'Could not find a character for this server.';
+                $table[] = $tableRow;
+                $this->setAccountValue($server, 'status', "{$date} - Could not find a character on this server.");
+                $this->setAccountValue($server, 'ok', false);
                 continue;
             }
             
             // login to the found character
-            $this->io->text('Logging into character ...');
             $api->login()->loginCharacter($characterId);
             
             // confirm
-            $this->io->text('Confirming login');
             $character = $api->login()->getCharacter()->character;
             if ($characterId !== $character->cid) {
-                $this->io->error("Could not login to this character.");
+                $tableRow[] = 'Could not login to this character.';
+                $table[] = $tableRow;
+                $this->setAccountValue($server, 'status', "{$date} - Could not login to the character for this server.");
+                $this->setAccountValue($server, 'ok', false);
                 continue;
             }
-            
-            // might as well keep those free nuts coming in
-            $this->io->text('Free nutz plz');
-            $api->payments()->acquirePoints();
             
             // validate login
-            $this->io->text('Validating login by requesting Earth Shard history, chances of there being none up?');
-            $earthShardSaleCount = count($api->market()->getItemMarketListings(5)->entries);
-            
-            if ($earthShardSaleCount === 0) {
-                $this->io->error("Earth Shard sale count was 0, this is either really unlucky or the character does not have market board access.");
+            try {
+                $earthShardSaleCount = count($api->market()->getItemMarketListings(5)->entries);
+    
+                if ($earthShardSaleCount === 0) {
+                    $tableRow[] = 'Could not validate Earth Shard sale count';
+                    $table[] = $tableRow;
+                    $this->setAccountValue($server, 'status', "{$date} - Could not obtain market board prices.");
+                    $this->setAccountValue($server, 'ok', false);
+                    continue;
+                }
+            } catch (\Exception $ex) {
+                $tableRow[] = '[EXCEPTION] Could not validate Earth Shard sale count, reason: '. $ex->getMessage();
+                $table[] = $tableRow;
+                $this->setAccountValue($server, 'status', "{$date} - [EXCEPTION] Could not obtain market board prices.");
+                $this->setAccountValue($server, 'ok', false);
                 continue;
             }
+            
            
             // confirm and then sleep a bit before we move onto the next character
-            $this->io->text("✔ Server {$server} is all ready to go!");
-            $this->io->text("Active token: ". $api->Profile()->getToken());
-            $this->io->text('Continue in 3 seconds ...');
-            sleep(3);
+            $tableRow[] = "✔ Token: {$api->Profile()->getToken()}";
+            $table[] = $tableRow;
+            
+            // copy profile
+            $this->setAccountValue($server, 'status', "{$date} - Character login token generated.");
+            $this->setAccountValue($server, 'ok', true);
+            $this->setAccountValue($server, 'time', time());
         }
         
-        $this->io->success('All characters have been logged into and tokens set for 24 hours.');
+        $this->io->text([
+            '', '- Copying temp logins over ...', ''
+        ]);
+        
+        // copy all temps to mains
+        foreach (self::SERVERS as $server => $accountRegistered) {
+            // skip characters not for this account
+            if ($account != $accountRegistered) {
+                continue;
+            }
+            
+            $this->setAccountSessionFromTemp($server);
+        }
+
+        // print results
+        $this->io->table(
+            [ 'Server', 'Information' ],
+            $table
+        );
+        
+    }
+    
+    /**
+     * Return account login status information
+     */
+    public static function getAccountsLoginStatusInformation()
+    {
+        $json = file_get_contents(Companion::PROFILE_FILENAME);
+        $json = json_decode($json);
+        
+        $data = [];
+        $headers = [
+            'Server',
+            'Status',
+            'Information'
+        ];
+        
+        foreach (self::SERVERS as $server => $account) {
+            $info = $json->{"xivapi_{$server}_temp"} ?? null;
+            
+            $data[] = [
+                "**{$server}**",
+                $info ? ($info->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline',
+                $info ? $info->status : 'No logged in session information for this server.'
+            ];
+        }
+        
+        return [ $headers, $data ];
+    }
+    
+    /**
+     * Set an account value on the session
+     */
+    private function setAccountValue($server, $field, $message)
+    {
+        $json = file_get_contents(Companion::PROFILE_FILENAME);
+        $json = json_decode($json);
+        $json->{"xivapi_{$server}_temp"}->{$field} = $message;
+    
+        file_put_contents(Companion::PROFILE_FILENAME, json_encode($json, JSON_PRETTY_PRINT));
+    }
+    
+    /**
+     * Set the account session from temp
+     */
+    private function setAccountSessionFromTemp($server)
+    {
+        $json = file_get_contents(Companion::PROFILE_FILENAME);
+        $json = json_decode($json);
+        
+        // only copy if its OK
+        if ($json->{"xivapi_{$server}_temp"}->ok) {
+            $json->{"xivapi_{$server}"} = $json->{"xivapi_{$server}_temp"};
+        }
+        
+        file_put_contents(Companion::PROFILE_FILENAME, json_encode($json, JSON_PRETTY_PRINT));
     }
 }

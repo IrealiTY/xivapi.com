@@ -2,10 +2,14 @@
 
 namespace App\Service\Docs;
 
+use App\Service\Companion\CompanionTokenManager;
+
 class Market extends DocBuilder implements DocInterface
 {
     public function build()
     {
+        [$statusHeaders, $statusData] = CompanionTokenManager::getAccountsLoginStatusInformation();
+        
         return $this
             ->h1('Market *(beta)*')
             ->text('Get in-game market board information for any server, at any time.')
@@ -151,8 +155,15 @@ class Market extends DocBuilder implements DocInterface
                     'Order'  => 0,
                 ]
             ], JSON_PRETTY_PRINT), 'json')
-            ->gap()
             
+            ->line()
+            
+            ->h6('Service Status')
+            ->text('Below is a table of each server and their market accessibility status, if your server status
+                is not enabled it may be that the server is congested and new characters cannot be made. Other times
+                it is because the companion API is having difficulties and a login token could not be generated.')
+            ->table($statusHeaders, $statusData)
+            ->gap()
 
             ->get();
     }
