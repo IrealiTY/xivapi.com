@@ -4,7 +4,7 @@ namespace App\Service\DataCustom;
 
 use App\Service\Helpers\ManualHelper;
 
-class Stain extends ManualHelper
+class UIColor extends ManualHelper
 {
     const PRIORITY = 20;
     
