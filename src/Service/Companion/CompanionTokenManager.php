@@ -242,20 +242,16 @@ class CompanionTokenManager
             $temp = $json->{"xivapi_{$server}_temp"} ?? null;
             $main = $json->{"xivapi_{$server}"} ?? null;
 
-            $status = implode("<br>", [
-                '`TEMP` ' . ($temp ? ($temp->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
-                '`MAIN` ' . ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline')
-            ]);
-
             $information = implode("<br>", [
-                '`TEMP` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
-                '`MAIN` ' . ($main ? $main->status : 'No logged in session information for this server.')
+                '`main` ' . ($main ? $main->status : 'No logged in session information for this server.'),
+                '`temp` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
             ]);
-
 
             $data[] = [
                 "**{$server}**",
-                $status,
+
+                // we only care about the status of the main session
+                ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
                 $information
             ];
         }
