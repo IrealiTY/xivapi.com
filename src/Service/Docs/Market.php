@@ -82,19 +82,29 @@ class Market extends DocBuilder implements DocInterface
             ->h4('Response info')
             ->code(json_encode([
                 'History' => [
-                    'CharacterName' => 'Player name who bought the item',
-                    'IsHQ'          => true,
-                    'PricePerUnit'  => 1000,
-                    'PriceTotal'    => 15000,
-                    'PurchaseDate'  => 'unix timestamp of purcahse date',
-                    'Quantity'      => 15,
+                    [
+                        'CharacterName' => '(string) [ player name ]',
+                        'IsHQ'          => true,
+                        'PricePerUnit'  => 1000,
+                        'PriceTotal'    => 15000,
+                        'PurchaseDate'  => '(string) [ unix timestamp ]',
+                        'Quantity'      => 15,
+                    ],
+                    [
+                        'CharacterName' => '(string) [ player name ]',
+                        'IsHQ'          => true,
+                        'PricePerUnit'  => 5000,
+                        'PriceTotal'    => 10000,
+                        'PurchaseDate'  => '(string) [ unix timestamp ]',
+                        'Quantity'      => 2,
+                    ]
                 ],
                 'Item' => [
                     'ID'     => 5,
                     'Icon'   => '/i/020000/020006.png',
                     'Name'   => 'Earth Shard',
                     'Rarity' => 1,
-                    'Url'    => 'Url to XIVAPI Item endpoint'
+                    'Url'    => '(string) XIVAPI Endpoint Url'
                 ],
             ], JSON_PRETTY_PRINT), 'json')
             ->gap()
@@ -114,7 +124,7 @@ class Market extends DocBuilder implements DocInterface
                         'Icon'   => '/i/020000/020006.png',
                         'Name'   => 'Earth Shard',
                         'Rarity' => 1,
-                        'Url'    => 'Url to XIVAPI Item endpoint'
+                        'Url'    => '(string) XIVAPI Endpoint Url'
                     ],
                     'Quantity' => 80,
                 ],
