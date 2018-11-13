@@ -89,6 +89,10 @@ class CompanionTokenManager
     
     /** @var SymfonyStyle */
     private $io;
+    /** @var array */
+    private $table = [];
+    /** @var string  */
+    private $date = null;
     
     public function setSymfonyStyle(SymfonyStyle $io): void
     {
@@ -103,94 +107,75 @@ class CompanionTokenManager
      */
     public function go(string $account): void
     {
+        $this->date = date('F j, Y, g:i a') . ' (UTC)';
         $this->io->title('Companion App API Token Manager');
+        $this->io->text("Date: {$this->date}");
     
         [$username, $password] = explode(',', getenv($account));
-        
-        $table = [];
+
         foreach (self::SERVERS as $server => $accountRegistered) {
-            // skip characters not for this account
-            if ($account != $accountRegistered) {
-                continue;
-            }
-    
-            $this->io->text("Server: {$server}");
-            $tableRow = [$server];
-            $date     = date('F j, Y, g:i a') .' (UTC)';
-            
-            // initialize API
-            Cookies::clear();
-            $api = new CompanionApi("xivapi_{$server}_temp", Companion::PROFILE_FILENAME);
-            
             try {
-                $api->Account()->login($username, $password);
-            } catch (\Exception $ex) {
-                $tableRow[] = 'Could not login to account, reason: '. $ex->getMessage();
-                $table[] = $tableRow;
-                $this->setAccountValue($server, 'status', "{$date} - Account login failure");
-                $this->setAccountValue($server, 'ok', false);
-                continue;
-            }
-            
-            // get character list
-            $characterId = null;
-            foreach ($api->login()->getCharacters()->accounts[0]->characters as $character) {
-                if ($character->world == $server) {
-                    $characterId = $character->cid;
-                    break;
-                }
-            }
-            
-            // if not found, error
-            if ($characterId === null) {
-                $tableRow[] = 'Could not find a character for this server.';
-                $table[] = $tableRow;
-                $this->setAccountValue($server, 'status', "{$date} - Could not find a character on this server.");
-                $this->setAccountValue($server, 'ok', false);
-                continue;
-            }
-            
-            // login to the found character
-            $api->login()->loginCharacter($characterId);
-            
-            // confirm
-            $character = $api->login()->getCharacter()->character;
-            if ($characterId !== $character->cid) {
-                $tableRow[] = 'Could not login to this character.';
-                $table[] = $tableRow;
-                $this->setAccountValue($server, 'status', "{$date} - Could not login to the character for this server.");
-                $this->setAccountValue($server, 'ok', false);
-                continue;
-            }
-            
-            // validate login
-            try {
-                $earthShardSaleCount = count($api->market()->getItemMarketListings(5)->entries);
-    
-                if ($earthShardSaleCount === 0) {
-                    $tableRow[] = 'Could not validate Earth Shard sale count';
-                    $table[] = $tableRow;
-                    $this->setAccountValue($server, 'status', "{$date} - Could not obtain market board prices.");
-                    $this->setAccountValue($server, 'ok', false);
+                // skip characters not for this account
+                if ($account != $accountRegistered) {
                     continue;
                 }
+
+                $this->io->text("Server: {$server}");
+
+                // initialize API
+                $api = new CompanionApi("xivapi_{$server}_temp", Companion::PROFILE_FILENAME);
+
+                try {
+                    $api->Account()->login($username, $password);
+                } catch (\Exception $ex) {
+                    $this->addToTable($server, 'Could not login to account, reason: ' . $ex->getMessage());
+                    $this->setAccountError($server, 'Login failure');
+                    continue;
+                }
+
+                // get character list
+                $characterId = null;
+                foreach ($api->login()->getCharacters()->accounts[0]->characters as $character) {
+                    if ($character->world == $server) {
+                        $characterId = $character->cid;
+                        break;
+                    }
+                }
+
+                // if not found, error
+                if ($characterId === null) {
+                    $this->addToTable($server, 'Could not find a character for this server.');
+                    $this->setAccountError($server, "Could not find a character on this server.");
+                    continue;
+                }
+
+                // login to the found character
+                $api->login()->loginCharacter($characterId);
+
+                // confirm
+                $character = $api->login()->getCharacter()->character;
+                if ($characterId !== $character->cid) {
+                    $this->addToTable($server, 'Could not login to this character.');
+                    $this->setAccountError($server, 'Could not login to the character for this server.');
+                    continue;
+                }
+
+                // validate login
+                try {
+                    $api->market()->getItemMarketListings(5);
+                } catch (\Exception $ex) {
+                    $this->addToTable($server, "Could not validate Earth Shard sale count, reason: {$ex->getMessage()}");
+                    $this->setAccountError($server, "Could not obtain market board prices.");
+                    continue;
+                }
+
+                // confirm success
+                $this->addToTable($server, "✔ Token: {$api->Profile()->getToken()}");
+                $this->setAccountSuccess($server, "Character login token generated.");
             } catch (\Exception $ex) {
-                $tableRow[] = '[EXCEPTION] Could not validate Earth Shard sale count, reason: '. $ex->getMessage();
-                $table[] = $tableRow;
-                $this->setAccountValue($server, 'status', "{$date} - [EXCEPTION] Could not obtain market board prices.");
-                $this->setAccountValue($server, 'ok', false);
-                continue;
+                $this->addToTable($server, "Could not validate Earth Shard sale count, reason: {$ex->getMessage()}");
+                $this->setAccountError($server, "Could not obtain market board prices.");
             }
-            
-           
-            // confirm and then sleep a bit before we move onto the next character
-            $tableRow[] = "✔ Token: {$api->Profile()->getToken()}";
-            $table[] = $tableRow;
-            
-            // copy profile
-            $this->setAccountValue($server, 'status', "{$date} - Character login token generated.");
-            $this->setAccountValue($server, 'ok', true);
-            $this->setAccountValue($server, 'time', time());
         }
         
         $this->io->text([
@@ -208,11 +193,34 @@ class CompanionTokenManager
         }
 
         // print results
+        $this->io->text("Date: {$this->date}");
         $this->io->table(
             [ 'Server', 'Information' ],
-            $table
+            $this->getTable()
         );
         
+    }
+
+    /**
+     * Log some information to the table
+     */
+    private function addToTable($server, $information): void
+    {
+        $this->table[$server] = $information;
+    }
+
+    /**
+     * Get proper table information
+     */
+    private function getTable(): array
+    {
+        $arr = [];
+        foreach ($this->table as $server => $info) {
+            $arr[] = [ $server, $info ];
+        }
+
+        return $arr;
+
     }
     
     /**
@@ -231,18 +239,50 @@ class CompanionTokenManager
         ];
         
         foreach (self::SERVERS as $server => $account) {
-            $info = $json->{"xivapi_{$server}_temp"} ?? null;
-            
+            $temp = $json->{"xivapi_{$server}_temp"} ?? null;
+            $main = $json->{"xivapi_{$server}"} ?? null;
+
+            $status = implode("<br>", [
+                'TEMP: ' . ($temp ? ($temp->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
+                'MAIN: ' . ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline')
+            ]);
+
+            $information = implode("<br>", [
+                'TEMP: ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
+                'MAIN: ' . ($main ? $main->status : 'No logged in session information for this server.')
+            ]);
+
+
             $data[] = [
                 "**{$server}**",
-                $info ? ($info->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline',
-                $info ? $info->status : 'No logged in session information for this server.'
+                $status,
+                $information
             ];
         }
         
         return [ $headers, $data ];
     }
-    
+
+    /**
+     * Set an error on the token
+     */
+    private function setAccountError($server, $message)
+    {
+        $this->setAccountValue($server, 'status', "{$this->date} - $message");
+        $this->setAccountValue($server, 'ok', false);
+        $this->setAccountValue($server, 'time', time());
+    }
+
+    /**
+     * Set a success on the token
+     */
+    private function setAccountSuccess($server, $message)
+    {
+        $this->setAccountValue($server, 'status', "{$this->date} - $message");
+        $this->setAccountValue($server, 'ok', true);
+        $this->setAccountValue($server, 'time', time());
+    }
+
     /**
      * Set an account value on the session
      */
