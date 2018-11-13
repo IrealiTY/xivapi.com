@@ -46,8 +46,8 @@ class MapData extends DocBuilder implements DocInterface
             ->gap()
             
             ->h6('Endpoints')
-            ->route('/MapData/[ContentName]/[ID]', true)
-            ->usage("{endpoint}/MapData/PlaceName/43")
+            ->route('/mapdata/[ContentName]/[ID]', true)
+            ->usage("{endpoint}/mapdata/PlaceName/43")
             ->text('`[ContentName]`: *(These are not case-sensitive)*')
             ->list([
                 'PlaceName',
@@ -69,7 +69,7 @@ class MapData extends DocBuilder implements DocInterface
             ->table([
                 'Map Data', 'Memory Data'
             ], [
-                [ '[/mapdata/download](/mapdata/download)', '[/memorydata/download](/memorydata/download)' ]
+                [ '[/downloads/map-data](/downloads/xivapi-map-data)', '[/downloads/memory-data](/downloads/xivapi-memory-data)' ]
             ])
             ->text('MemoryData is various other information found in memory, some of it may be faulty right now
                 (eg all results are 0) as Patch updates do break things. However if it looks correct, it likely is.

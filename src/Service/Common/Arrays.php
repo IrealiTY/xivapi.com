@@ -312,4 +312,27 @@ class Arrays
 
         return $array;
     }
+
+    /**
+     * Write a repository response to a CSV
+     */
+    public static function repositoryToCsv($repo, $filename)
+    {
+        $arr = [];
+        foreach ($repo->findAll() as $obj) {
+            if (empty($arr)) {
+                $arr[] = array_keys($obj->toArray());
+            }
+
+            $arr[] = array_values($obj->toArray());
+        }
+
+        // write to file
+        $fp = fopen($filename, 'w');
+        foreach ($positions as $fields) {
+            fputcsv($fp, $fields);
+        }
+
+        fclose($fp);
+    }
 }

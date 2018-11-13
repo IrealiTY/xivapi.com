@@ -2709,16 +2709,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.34.1",
+            "version": "1.34.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "19201b87f7dba2a7cbf1cccdf0e1da13c04ee9c9"
+                "reference": "b9a444d829c9a16735aceca1b173e765745bcc0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/19201b87f7dba2a7cbf1cccdf0e1da13c04ee9c9",
-                "reference": "19201b87f7dba2a7cbf1cccdf0e1da13c04ee9c9",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/b9a444d829c9a16735aceca1b173e765745bcc0c",
+                "reference": "b9a444d829c9a16735aceca1b173e765745bcc0c",
                 "shasum": ""
             },
             "require": {
@@ -2726,8 +2726,11 @@
                 "symfony/translation": "~2.6 || ~3.0 || ~4.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "~2",
                 "phpunit/phpunit": "^4.8.35 || ^5.7"
+            },
+            "suggest": {
+                "friendsofphp/php-cs-fixer": "Needed for the `composer phpcs` command. Allow to automatically fix code style.",
+                "phpstan/phpstan": "Needed for the `composer phpstan` command. Allow to detect potential errors."
             },
             "type": "library",
             "extra": {
@@ -2760,7 +2763,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-11-08T13:33:47+00:00"
+            "time": "2018-11-13T08:26:10+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -4048,16 +4051,16 @@
         },
         {
             "name": "react/dns",
-            "version": "v0.4.15",
+            "version": "v0.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/dns.git",
-                "reference": "319e110a436d26a2fa137cfa3ef2063951715794"
+                "reference": "0a0bedfec72b38406413c6ea01e1c015bd0bf72b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/dns/zipball/319e110a436d26a2fa137cfa3ef2063951715794",
-                "reference": "319e110a436d26a2fa137cfa3ef2063951715794",
+                "url": "https://api.github.com/repos/reactphp/dns/zipball/0a0bedfec72b38406413c6ea01e1c015bd0bf72b",
+                "reference": "0a0bedfec72b38406413c6ea01e1c015bd0bf72b",
                 "shasum": ""
             },
             "require": {
@@ -4089,7 +4092,7 @@
                 "dns-resolver",
                 "reactphp"
             ],
-            "time": "2018-07-02T12:17:56+00:00"
+            "time": "2018-11-11T11:21:13+00:00"
         },
         {
             "name": "react/event-loop",
@@ -5189,16 +5192,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.1.1",
+            "version": "v1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "9fb60f232af0764d58002e7872acb43a74506d25"
+                "reference": "803c49664ddc7cbc4be02f41491766be32c90a7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/9fb60f232af0764d58002e7872acb43a74506d25",
-                "reference": "9fb60f232af0764d58002e7872acb43a74506d25",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/803c49664ddc7cbc4be02f41491766be32c90a7f",
+                "reference": "803c49664ddc7cbc4be02f41491766be32c90a7f",
                 "shasum": ""
             },
             "require": {
@@ -5232,7 +5235,7 @@
                 }
             ],
             "description": "Composer plugin for Symfony",
-            "time": "2018-09-03T08:17:12+00:00"
+            "time": "2018-11-12T12:25:13+00:00"
         },
         {
             "name": "symfony/form",
@@ -7006,16 +7009,16 @@
         },
         {
             "name": "xivapi/companion-php",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/companion-php.git",
-                "reference": "7a50ddc8591bb40c423493c9c4db3e29999056fe"
+                "reference": "ced8b901f24b22cc8f69210649020096404efaa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/7a50ddc8591bb40c423493c9c4db3e29999056fe",
-                "reference": "7a50ddc8591bb40c423493c9c4db3e29999056fe",
+                "url": "https://api.github.com/repos/xivapi/companion-php/zipball/ced8b901f24b22cc8f69210649020096404efaa5",
+                "reference": "ced8b901f24b22cc8f69210649020096404efaa5",
                 "shasum": ""
             },
             "require": {
@@ -7041,20 +7044,20 @@
                 "ffxiv",
                 "php"
             ],
-            "time": "2018-11-09T17:28:50+00:00"
+            "time": "2018-11-12T22:03:08+00:00"
         },
         {
             "name": "xivapi/lodestone-parser",
-            "version": "1.8",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/lodestone-parser.git",
-                "reference": "eedeb7b391b9cc3677a980925707526d7749e0d5"
+                "reference": "8516e195099aa8d42082cf7186dea8c224e00789"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/eedeb7b391b9cc3677a980925707526d7749e0d5",
-                "reference": "eedeb7b391b9cc3677a980925707526d7749e0d5",
+                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/8516e195099aa8d42082cf7186dea8c224e00789",
+                "reference": "8516e195099aa8d42082cf7186dea8c224e00789",
                 "shasum": ""
             },
             "require": {
@@ -7090,7 +7093,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-09-01T15:29:40+00:00"
+            "time": "2018-11-11T12:45:57+00:00"
         },
         {
             "name": "zendframework/zend-code",
