@@ -242,10 +242,10 @@ class CompanionTokenManager
             $temp = $json->{"xivapi_{$server}_temp"} ?? null;
             $main = $json->{"xivapi_{$server}"} ?? null;
 
-            $information = implode("<br>", [
+            $information = implode("", [
                 '<span style="font-size:14px">',
-                '`main` ' . ($main ? $main->status : 'No logged in session information for this server.'),
-                '`temp` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
+                '`MAIN` ' . ($main ? $main->status : 'No logged in session information for this server.') .'<br>',
+                '`TEMP` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
                 '</span>',
             ]);
 
