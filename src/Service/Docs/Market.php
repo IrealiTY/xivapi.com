@@ -174,7 +174,20 @@ class Market extends DocBuilder implements DocInterface
                 "offline" it may mean that the server is congested and new characters cannot be made or the
                 companion API is having issues accessing the Data Center where the server is based.')
             ->table($statusHeaders, $statusData)
-            ->gap()
+            ->gap(2)
+
+            ->h6('Examples')
+            ->text('Some very basic concepts using the Market API')
+            ->table(
+                ['Language', 'Link', 'Information'],
+                [
+                    [
+                        'Javascript',
+                        '[JS Fiddle](http://jsfiddle.net/vekien/Lsu3pw9q/134/embedded/result/)',
+                        'Super simple example using bootstrap, jquery and some vanilla javascript.'
+                    ]
+                ]
+            )
 
             ->get();
     }
