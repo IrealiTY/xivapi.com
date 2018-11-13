@@ -107,7 +107,7 @@ class CompanionTokenManager
      */
     public function go(string $account): void
     {
-        $this->date = date('F j, Y, g:i a') . ' (UTC)';
+        $this->date = date('Y-m-d H:i:s') . ' (UTC)';
         $this->io->title('Companion App API Token Manager');
         $this->io->text("Date: {$this->date}");
     
@@ -179,7 +179,7 @@ class CompanionTokenManager
         }
         
         $this->io->text([
-            '', '- Copying temp logins over ...', ''
+            '', '- Copying temp login to main production sessions ...', ''
         ]);
         
         // copy all temps to mains
@@ -243,13 +243,13 @@ class CompanionTokenManager
             $main = $json->{"xivapi_{$server}"} ?? null;
 
             $status = implode("<br>", [
-                'TEMP: ' . ($temp ? ($temp->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
-                'MAIN: ' . ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline')
+                '`TEMP` ' . ($temp ? ($temp->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
+                '`MAIN` ' . ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline')
             ]);
 
             $information = implode("<br>", [
-                'TEMP: ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
-                'MAIN: ' . ($main ? $main->status : 'No logged in session information for this server.')
+                '`TEMP` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
+                '`MAIN` ' . ($main ? $main->status : 'No logged in session information for this server.')
             ]);
 
 
