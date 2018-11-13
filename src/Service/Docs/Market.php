@@ -14,6 +14,7 @@ class Market extends DocBuilder implements DocInterface
             ->h1('Market *(beta)*')
             ->text('Get in-game market board information for any server, at any time.')
             ->text('If you need any help, please hop on **Discord**: https://discord.gg/MFFVHWC')
+            ->link('View Server Status', 'http://xivapi.com/docs/Market#section-5')
             
             // beta notes
             ->h4('*beta* note:')
@@ -158,10 +159,10 @@ class Market extends DocBuilder implements DocInterface
             
             ->line()
             
-            ->h6('Service Status')
-            ->text('Below is a table of each server and their market accessibility status, if your server status
-                is not enabled it may be that the server is congested and new characters cannot be made. Other times
-                it is because the companion API is having difficulties and a login token could not be generated.')
+            ->h6('Server Status')
+            ->text('Below is a table of each server and their market accessibility status. If your server is
+                "offline" it may mean that the server is congested and new characters cannot be made or the
+                companion API is having issues accessing the Data Center where the server is based.')
             ->table($statusHeaders, $statusData)
             ->gap()
 
