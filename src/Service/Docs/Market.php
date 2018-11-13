@@ -188,6 +188,11 @@ class Market extends DocBuilder implements DocInterface
                     ]
                 ]
             )
+            ->gap()
+
+            ->h6('Open Source')
+            ->text('The library the handles all companion interaction is open source (PHP)')
+            ->link('GitHub: companion-php', 'https://github.com/xivapi/companion-php')
 
             ->get();
     }
