@@ -25,7 +25,7 @@ class Content extends DocBuilder implements DocInterface
             // content!
             //
 
-            ->h6('Index')
+            ->h6('Content Lists')
             ->route('/[ContentName]')
             ->usage('{endpoint}/item')
             ->text('Returns a paginated list of content for the specified Content Name')
@@ -56,11 +56,12 @@ class Content extends DocBuilder implements DocInterface
             )
             ->gap(2)
             
-            ->h6('Common Parameters')
-            
+            //
             // schema
-            ->h3('schema')
-            ->usage('{endpoint}/Item?schema=1&pretty=1')
+            //
+            ->h6('Content Schema')
+                ->route('/[ContentName]/schema')
+            ->usage('{endpoint}/Item/schema?pretty=1')
             ->text('View the current column and schema information of the content. Schema is automatically built 
                 from the "biggest" document for that specific content.')
             ->h5('Response information')
@@ -77,6 +78,8 @@ class Content extends DocBuilder implements DocInterface
                 ]
             )
             ->gap()
+
+            ->h6('Common Parameters')
             
             // max items
             ->h3('max_items')
