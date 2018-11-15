@@ -21,6 +21,9 @@ class GenerateLargeItemIconCommand extends Command
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->setSymfonyStyle($input, $output);
+        $this->io->text('Lodestone Large Icon Downloader');
+
         $api = 'https://xivapi.com/market/phoenix/items/%s';
         $url = 'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/%s.png?%s';
 
@@ -36,7 +39,7 @@ class GenerateLargeItemIconCommand extends Command
 
             // grab market info as it includes item id
             // ... yes im a lazy shit; querying my own api
-            $market = json_decode(sprintf($api, $itemId));
+            $market = json_decode(file_get_contents(sprintf($api, $itemId)));
 
             // download if an icon exists
             if (!empty($market->Lodestone->Icon)) {
