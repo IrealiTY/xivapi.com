@@ -40,7 +40,7 @@ class LodestonePvPTeamController extends Controller
         return $this->json(
             Japan::query('/japan/search/pvpteam', [
                 'name'   => $request->get('name'),
-                'server' => $request->get('server'),
+                'server' => ucwords($request->get('server')),
                 'page'   => $request->get('page') ?: 1
             ])
         );

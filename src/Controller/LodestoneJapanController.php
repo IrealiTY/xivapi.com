@@ -20,7 +20,7 @@ class LodestoneJapanController extends Controller
         return $this->json(
             (new Api())->searchCharacter(
                 $request->get('name'),
-                $request->get('server'),
+                ucwords($request->get('server')),
                 $request->get('page')
             )
         );
@@ -34,7 +34,7 @@ class LodestoneJapanController extends Controller
         return $this->json(
             (new Api())->searchFreeCompany(
                 $request->get('name'),
-                $request->get('server'),
+                ucwords($request->get('server')),
                 $request->get('page')
             )
         );
@@ -48,7 +48,7 @@ class LodestoneJapanController extends Controller
         return $this->json(
             (new Api())->searchLinkshell(
                 $request->get('name'),
-                $request->get('server'),
+                ucwords($request->get('server')),
                 $request->get('page')
             )
         );
@@ -62,7 +62,7 @@ class LodestoneJapanController extends Controller
         return $this->json(
             (new Api())->searchPvPTeam(
                 $request->get('name'),
-                $request->get('server'),
+                ucwords($request->get('server')),
                 $request->get('page')
             )
         );

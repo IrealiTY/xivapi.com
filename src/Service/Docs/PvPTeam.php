@@ -9,6 +9,7 @@ class PvPTeam extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('PvP Teams')
             ->text('Search and retrieve PVP Team data from The Lodestone.')
 
             //
@@ -21,7 +22,7 @@ class PvPTeam extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/PvPTeam/Search *', true)
+            ->route('/pvpteam/search *', true)
             ->usage("{endpoint}/pvpteam/search?name=LeAwesome&server=Phoenix")
             ->text('Search for pvp team on The Lodestone. This parses the lodestone in real time so it will be 
                 slow for uncached responses. All search queries are cached for 1 hour. This does not search XIVAPI 
@@ -31,8 +32,7 @@ class PvPTeam extends DocBuilder implements DocInterface
                 [ '`name`', 'The name of the pvpteam to search, you can use `+` for spaces or let the API handle 
                     it for you. If you search very short names you will get lots of responses. This is an issue 
                     with The Lodestone and not much XIVAPI can do about it at this time.' ],
-                [ '`server`', '*(optional)* The server to search against, this is case sensitive - You can obtain 
-                    a list of valid servers via: https://xivapi.com/servers' ],
+                [ '`server`', '*(optional)* The server to search against, list of servers: https://xivapi.com/servers' ],
                 [ '`page`', '*(optional)* Search or move to a specific page.' ]
             ])
             ->gap(2)
@@ -41,7 +41,7 @@ class PvPTeam extends DocBuilder implements DocInterface
             // Get
             //
             ->h6('PvP Team Members')
-            ->route('/PvPTeam/[lodestone_id]', true)
+            ->route('/pvpteam/[lodestone_id]', true)
             ->usage('{endpoint}/pvpteam/8e0bcac3c1380c9b08f104aab4c9605dfd846a1b')
             ->text('Get PVP Team data, due to the nature of availability on the service this 
                 endpoint will return either populated data or nothing, you will have to check the `Info` 

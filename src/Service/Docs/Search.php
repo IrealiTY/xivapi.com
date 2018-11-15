@@ -17,6 +17,7 @@ class Search extends DocBuilder implements DocInterface
         }
         
         return $this
+            ->h1('Search')
             ->text('XIVAPI provides the ability to quickly search all game content via ElasticSearch. 
                 This search endpoint only searches game content and not: characters, free companies, 
                 linkshells or pvp teams. Those have their own dedicated search endpoints as they 
@@ -29,7 +30,7 @@ class Search extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/Search', true)
+            ->route('/search', true)
             ->usage("{endpoint}/search?string=allagan+visor&pretty=1")
             ->text('Search for something! The Search is multi-content and contains combined data, 
                 this means your search request covers a vast amount of selected content 

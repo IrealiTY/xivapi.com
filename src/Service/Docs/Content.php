@@ -7,13 +7,14 @@ class Content extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Game Content')
             ->text('Obtain game content data of Final Fantasy XIV.')
             ->text('If you find anything odd and want to look at the raw CSV values, 
                 visit: https://github.com/viion/ffxiv-datamining/tree/master/csv')
             ->gap()
 
             ->h6('Content')
-            ->route('/Content', true)
+            ->route('/content', true)
             ->usage('{endpoint}/content')
             ->text('View a list of available content that is accessible in the API. Content is added rapidly 
                 when discovered and mapped to the SaintCoincach Schema, with huge effort from the community 
@@ -26,9 +27,7 @@ class Content extends DocBuilder implements DocInterface
 
             ->h6('Index')
             ->route('/[ContentName]')
-            ->usage('{endpoint}/Item')
-            ->note('[ContentName] is case sensitive, for example: `Item` will work, `item` will not. 
-                This is intentional.')
+            ->usage('{endpoint}/item')
             ->text('Returns a paginated list of content for the specified Content Name')
             ->h5('Pagination structure')
             ->json('{
@@ -101,9 +100,7 @@ class Content extends DocBuilder implements DocInterface
 
             ->h6('Content Data')
             ->route('/[ContentName]/[ID]')
-            ->usage('{endpoint}/Item/1675')
-            ->note('[ContentName] is case sensitive, for example: `Item` will work, `item` will not. This is 
-                intentional.')
+            ->usage('{endpoint}/item/1675')
             ->text('Returns information about a specific object including extended information.')
             ->gap()
             
@@ -128,9 +125,13 @@ class Content extends DocBuilder implements DocInterface
             // Server List
             //
             ->h6('Server List')
-            ->route('/Servers', true)
+            ->route('/servers')
             ->usage('{endpoint}/servers')
             ->text('A list of servers on the official servers (JA, EN, FR, DE)')
+    
+            ->route('/servers/dc')
+            ->usage('{endpoint}/servers/dc')
+            ->text('Another list of servers grouped by their data center.')
             
             ->get();
     }

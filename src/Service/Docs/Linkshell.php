@@ -9,6 +9,7 @@ class Linkshell extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Linkshells')
             ->text('Search and retrieve Linkshell data from The Lodestone.')
 
             //
@@ -21,7 +22,7 @@ class Linkshell extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/Linkshell/Search *', true)
+            ->route('/linkshell/search *', true)
             ->usage("{endpoint}/linkshell/search?name=LeAwesome&server=Phoenix")
             ->text('Search for linkshells on The Lodestone. This parses the lodestone in real time so it will 
                 be slow for uncached responses. All search queries are cached for 1 hour. This does not search 
@@ -41,7 +42,7 @@ class Linkshell extends DocBuilder implements DocInterface
             // Get
             //
             ->h6('Linkshell Members')
-            ->route('/Linkshell/[lodestone_id]', true)
+            ->route('/linkshell/[lodestone_id]', true)
             ->usage('{endpoint}/linkshell/19984723346535274')
             ->text('Get Linkshell data, due to the nature of availability on the service this endpoint 
                 will return either populated data or nothing, you will have to check the `Info` 

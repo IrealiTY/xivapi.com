@@ -3,6 +3,8 @@
 namespace App\Service\Content;
 
 use App\Entity\App;
+use App\Service\Common\Arrays;
+use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 use App\Service\Apps\AppManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,13 +91,22 @@ class ContentList
         }
 
         // get list data
+
+        // temp hack...
+        $columns = $this->request->get('columns')
+            ? array_unique(explode(',', $this->request->get('columns')))
+            : ["ID","Name","Icon","Url"];
+
         $data = [];
         foreach ($this->ids as $id) {
             $content = $this->cache->get("xiv_{$this->name}_{$id}");
             
             if ($content) {
-                $data[] = $content;
+                $content = Language::handle($content, $this->request->get('language'));
+                $data[] = Arrays::extractColumns($content, $columns);
             }
+
+            unset($content);
         }
        
         return [

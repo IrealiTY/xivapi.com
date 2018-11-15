@@ -7,9 +7,11 @@ class PatchList extends DocBuilder implements DocInterface
     public function build()
     {
         return $this
+            ->h1('Patch List')
+            
             // Lodestone
-            ->route('/PatchList', true)
-            ->usage("{endpoint}/PatchList")
+            ->route('/patchlist', true)
+            ->usage("{endpoint}/patchlist")
             ->text('The API keeps a track record of when a piece of content is updated, this is based on which
                 patch version the ID appears; ignoring all "dummy" rows. This patch list is handled manually
                 and has been curated over many years. Work is in progress to ensure an accurate patch version

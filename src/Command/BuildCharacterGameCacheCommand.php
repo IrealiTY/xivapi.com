@@ -70,6 +70,10 @@ class BuildCharacterGameCacheCommand extends Command
         foreach ($this->cache->get("ids_{$contentName}") as $id) {
             $content = $this->cache->get("xiv_{$contentName}_{$id}");
             $this->data[$contentName][Hash::hash($content->Name_en)] = $content->ID;
+            
+            if (isset($content->NameFemale_en)) {
+                $this->data[$contentName][Hash::hash($content->NameFemale_en)] = $content->ID;
+            }
         }
     }
 

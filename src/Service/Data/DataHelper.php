@@ -9,6 +9,9 @@ class DataHelper
      * this is mainly for names.
      */
     const COLUMNS = [
+        'Aetheryte' => [
+            'Singular' => 'Name'
+        ],
         'BNpcName' => [
             'Singular' => 'Name'
         ],
@@ -35,6 +38,27 @@ class DataHelper
         ],
         'Quest' => [
             'Id' => 'TextFile',
+        ],
+        'EurekaAetherItem' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankGridaniaFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankGridaniaMaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankLimsaFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankLimsaMaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankUldahFemaleText' => [
+            'Singular' => 'Name'
+        ],
+        'GCRankUldahMaleText' => [
+            'Singular' => 'Name'
         ],
     ];
 

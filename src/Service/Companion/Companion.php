@@ -2,76 +2,146 @@
 
 namespace App\Service\Companion;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use App\Service\Redis\Cache;
+use Companion\CompanionApi;
 
 class Companion
 {
-    const ENDPOINT      = 'https://companion.finalfantasyxiv.com';
-    const ENDPOINT_DC   = 'https://companion-eu.finalfantasyxiv.com';
-    const VERSION_PATH  = '/sight-v060/sight';
-    const CACHE_TIME    = 600; // 10 minutes
-    const TIMEOUT_SEC   = 15; // 15 seconds
-    const MAX_TRIES     = 15;
-    const DELAY_MS      = 250000; // 250ms
+    use CompanionEnrich;
     
-    public static function setToken($token)
-    {
-        file_put_contents(__DIR__.'/token', trim($token));
-    }
+    const PROFILE_FILENAME = __DIR__.'/accounts.json';
     
-    public static function getToken()
-    {
-        return trim(file_get_contents(__DIR__.'/token'));
-    }
-
+    /** @var CompanionApi */
+    private $api;
+    
     /**
-     * Request data from the companion app
+     * Set server for all DC requests
      */
-    protected function request(CompanionRequest $request): array
+    public function setServer(string $server): Companion
     {
-        $client = new Client([
-            'base_uri' => $request->baseUri,
-            'timeout'  => self::TIMEOUT_SEC
-        ]);
-
-        try {
-            // add headers
-            $options = [
-                RequestOptions::HEADERS => $request->headers
-            ];
-
-            // if a json payload exists, include it
-            if ($request->json) {
-                $options[RequestOptions::JSON] = $request->json;
-            }
-
-            $start = $this->getTimestamp();
-            foreach (range(0, self::MAX_TRIES) as $attempts) {
-                $response = $client->get($request->apiRoute, $options);
-
-                // if the response is 202, then we wait and try again
-                if ($response->getStatusCode() == 202) {
-                    usleep(self::DELAY_MS);
-                    continue;
-                }
-
-                // get response
-                $data  = json_decode((string)$response->getBody(), true);
-                $speed = $this->getTimestamp() - $start;
-
-                // return to API call
-                return [ $data, $speed, $attempts ];
-            }
-            
-            throw new \Exception('Could not fetch data from Companion API');
-        } catch (\Exception $ex) {
-            throw $ex;
+        $server = ucwords($server);
+        
+        // initialize api
+        $this->api = new CompanionApi("xivapi_{$server}", self::PROFILE_FILENAME);
+    
+        // validate
+        $validServers = CompanionTokenManager::SERVERS;
+        if (!isset($validServers[$server])) {
+            throw new \Exception("Sorry! {$server} is not a valid server.");
         }
+        
+        // if no token, error
+        if (empty($this->api->Profile()->getToken())) {
+            throw new \Exception("Sorry! At this time we do not support the server: {$server} - This is likely due to world congestion preventing new characters");
+        }
+        
+        return $this;
     }
-
-    protected function getTimestamp()
+    
+    /**
+     * Get prices for a specific item
+     */
+    public function getItemPrices($itemId): array
     {
-        return round(microtime(true) * 1000);
+        $item     = $this->getEnrichedItem($itemId);
+        $response = $this->api->Market()->getItemMarketListings($itemId);
+        
+        // build prices
+        $prices = [];
+        foreach ($response->entries as $row) {
+            $prices[] = [
+                'ID'             => $itemId,
+                'Materia'        => $this->getEnrichedMateria($row->materia),
+                'Town'           => $this->getEnrichedTown($row->registerTown),
+                'Quantity'       => $row->stack,
+                'CraftSignature' => $row->signatureName,
+                'IsHQ'           => (bool)($row->hq ? true : false),
+                'IsCrafted'      => (bool)($row->isCrafted ? true : false),
+                'Stain'          => $row->stain,
+                'PricePerUnit'   => $row->sellPrice,
+                'PriceTotal'     => $row->sellPrice * $row->stack,
+                'RetainerName'   => $row->sellRetainerName,
+            ];
+        }
+        
+        // build market
+        return [
+            'Item'      => $item,
+            'Prices'    => $prices,
+            'Lodestone' => [
+                'LodestoneId'   => $response->eorzeadbItemId,
+                'Icon'          => $response->icon,
+                'IconHq'        => $response->iconHq,
+            ],
+        ];
+    }
+    
+    /**
+     * Get history for a specific item
+     */
+    public function getItemHistory($itemId): array
+    {
+        $item     = $this->getEnrichedItem($itemId);
+        $response = $this->api->Market()->getTransactionHistory($itemId);
+        
+        // build history
+        $history = [];
+        foreach ($response->history as $row) {
+            $history[] = [
+                'Quantity'      => $row->stack,
+                'PricePerUnit'  => $row->sellPrice,
+                'PriceTotal'    => $row->sellPrice * $row->stack,
+                'CharacterName' => $row->buyCharacterName,
+                'PurchaseDate'  => $row->buyRealDate/1000,
+                'IsHQ'          => $row->hq,
+            ];
+        }
+    
+        // build market
+        return [
+            'Item'      => $item,
+            'History'   => $history,
+        ];
+    }
+    
+    /**
+     * Get category listings for an item
+     */
+    public function getCategoryList($categoryId): array
+    {
+        $response = $this->api->Market()->getMarketListingsByCategory($categoryId);
+        
+        // build list
+        $list = [];
+        foreach ($response->items as $row) {
+            $list[] = [
+                'ID'        => $row->catalogId,
+                'Item'      => $this->getEnrichedItem($row->catalogId),
+                'Quantity'  => $row->count,
+            ];
+        }
+        
+        return $list;
+    }
+    
+    /**
+     * Get a list of search categories
+     */
+    public function getCategories(): array
+    {
+        $arr = [];
+        foreach ($this->cache->get('ids_ItemSearchCategory') as $id) {
+            $category = $this->cache->get("xiv_ItemSearchCategory_{$id}");
+            // Ignore anything with no name or no category id
+            if (empty($category->Name_en) || $category->Category == 0) {
+                continue;
+            }
+        
+            // Don't care much about these bits
+            unset($category->ClassJob, $category->GameContentLinks);
+            $arr[] = $category;
+        }
+        
+        return $arr;
     }
 }

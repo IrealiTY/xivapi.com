@@ -205,7 +205,7 @@ class DocBuilder
         $this->doc[] = "## `{$route}`";
 
         if ($canBeLowerCase) {
-            $this->doc[] = 'lower-case supported: `'. strtolower($route) .'`';
+            //$this->doc[] = 'lower-case supported: `'. strtolower($route) .'`';
         }
 
         $this->doc[] = ' ';

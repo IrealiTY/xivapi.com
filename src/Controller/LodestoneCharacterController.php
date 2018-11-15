@@ -55,7 +55,7 @@ class LodestoneCharacterController extends Controller
         return $this->json(
             Japan::query('/japan/search/character', [
                 'name'   => $request->get('name'),
-                'server' => $request->get('server'),
+                'server' => ucwords($request->get('server')),
                 'page'   => $request->get('page') ?: 1
             ])
         );
@@ -291,7 +291,7 @@ class LodestoneCharacterController extends Controller
         [$entAchievements, $data] = $this->service->getAchievements($id);
 
         if ($this->service->cache->get(__METHOD__.$id)) {
-            return $this->json(0);
+            // return $this->json(0);
         }
 
         // Bump to front
