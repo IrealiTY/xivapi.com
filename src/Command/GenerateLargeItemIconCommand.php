@@ -37,6 +37,14 @@ class GenerateLargeItemIconCommand extends Command
         foreach ($ids as $itemId) {
             $count++;
 
+            // local filename
+            $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
+
+            // if the file exists, skip it!
+            if (file_exists($filename)) {
+                continue;
+            }
+
             // grab market info as it includes item id
             // ... yes im a lazy shit; querying my own api
             $market = json_decode(file_get_contents(sprintf($api, $itemId)));
@@ -46,8 +54,7 @@ class GenerateLargeItemIconCommand extends Command
                 // download icon and move it to local copy
                 $iconUrl = sprintf($url, $market->Lodestone->Icon, time());
 
-                // local filename
-                $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
+
 
                 // download icon
                 copy($iconUrl, $filename);
