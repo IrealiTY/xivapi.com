@@ -54,8 +54,6 @@ class GenerateLargeItemIconCommand extends Command
                 // download icon and move it to local copy
                 $iconUrl = sprintf($url, $market->Lodestone->Icon, time());
 
-
-
                 // download icon
                 copy($iconUrl, $filename);
             }
