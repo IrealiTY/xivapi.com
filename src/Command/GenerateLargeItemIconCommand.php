@@ -44,7 +44,7 @@ class GenerateLargeItemIconCommand extends Command
             // download if an icon exists
             if (!empty($market->Lodestone->Icon)) {
                 // download icon and move it to local copy
-                $iconUrl = sprintf($url, $market->Lodestone->LodestoneId, time());
+                $iconUrl = sprintf($url, $market->Lodestone->Icon, time());
 
                 // local filename
                 $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
@@ -62,7 +62,7 @@ class GenerateLargeItemIconCommand extends Command
             ];
 
             $cache->set("xiv2_Item_{$itemId}", $secondary);
-            $this->io->text("{$count}/{$total}");
+            $this->io->text("{$count}/{$total} - Downloaded: {$market->Item->Name}");
         }
 
     }
