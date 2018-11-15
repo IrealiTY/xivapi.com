@@ -2,9 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\Companion\Companion;
 use App\Service\Redis\Cache;
-use Companion\CompanionApi;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,10 +21,8 @@ class GenerateLargeItemIconCommand extends Command
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $api = 'https://xivapi.com/market/phoenix/items/%s';
         $url = 'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/%s.png?%s';
-
-        // connect to companion app
-        $companion = new CompanionApi('xivapi_Phoenix', Companion::PROFILE_FILENAME);
 
         // redis cache
         $cache = new Cache();
@@ -39,7 +35,8 @@ class GenerateLargeItemIconCommand extends Command
             $count++;
 
             // grab market info as it includes item id
-            $market = $companion->Market()->getItemMarketListings($itemId);
+            // ... yes im a lazy shit; querying my own api
+            $market = json_decode(sprintf($api, $itemId));
 
             // download icon and move it to local copy
             $iconUrl = sprintf($url, $market->Lodestone->LodestoneId, time());
