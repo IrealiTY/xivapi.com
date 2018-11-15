@@ -98,10 +98,29 @@ class XivGameContentController extends Controller
         $start = microtime(true);
         $app = $this->appManager->fetch($request);
         
-        $content = $request->get('schema')
-            ? $this->cache->get("schema_{$name}")
-            : $this->contentList->get($request, $name, $app);
+        $content = $this->contentList->get($request, $name, $app);
         
+        $duration = microtime(true) - $start;
+        GoogleAnalytics::hit([$name]);
+        GoogleAnalytics::event('content', 'list', 'duration', $duration);
+        return $this->json($content);
+    }
+
+    /**
+     * @Route("/{name}/schema")
+     */
+    public function schema(Request $request, $name)
+    {
+        $name = ContentNameCaseConverter::toUpperCase($name);
+        if (!$name) {
+            throw new NotFoundHttpException("No content data found for: {$name}");
+        }
+
+        $start = microtime(true);
+        $this->appManager->fetch($request);
+
+        $content = $this->cache->get("schema_{$name}");
+
         $duration = microtime(true) - $start;
         GoogleAnalytics::hit([$name]);
         GoogleAnalytics::event('content', 'list', 'duration', $duration);
@@ -122,12 +141,9 @@ class XivGameContentController extends Controller
         $start = microtime(true);
         $this->appManager->fetch($request);
     
-        $content = $request->get('schema')
-            ? $this->cache->get("schema_{$name}")
-            : $this->cache->get("xiv_{$name}_{$id}");
-
+        $content = $this->cache->get("xiv_{$name}_{$id}");
         if (!$content) {
-            throw new NotFoundHttpException("FFXIV Game Content not found for; ID = {$id}, Name = {$name}");
+            throw new NotFoundHttpException("No content data found for: {$name} {$id}");
         }
     
         $duration = microtime(true) - $start;

@@ -2,6 +2,7 @@
 
 namespace App\Service\Docs;
 
+use App\Service\Common\Environment;
 use App\Service\Companion\CompanionTokenManager;
 
 class Market extends DocBuilder implements DocInterface
@@ -173,6 +174,9 @@ class Market extends DocBuilder implements DocInterface
             ->text('Below is a table of each server and their market accessibility status. If your server is
                 "offline" it may mean that the server is congested and new characters cannot be made or the
                 companion API is having issues accessing the Data Center where the server is based.')
+            ->text(constant(Environment::CONSTANT) === 'staging'
+                ? 'Please ignore the table below in staging as the status is only updated in the prod environment'
+                : 'Live as of: '. date('Y-m-d H:i') .' UTC')
             ->table($statusHeaders, $statusData)
             ->gap(2)
 
