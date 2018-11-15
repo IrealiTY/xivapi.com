@@ -68,12 +68,12 @@ class Content extends DocBuilder implements DocInterface
             ->table(
                 [ 'Field', 'Details' ],
                 [
-                    [ '`ColumnCount`', 'The total number of columns found in the schema, this can be even higher if 
+                    [ '`ColumnCount`', 'The total number of columns found in the schema, this can be even higher if <br> 
                         the content that generated the schema doesn\'t have everything possible!' ],
-                    [ '`Columns`', 'A list of columns you can choose using the `columns=X,Y,Z` query parameter. 
+                    [ '`Columns`', 'A list of columns you can choose using the `columns=X,Y,Z` query parameter.<br> 
                         Sub content is in dot notation.' ],
                     [ '`ContentID`', 'The ID of the content that generated this schema, so you can view the real data!' ],
-                    [ '`ContentSchema`', 'Similar to `Columns` but it provides the full structure and provides data 
+                    [ '`ContentSchema`', 'Similar to `Columns` but it provides the full structure and provides data <br> 
                         types where possible (these are auto-detected)'],
                 ]
             )
