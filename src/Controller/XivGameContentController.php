@@ -142,9 +142,16 @@ class XivGameContentController extends Controller
         $this->appManager->fetch($request);
     
         $content = $this->cache->get("xiv_{$name}_{$id}");
+        $content2 = $this->cache->get("xiv2_{$name}_{$id}") ?: (object)[];
+
         if (!$content) {
             throw new NotFoundHttpException("No content data found for: {$name} {$id}");
         }
+
+        $content = array_merge(
+            (array)$content,
+            (array)$content2
+        );
     
         $duration = microtime(true) - $start;
         GoogleAnalytics::hit([$name, $id]);

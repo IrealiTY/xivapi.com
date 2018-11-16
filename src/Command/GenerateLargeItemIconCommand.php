@@ -9,6 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateLargeItemIconCommand extends Command
 {
+    const SAVED_LIST_FILENAME = __DIR__.'/resources/icons.json';
+
     use CommandHelperTrait;
 
     protected function configure()
@@ -29,6 +31,7 @@ class GenerateLargeItemIconCommand extends Command
 
         // redis cache
         $cache = new Cache();
+        $completed = json_decode(file_get_contents(self::SAVED_LIST_FILENAME));
 
         // loop through items
         $ids   = $cache->get('ids_Item');
@@ -36,6 +39,14 @@ class GenerateLargeItemIconCommand extends Command
         $count = 0;
         foreach ($ids as $itemId) {
             $count++;
+
+            // local filename
+            $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
+
+            // Skip if file exists or we've previously completed it.
+            if (file_exists($filename) || in_array($itemId, $completed)) {
+                continue;
+            }
 
             // grab market info as it includes item id
             // ... yes im a lazy shit; querying my own api
@@ -45,9 +56,6 @@ class GenerateLargeItemIconCommand extends Command
             if (!empty($market->Lodestone->Icon)) {
                 // download icon and move it to local copy
                 $iconUrl = sprintf($url, $market->Lodestone->Icon, time());
-
-                // local filename
-                $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
 
                 // download icon
                 copy($iconUrl, $filename);
@@ -63,6 +71,10 @@ class GenerateLargeItemIconCommand extends Command
 
             $cache->set("xiv2_Item_{$itemId}", $secondary);
             $this->io->text("{$count}/{$total} - Downloaded: {$market->Item->Name}");
+
+            // save completed
+            $completed[] = $itemId;
+            file_put_contents(self::SAVED_LIST_FILENAME, json_encode($completed));
         }
 
     }
