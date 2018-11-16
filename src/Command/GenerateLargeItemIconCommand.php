@@ -29,6 +29,7 @@ class GenerateLargeItemIconCommand extends Command
 
         // redis cache
         $cache = new Cache();
+        $completed = json_decode(file_get_contents(__DIR__.'/icons.json'));
 
         // loop through items
         $ids   = $cache->get('ids_Item');
@@ -40,8 +41,8 @@ class GenerateLargeItemIconCommand extends Command
             // local filename
             $filename = __DIR__ ."/../../public/i2/{$itemId}.png";
 
-            // if the file exists, skip it!
-            if (file_exists($filename)) {
+            // Skip if file exists or we've previously completed it.
+            if (file_exists($filename) || in_array($itemId, $completed)) {
                 continue;
             }
 
@@ -68,6 +69,10 @@ class GenerateLargeItemIconCommand extends Command
 
             $cache->set("xiv2_Item_{$itemId}", $secondary);
             $this->io->text("{$count}/{$total} - Downloaded: {$market->Item->Name}");
+
+            // save completed
+            $completed[] = $itemId;
+            file_put_contents(__DIR__.'/icons.json', json_encode($completed));
         }
 
     }
