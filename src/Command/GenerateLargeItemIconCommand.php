@@ -63,7 +63,7 @@ class GenerateLargeItemIconCommand extends Command
 
             // set secondary information
             $secondary = (Object)[
-                'Icon2x'          => $filename ?? null,
+                'Icon2x'          => isset($filename) ? "/i2/{$itemId}.png" : null,
                 'LodestoneID'     => $market->Lodestone->LodestoneId,
                 'LodestoneIcon'   => $market->Lodestone->Icon,
                 'LodestoneIconHQ' => $market->Lodestone->IconHq,
