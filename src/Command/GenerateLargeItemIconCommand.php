@@ -45,7 +45,7 @@ class GenerateLargeItemIconCommand extends Command
 
             // Skip if file exists or we've previously completed it.
             if (file_exists($filename) || in_array($itemId, $completed)) {
-                continue;
+                //continue;
             }
 
             // grab market info as it includes item id
@@ -55,10 +55,10 @@ class GenerateLargeItemIconCommand extends Command
             // download if an icon exists
             if (!empty($market->Lodestone->Icon)) {
                 // download icon and move it to local copy
-                $iconUrl = sprintf($url, $market->Lodestone->Icon, time());
+                //$iconUrl = sprintf($url, $market->Lodestone->Icon, time());
 
                 // download icon
-                copy($iconUrl, $filename);
+                //copy($iconUrl, $filename);
             }
 
             // set secondary information
@@ -69,7 +69,7 @@ class GenerateLargeItemIconCommand extends Command
                 'LodestoneIconHQ' => $market->Lodestone->IconHq,
             ];
 
-            $cache->set("xiv2_Item_{$itemId}", $secondary);
+            $cache->set("xiv2_Item_{$itemId}", $secondary, SaintCoinachRedisCommand::REDIS_DURATION);
             $this->io->text("{$count}/{$total} - Downloaded: {$market->Item->Name}");
 
             // save completed
