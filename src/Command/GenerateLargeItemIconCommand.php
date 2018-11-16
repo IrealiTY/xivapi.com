@@ -9,6 +9,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateLargeItemIconCommand extends Command
 {
+    const SAVED_LIST_FILENAME = __DIR__.'/resources/icons.json';
+
     use CommandHelperTrait;
 
     protected function configure()
@@ -29,7 +31,7 @@ class GenerateLargeItemIconCommand extends Command
 
         // redis cache
         $cache = new Cache();
-        $completed = json_decode(file_get_contents(__DIR__.'/icons.json'));
+        $completed = json_decode(file_get_contents(self::SAVED_LIST_FILENAME));
 
         // loop through items
         $ids   = $cache->get('ids_Item');
@@ -72,7 +74,7 @@ class GenerateLargeItemIconCommand extends Command
 
             // save completed
             $completed[] = $itemId;
-            file_put_contents(__DIR__.'/icons.json', json_encode($completed));
+            file_put_contents(self::SAVED_LIST_FILENAME, json_encode($completed));
         }
 
     }
