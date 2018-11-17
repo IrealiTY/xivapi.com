@@ -14,7 +14,7 @@ class GameData
      */
     public static function init()
     {
-        if (!self::$cache === null) {
+        if (self::$cache === null) {
             self::$cache = new Cache();
         }
     }
