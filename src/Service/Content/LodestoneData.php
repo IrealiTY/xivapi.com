@@ -424,7 +424,7 @@ class LodestoneData
                     'Icon',
                     'Url',
                     'Name_[LANG]',
-                    'Abbreviation_[LANG]'
+                    'Abbreviation_[LANG]',
                 ]
             );
 
@@ -434,7 +434,7 @@ class LodestoneData
                     'Icon',
                     'Url',
                     'Name_[LANG]',
-                    'Abbreviation_[LANG]'
+                    'Abbreviation_[LANG]',
                 ]
             );
 
@@ -450,7 +450,7 @@ class LodestoneData
                 'Icon',
                 'Url',
                 'Name_[LANG]',
-                'Abbreviation_[LANG]'
+                'Abbreviation_[LANG]',
             ]
         );
         $data->ActiveClassJob->Job = self::extendCharacterDataHandlerSimple(
@@ -459,7 +459,7 @@ class LodestoneData
                 'Icon',
                 'Url',
                 'Name_[LANG]',
-                'Abbreviation_[LANG]'
+                'Abbreviation_[LANG]',
             ]
         );
 
@@ -475,7 +475,7 @@ class LodestoneData
                 'Icon',
                 'Url',
                 'Name_[LANG]',
-                'Abbreviation_[LANG]'
+                'Abbreviation_[LANG]',
             ]
         );
         $data->GearSet->Job = self::extendCharacterDataHandlerSimple(
@@ -484,7 +484,7 @@ class LodestoneData
                 'Icon',
                 'Url',
                 'Name_[LANG]',
-                'Abbreviation_[LANG]'
+                'Abbreviation_[LANG]',
             ]
         );
         unset(
@@ -500,7 +500,7 @@ class LodestoneData
                 self::getContent("xiv_BaseParam_{$id}"),
                 [
                     'ID',
-                    'Name_[LANG]'
+                    'Name_[LANG]',
                 ]
             );
 
@@ -526,8 +526,10 @@ class LodestoneData
                     'LevelEquip',
                     'LevelItem',
                     'Rarity',
+                    'ItemUICategory.ID',
                     'ItemUICategory.Name_[LANG]',
-                    'ClassJobCategory.Name_[LANG]'
+                    'ClassJobCategory.ID',
+                    'ClassJobCategory.Name_[LANG]',
                 ]
             );
 
@@ -537,7 +539,7 @@ class LodestoneData
                 [
                     'ID',
                     'Icon',
-                    'Name_[LANG]'
+                    'Name_[LANG]',
                 ]
             ) : null;
 
@@ -547,7 +549,7 @@ class LodestoneData
                 [
                     'ID',
                     'Icon',
-                    'Name_[LANG]'
+                    'Name_[LANG]',
                 ]
             ) : null;
 
