@@ -45,7 +45,7 @@ class GenerateLargeItemIconCommand extends Command
 
             // Skip if file exists or we've previously completed it.
             if (file_exists($filename) || in_array($itemId, $completed)) {
-                //continue;
+                continue;
             }
 
             // grab market info as it includes item id
