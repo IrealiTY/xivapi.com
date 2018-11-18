@@ -105,7 +105,7 @@ class CompanionTokenManager
      * if this succeeds it will be copied to the main login `xivapi_[server]
      * otherwise it wil lbe marked with an error.
      */
-    public function go(string $account): void
+    public function go(string $account, bool $debug = false): void
     {
         $this->date = date('Y-m-d H:i:s') . ' (UTC)';
         $this->io->title('Companion App API Token Manager');
@@ -114,6 +114,11 @@ class CompanionTokenManager
         [$username, $password] = explode(',', getenv($account));
 
         foreach (self::SERVERS as $server => $accountRegistered) {
+            // skip all but phoenix if in debug mode
+            if ($debug && $server !== 'Phoenix') {
+                continue;
+            }
+            
             try {
                 // skip characters not for this account
                 if ($account != $accountRegistered) {
@@ -184,6 +189,11 @@ class CompanionTokenManager
         
         // copy all temps to mains
         foreach (self::SERVERS as $server => $accountRegistered) {
+            // skip all but phoenix if in debug mode
+            if ($debug && $server !== 'Phoenix') {
+                continue;
+            }
+            
             // skip characters not for this account
             if ($account != $accountRegistered) {
                 continue;
