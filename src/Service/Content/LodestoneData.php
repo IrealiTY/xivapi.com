@@ -276,7 +276,7 @@ class LodestoneData
         $content = json_decode(json_encode($content), true);
 
         if (!$content) {
-            return [];
+            return null;
         }
 
         // build new array using fields
