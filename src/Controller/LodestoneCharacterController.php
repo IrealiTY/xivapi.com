@@ -200,7 +200,7 @@ class LodestoneCharacterController extends Controller
 
         $key = __METHOD__ . $id;
         if ($data = $this->service->cache->get($key)) {
-            return $data;
+            return $this->json($data);
         }
 
         $character = (new Api())->getCharacter($id);
