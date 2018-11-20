@@ -96,7 +96,7 @@ class LodestoneData
     
     public static function findContent($category, $string)
     {
-        return self::$content->{$category}->{Hash::hash(trim($string))} ?? "[NOT FOUND]";
+        return self::$content->{$category}->{Hash::hash(trim($string))} ?? "[NOT FOUND: {$string}]";
     }
     
     /**
