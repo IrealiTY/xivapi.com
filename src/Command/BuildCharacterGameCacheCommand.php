@@ -104,21 +104,18 @@ class BuildCharacterGameCacheCommand extends Command
         
             // soul Stones
             if ($item->ItemUICategory->ID == 62) {
-                $this->io->text('Adding: Soul Stones');
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }
         
             // materia
             if ($item->ItemUICategory->ID == 58) {
-                $this->io->text("Adding: Materia: {$item->Name_en}");
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }
         
             // dyes
             if ($item->ItemUICategory->ID == 55) {
-                $this->io->text("Adding: Dyes: {$item->Name_en}");
                 $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
                 continue;
             }
