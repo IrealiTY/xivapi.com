@@ -13,6 +13,9 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 class CharacterService extends Service
 {
+    /**
+     * Get a character; this will add the character if they do not exist
+     */
     public function get($id): array
     {
         /** @var Character $ent */
@@ -20,6 +23,9 @@ class CharacterService extends Service
         return $ent ? $this->fetch($ent) : $this->register($id);
     }
     
+    /**
+     * Fetch an existing character
+     */
     public function fetch(Character $ent): array
     {
         if ($ent->getState() === Character::STATE_CACHED) {
@@ -29,19 +35,20 @@ class CharacterService extends Service
         return [ $ent, $data[0] ?? null, $data[1] ?? null ];
     }
     
+    /**
+     * Register a new character to be added to the site
+     */
     public function register($id): array
     {
         if (!is_numeric($id) || strlen($id) > 32) {
             throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
 
-        //$ent = new Character($id);
-        //$this->persist($ent);
+        $ent = new Character($id);
+        $this->persist($ent);
 
         // send a request to rabbit mq to add this character
-        CharacterQueue::add($id, CharacterQueue::FAST);
-
-        die('in queue');
+        CharacterQueue::request($id, CharacterQueue::FAST);
 
         return [ $ent, null, null ];
     }

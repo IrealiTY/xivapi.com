@@ -17,6 +17,7 @@ use App\Service\Lodestone\CharacterService;
 use App\Service\Lodestone\FreeCompanyService;
 use App\Service\Lodestone\PvPTeamService;
 use App\Service\Lodestone\ServiceQueues;
+use App\Service\LodestoneQueue\CharacterQueue;
 use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Lodestone\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -290,9 +291,12 @@ class LodestoneCharacterController extends Controller
         [$entFriends, $data] = $this->service->getFriends($id);
         [$entAchievements, $data] = $this->service->getAchievements($id);
 
-        if ($this->service->cache->get(__METHOD__.$id)) {
-            // return $this->json(0);
+        if (!$request->get('mq') && $this->service->cache->get(__METHOD__.$id)) {
+            return $this->json(0);
         }
+    
+        // send a request to rabbit mq to add this character
+        CharacterQueue::request($id, CharacterQueue::FAST);
 
         // Bump to front
         $ent->setUpdated(0);

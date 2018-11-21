@@ -14,7 +14,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMQ
 {
     const DURATION = 55;
-    const TIMEOUT = 15;
+    const TIMEOUT = 55;
     const QUEUE_OPTIONS = [
         'passive'       => false,
         'durable'       => false,
@@ -76,7 +76,7 @@ class RabbitMQ
             $handler(json_decode($message->body));
 
             // if the environment is prod, we will mark the message is read.
-            if (getenv('APP_ENV') == 'prod') {
+            if (true || getenv('APP_ENV') == 'prod') {
                 $channel->basic_ack($message->delivery_info['delivery_tag']);
             }
         };

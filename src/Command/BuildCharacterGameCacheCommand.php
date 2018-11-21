@@ -41,7 +41,6 @@ class BuildCharacterGameCacheCommand extends Command
         $this->setSymfonyStyle($input, $output);
         $this->io->title('Patch Management');
 
-        $this->cacheItems();
         $this->CacheMounts();
         $this->cacheGeneric('Companion');
         $this->cacheGeneric('Race');
@@ -57,6 +56,7 @@ class BuildCharacterGameCacheCommand extends Command
         $this->cacheGeneric('GCRankLimsaMaleText');
         $this->cacheGeneric('GCRankUldahFemaleText');
         $this->cacheGeneric('GCRankUldahMaleText');
+        $this->cacheItems();
 
         // cache for 100 days!
         file_put_contents(__DIR__.'/resources/lodestone_data.json', json_encode($this->data, JSON_PRETTY_PRINT));
@@ -94,7 +94,13 @@ class BuildCharacterGameCacheCommand extends Command
     private function cacheItems()
     {
         $this->io->text('Cache: Item');
-        foreach ($this->cache->get('ids_Item') as $id) {
+        $ids = $this->cache->get('ids_Item');
+        
+        $this->io->progressStart(count($ids));
+        
+        foreach ($ids as $id) {
+            $this->io->progressAdvance();
+            
             $item = $this->cache->get("xiv_Item_{$id}");
 
             // no name? skip
@@ -112,5 +118,6 @@ class BuildCharacterGameCacheCommand extends Command
 
             $this->data['Item'][$hash] = $item->ID;
         }
+        $this->io->progressFinish();
     }
 }

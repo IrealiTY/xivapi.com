@@ -2,23 +2,24 @@
 
 namespace App\Command;
 
+use App\Entity\Character;
+use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\LodestoneQueue\Manager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * | This would run on the XIVAPI side. XIVAPI processes responses.
+ * | This would run on the XIVAPI side. XIVAPI decides who to queue
  * |
- * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerResponse characters_fast
+ * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerQueue
  * |
- * |    php bin/console AutoManagerResponse characters_fast
+ * |    php bin/console AutoManagerQueue
  * |
  */
-class AutoManagerResponse extends Command
+class AutoManagerQueue extends Command
 {
     /** @var EntityManagerInterface */
     private $em;
@@ -32,15 +33,20 @@ class AutoManagerResponse extends Command
     protected function configure()
     {
         $this
-            ->setName('AutoManagerResponse')
+            ->setName('AutoManagerQueue')
             ->setDescription("Auto manage lodestone population queues.")
-            ->addArgument('queue', InputArgument::REQUIRED, 'Name of RabbitMQ queue.')
         ;
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $manager = new Manager(new SymfonyStyle($input, $output), $this->em);
-        $manager->processResponse($input->getArgument('queue'));
+        $io = new SymfonyStyle($input, $output);
+        
+        // queue characters to update
+        $io->text('Queue: Characters to update');
+        CharacterQueue::queue(
+            $this->em->getRepository(Character::class)->findCharactersToUpdate(),
+            CharacterQueue::AUTO
+        );
     }
 }

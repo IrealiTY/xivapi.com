@@ -49,11 +49,15 @@ class LodestoneData
     
     public static function load($type, $filename, $id)
     {
+        $jsonFilename = self::folder($type, $id) .'/'. $filename .'.json';
+        
         return [
-            json_decode(
-                file_get_contents(self::folder($type, $id) .'/'. $filename .'.json') ?: ''
-            ),
-            self::modified($type, $filename, $id)
+            file_exists($jsonFilename)
+                ? json_decode(file_get_contents($jsonFilename))
+                : null,
+            file_exists($jsonFilename)
+                ? self::modified($type, $filename, $id)
+                : null,
         ];
     }
     

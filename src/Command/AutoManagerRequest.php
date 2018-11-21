@@ -3,14 +3,7 @@
 namespace App\Command;
 
 use App\Service\LodestoneQueue\Manager;
-use App\Service\Redis\Cache;
-use App\Service\Content\LodestoneData;
-use App\Service\LodestoneAutoManagers\{
-    AutoCharacterManager,
-    AutoFreeCompanyManager,
-    AutoLinkshellManager,
-    AutoPvpTeamManager
-};
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,11 +15,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * |
  * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerRequest characters_fast
  * |
- * |    php bin/console AutoManagerRequest
+ * |    php bin/console AutoManagerRequest characters_fast
  * |
  */
 class AutoManagerRequest extends Command
 {
+    /** @var EntityManagerInterface */
+    private $em;
+    
+    public function __construct(EntityManagerInterface $em, ?string $name = null)
+    {
+        parent::__construct($name);
+        $this->em = $em;
+    }
+    
     protected function configure()
     {
         $this
@@ -38,7 +40,7 @@ class AutoManagerRequest extends Command
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $manager = new Manager(new SymfonyStyle($input, $output));
+        $manager = new Manager(new SymfonyStyle($input, $output), $this->em);
         $manager->processRequests($input->getArgument('queue'));
     }
 }

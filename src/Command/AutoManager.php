@@ -70,8 +70,8 @@ class AutoManager extends Command
         $io->section('Auto Character Manager');
         $this->autoCharacterManager
              ->setSymfonyStyle($io)
-             ->handleAddedCharacters()
-             ->handleUpdatedCharacters()
+             //->handleAddedCharacters()
+             //->handleUpdatedCharacters()
              ->handleUpdatedAchievements()
              ->handleUpdatedFriends();
     

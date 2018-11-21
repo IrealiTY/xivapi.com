@@ -2,6 +2,7 @@
 
 namespace App\Service\LodestoneQueue;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -10,10 +11,13 @@ class Manager
 {
     /** @var SymfonyStyle */
     private $io;
+    /** @var EntityManagerInterface */
+    private $em;
 
-    public function __construct(SymfonyStyle $io)
+    public function __construct(SymfonyStyle $io, EntityManagerInterface $em)
     {
         $this->io = $io;
+        $this->em = $em;
     }
 
     /**
@@ -36,7 +40,7 @@ class Manager
 
             // read requests
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
-                $this->io->text("{$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
+                $this->io->text(date('Y-m-d H:i:s') . " {$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
 
                 // call the API class dynamically and record any exceptions
                 try {
@@ -46,6 +50,9 @@ class Manager
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
+                
+                // add a timestamp
+                $request->updated = time();
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
@@ -54,7 +61,6 @@ class Manager
             // close connections
             $requestRabbit->close();
             $responseRabbit->close();
-
             $this->io->success('Completed!');
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
@@ -65,14 +71,46 @@ class Manager
             }
         }
     }
-
+    
+    /**
+     * Process response messages back from RabbitMQ
+     */
     public function processResponse(string $queue): void
     {
         $this->io->title("Processing responses: {$queue}");
 
-        // connect to response queue
-        // grab the message
-        // do something based on "type" (eg character... fc...ls...etc)
-        // do any stats recording
+        try {
+            $responseRabbit = new RabbitMQ();
+            $responseRabbit->connect("{$queue}_response");
+            
+            // read responses
+            $responseRabbit->readMessageAsync(function($response) {
+                $this->io->text(date('Y-m-d H:i:s') . " {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
+                
+                // add finished timestamp
+                $response->finished = time();
+                
+                // handle response based on type
+                switch($response->type) {
+                    default:
+                        $this->io->error("Unknown response type: {$response->type}");
+                        return;
+                        
+                    case 'character':
+                        CharacterQueue::response($this->em, $response);
+                        break;
+                }
+            });
+    
+            $responseRabbit->close();
+            $this->io->success('Completed!');
+        } catch (\Exception $ex) {
+            if (get_class($ex) === AMQPTimeoutException::class) {
+                $this->io->text('Connection closed automatically');
+            } else {
+                $this->io->error("Exception Thrown");
+                throw $ex;
+            }
+        }
     }
 }

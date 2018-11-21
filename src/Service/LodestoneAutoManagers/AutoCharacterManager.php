@@ -17,6 +17,9 @@ use Lodestone\Exceptions\NotFoundException;
 
 class AutoCharacterManager extends LodestoneManager
 {
+    /**
+     * @deprecated for: \App\Service\LodestoneQueue\CharacterQueue::response
+     */
     public function handleAddedCharacters()
     {
         $this->io->text(__METHOD__);
@@ -66,6 +69,9 @@ class AutoCharacterManager extends LodestoneManager
         return $this;
     }
     
+    /**
+     * @deprecated for: \App\Service\LodestoneQueue\CharacterQueue::response
+     */
     public function handleUpdatedCharacters()
     {
         $this->io->text(__METHOD__);
@@ -109,6 +115,10 @@ class AutoCharacterManager extends LodestoneManager
         $this->cache->set($obj->request->key, $repo->findCharactersToUpdate(), (60*60));
         return $this;
     }
+    
+    //
+    // ------
+    //
     
     public function handleUpdatedAchievements()
     {
