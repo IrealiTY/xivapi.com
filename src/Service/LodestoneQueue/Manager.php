@@ -28,7 +28,7 @@ class Manager
         $this->io->title('Processing incoming messages');
 
         // connect to rabbit mq queue. This could be split off into multiple queues across multiple servers
-        $this->rabbit->connect('characters');
+        $this->rabbit->connect('characters_fast');
 
         // read messages
         $this->rabbit->readMessageAsync(function($response) {

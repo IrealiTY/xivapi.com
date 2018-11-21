@@ -24,7 +24,7 @@ class CharacterQueue
     {
         $ids = is_string($ids) ? [ $ids ] : $ids;
 
-        $this->rabbit->connect('characters'. $priority ? '_fast' : '_auto');
+        $this->rabbit->connect('characters'. ($priority ? '_fast' : '_auto'));
 
         foreach ($ids as $id) {
             $this->rabbit->sendMessage([
