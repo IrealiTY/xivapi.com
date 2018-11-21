@@ -91,12 +91,12 @@ class LodestoneData
             self::$cache = new Cache();
         }
 
-        return self::$cache->get($key);
+        return self::$cache->get($key) ?: null;
     }
     
     public static function findContent($category, $string)
     {
-        return self::$content->{$category}->{Hash::hash(trim($string))} ?? "[NOT FOUND]";
+        return self::$content->{$category}->{Hash::hash($string)} ?? "[NOT FOUND: {$category} - {$string}]";
     }
     
     /**
@@ -276,7 +276,7 @@ class LodestoneData
         $content = json_decode(json_encode($content), true);
 
         if (!$content) {
-            return [];
+            return null;
         }
 
         // build new array using fields

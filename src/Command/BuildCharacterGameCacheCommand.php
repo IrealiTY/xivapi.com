@@ -96,38 +96,21 @@ class BuildCharacterGameCacheCommand extends Command
         $this->io->text('Cache: Item');
         foreach ($this->cache->get('ids_Item') as $id) {
             $item = $this->cache->get("xiv_Item_{$id}");
-        
-            // don't care about these
-            if (empty($item->ItemUICategory->ID)) {
+
+            // no name? skip
+            if (empty($item->Name_en)) {
                 continue;
             }
-        
-            // soul Stones
-            if ($item->ItemUICategory->ID == 62) {
-                $this->io->text('Adding: Soul Stones');
-                $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
-                continue;
+
+            // build hash
+            $hash = Hash::hash($item->Name_en);
+
+            // check for dupes
+            if (isset($this->data['Item'][$hash])) {
+                $this->io->error('Duplicate for: '. $item->Name_en);
             }
-        
-            // materia
-            if ($item->ItemUICategory->ID == 58) {
-                $this->io->text("Adding: Materia: {$item->Name_en}");
-                $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
-                continue;
-            }
-        
-            // dyes
-            if ($item->ItemUICategory->ID == 55) {
-                $this->io->text("Adding: Dyes: {$item->Name_en}");
-                $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
-                continue;
-            }
-        
-            // all equipment gear can be repaired
-            if (!empty($item->ClassJobRepair)) {
-                $this->data['Item'][Hash::hash($item->Name_en)] = $item->ID;
-                continue;
-            }
+
+            $this->data['Item'][$hash] = $item->ID;
         }
     }
 }
