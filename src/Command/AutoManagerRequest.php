@@ -25,22 +25,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * |    php bin/console AutoManagerQueue
  * |
  */
-class AutoManagerQueue extends Command
+class AutoManagerRequest extends Command
 {
     protected function configure()
     {
         $this
             ->setName('AutoManagerQueue')
             ->setDescription("Auto manage lodestone population queues.")
-            ->addArgument('direction', InputArgument::REQUIRED, 'Incoming or Outgoing queue');
+            ->addArgument('queue', InputArgument::REQUIRED, 'Name of RabbitMQ queue.')
+        ;
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $manager = new Manager(new SymfonyStyle($input, $output));
-
-        $input->getArgument('direction') === 'incoming'
-            ? $manager->incoming()
-            : $manager->outgoing();
+        $manager->processRequests($input->getArgument('queue'));
     }
 }

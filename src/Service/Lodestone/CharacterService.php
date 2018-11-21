@@ -39,7 +39,7 @@ class CharacterService extends Service
         //$this->persist($ent);
 
         // send a request to rabbit mq to add this character
-        (new CharacterQueue($this->rabbit))->queue($id, true);
+        CharacterQueue::add($id, CharacterQueue::FAST);
 
         die('in queue');
 
