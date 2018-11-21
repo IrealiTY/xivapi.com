@@ -24,7 +24,7 @@ class Manager
      */
     public function processRequests(string $queue): void
     {
-        $this->io->title("Processing queue: {$queue}");
+        $this->io->title("Processing requests: {$queue}");
 
         try {
             $requestRabbit  = new RabbitMQ();
@@ -54,6 +54,8 @@ class Manager
             // close connections
             $requestRabbit->close();
             $responseRabbit->close();
+
+            $this->io->success('Completed!');
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');
@@ -62,5 +64,15 @@ class Manager
                 throw $ex;
             }
         }
+    }
+
+    public function processResponse(string $queue): void
+    {
+        $this->io->title("Processing responses: {$queue}");
+
+        // connect to response queue
+        // grab the message
+        // do something based on "type" (eg character... fc...ls...etc)
+        // do any stats recording
     }
 }

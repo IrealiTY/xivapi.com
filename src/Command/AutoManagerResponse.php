@@ -18,19 +18,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * | This would run on the SYNC side. SYNC processes requests.
+ * | This would run on the XIVAPI side. XIVAPI processes responses.
  * |
- * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerRequest characters_fast
+ * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerResponse characters_fast
  * |
- * |    php bin/console AutoManagerRequest
+ * |    php bin/console AutoManagerResponse
  * |
  */
-class AutoManagerRequest extends Command
+class AutoManagerResponse extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('AutoManagerRequest')
+            ->setName('AutoManagerResponse')
             ->setDescription("Auto manage lodestone population queues.")
             ->addArgument('queue', InputArgument::REQUIRED, 'Name of RabbitMQ queue.')
         ;
@@ -39,6 +39,6 @@ class AutoManagerRequest extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $manager = new Manager(new SymfonyStyle($input, $output));
-        $manager->processRequests($input->getArgument('queue'));
+        $manager->processResponse($input->getArgument('queue'));
     }
 }
