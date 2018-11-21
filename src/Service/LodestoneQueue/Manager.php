@@ -29,6 +29,7 @@ class Manager
     public function processRequests(string $queue): void
     {
         $this->io->title("Processing requests: {$queue}");
+        $alive = time();
 
         try {
             $requestRabbit  = new RabbitMQ();
@@ -61,7 +62,7 @@ class Manager
             // close connections
             $requestRabbit->close();
             $responseRabbit->close();
-            $this->io->success('processRequests Completed!');
+            $this->io->text(date('Y-m-d H:i:s') . 'processRequests Completed! Alive for: '. time() - $alive);
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');
@@ -78,6 +79,7 @@ class Manager
     public function processResponse(string $queue): void
     {
         $this->io->title("Processing responses: {$queue}");
+        $alive = time();
 
         try {
             $responseRabbit = new RabbitMQ();
@@ -102,12 +104,12 @@ class Manager
                             break;
                     }
                 } catch (\Exception $ex) {
-                    $this->io->error('Exception thrown: '. $ex->getMessage());
+                    $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
                 }
             });
     
             $responseRabbit->close();
-            $this->io->success('processResponse Completed!');
+            $this->io->text(date('Y-m-d H:i:s') . 'processResponse Completed Alive for: '. time() - $alive);
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');

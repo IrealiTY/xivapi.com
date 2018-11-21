@@ -94,8 +94,14 @@ class RabbitMQ
 
         // process messages
         $time = time();
+        $current = 0;
         while(count($channel->callbacks)) {
             $diff = time() - $time;
+            
+            if ($current != time()) {
+                $current = time();
+                echo "Alive: ". $current . "\n";
+            }
 
             // stays alive for a maximum of 60 seconds
             if ($diff > self::DURATION) {
