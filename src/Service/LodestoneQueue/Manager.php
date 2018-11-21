@@ -36,6 +36,8 @@ class Manager
 
             // read requests
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
+                $this->io->text("{$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
+
                 // call the API class dynamically
                 $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
 
