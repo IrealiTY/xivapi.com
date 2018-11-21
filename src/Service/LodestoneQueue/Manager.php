@@ -67,7 +67,7 @@ class Manager
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');
             } else {
-                $this->io->error("Exception Thrown");
+                $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
                 throw $ex;
             }
         }
@@ -114,7 +114,7 @@ class Manager
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');
             } else {
-                $this->io->error("Exception Thrown");
+                $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
                 throw $ex;
             }
         }
