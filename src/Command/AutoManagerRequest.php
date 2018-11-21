@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * | This would run on the SYNC side. SYNC processes requests.
  * |
- * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerQueue
+ * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerRequest characters_fast
  * |
  * |    php bin/console AutoManagerQueue
  * |

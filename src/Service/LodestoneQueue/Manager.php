@@ -22,7 +22,7 @@ class Manager
      * will be in the queue: [$queue]_requests and be saved back to: [$queue]_response
      * once they have been fulfilled.
      */
-    public function processRequests(string $queue): Manager
+    public function processRequests(string $queue): void
     {
         $this->io->title("Processing queue: {$queue}");
 
