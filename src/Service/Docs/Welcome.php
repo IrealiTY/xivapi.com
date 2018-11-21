@@ -25,7 +25,7 @@ class Welcome extends DocBuilder implements DocInterface
             //
             ->h6("Endpoints")
             ->table(['Production', 'Staging', 'Local'], [
-                [ 'https://xivapi.com', 'https://xivapi.staging.com', 'http://xivapi.local' ]
+                [ 'https://xivapi.com', 'https://staging.xivapi.com', 'http://xivapi.local' ]
             ])
             ->gap()
 
