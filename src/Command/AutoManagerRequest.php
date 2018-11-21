@@ -14,6 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * | This would run on the SYNC side. SYNC processes requests.
  * |
  * |    * * * * * /usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_fast
+ * |    * * * * * /usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_auto
  * |
  * |    php bin/console AutoManagerRequest characters_fast
  * |

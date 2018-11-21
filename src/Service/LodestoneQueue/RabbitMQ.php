@@ -14,7 +14,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 class RabbitMQ
 {
     const DURATION = 60;
-    const TIMEOUT = 30;
+    const TIMEOUT = 55;
     const QUEUE_OPTIONS = [
         'passive'       => false,
         'durable'       => false,
@@ -97,13 +97,13 @@ class RabbitMQ
         while(count($channel->callbacks)) {
             $diff = time() - $time;
 
-            // stays alive for a maximum of 55 seconds
+            // stays alive for a maximum of 60 seconds
             if ($diff > self::DURATION) {
                 return;
             }
 
             try {
-                // wait for messages, maximum time of 15 seconds
+                // wait for messages, maximum time of 55 seconds
                 $channel->wait(false, false, self::TIMEOUT);
             } catch (\Exception $ex) {
                 $this->exception = $ex;

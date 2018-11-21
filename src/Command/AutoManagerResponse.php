@@ -14,6 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * | This would run on the XIVAPI side. XIVAPI processes responses.
  * |
  * |    * * * * * /usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_fast
+ * |    * * * * * /usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_auto
  * |
  * |    php bin/console AutoManagerResponse characters_fast
  * |
