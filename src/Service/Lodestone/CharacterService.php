@@ -7,6 +7,7 @@ use App\Entity\CharacterAchievements;
 use App\Entity\CharacterFriends;
 use App\Entity\Entity;
 use App\Service\Content\LodestoneData;
+use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
@@ -22,7 +23,6 @@ class CharacterService extends Service
     public function fetch(Character $ent): array
     {
         if ($ent->getState() === Character::STATE_CACHED) {
-            $this->persist($ent->setUpdated($ent->getUpdated()-10));
             $data = LodestoneData::load('character', 'data', $ent->getId());
         }
         
@@ -31,16 +31,16 @@ class CharacterService extends Service
     
     public function register($id): array
     {
-        if (!is_numeric($id)) {
-            throw new NotAcceptableHttpException("ID is not numeric: {$id}");
+        if (!is_numeric($id) || strlen($id) > 32) {
+            throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
-        
-        if (strlen($id) > 32) {
-            throw new NotAcceptableHttpException("ID length is too long");
-        }
-        
+
         $ent = new Character($id);
         $this->persist($ent);
+
+        // send a request to rabbit mq to add this character
+        (new CharacterQueue($this->rabbit))->queue($id);
+
         return [ $ent, null, null ];
     }
     

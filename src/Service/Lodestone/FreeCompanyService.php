@@ -32,7 +32,6 @@ class FreeCompanyService extends Service
     public function fetch(FreeCompany $ent): array
     {
         if ($ent->getState() === FreeCompany::STATE_CACHED) {
-            $this->persist($ent->setUpdated($ent->getUpdated()-10));
             $data = LodestoneData::load('freecompany', 'data', $ent->getId());
         }
         

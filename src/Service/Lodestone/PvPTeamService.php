@@ -19,7 +19,6 @@ class PvPTeamService extends Service
     public function fetch(PvPTeam $ent): array
     {
         if ($ent->getState() === Entity::STATE_CACHED) {
-            $this->persist($ent->setUpdated($ent->getUpdated()-10));
             $data = LodestoneData::load('pvpteam', 'data', $ent->getId());
         }
     

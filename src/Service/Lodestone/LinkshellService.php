@@ -19,7 +19,6 @@ class LinkshellService extends Service
     public function fetch(Linkshell $ent): array
     {
         if ($ent->getState() === Linkshell::STATE_CACHED) {
-            $this->persist($ent->setUpdated($ent->getUpdated()-10));
             $data = LodestoneData::load('linkshell', 'data', $ent->getId());
         }
     
