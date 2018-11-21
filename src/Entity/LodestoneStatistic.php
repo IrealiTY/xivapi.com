@@ -50,6 +50,11 @@ class LodestoneStatistic
     private $status;
     /**
      * @var string
+     * @ORM\Column(type="string", length=10)
+     */
+    private $duration;
+    /**
+     * @var string
      * @ORM\Column(type="string", length=200)
      */
     private $response;
@@ -140,6 +145,18 @@ class LodestoneStatistic
     public function setStatus(string $status)
     {
         $this->status = $status;
+        
+        return $this;
+    }
+    
+    public function getDuration(): string
+    {
+        return $this->duration;
+    }
+    
+    public function setDuration(string $duration)
+    {
+        $this->duration = $duration;
         
         return $this;
     }

@@ -52,7 +52,7 @@ class Manager
                 }
                 
                 // add a timestamp
-                $request->updated = time();
+                $request->updated = microtime(true);
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
@@ -89,7 +89,7 @@ class Manager
                     $this->io->text(date('Y-m-d H:i:s') . " {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
     
                     // add finished timestamp
-                    $response->finished = time();
+                    $response->finished = microtime(true);
     
                     // handle response based on type
                     switch($response->type) {
