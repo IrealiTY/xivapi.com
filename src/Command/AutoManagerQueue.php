@@ -12,6 +12,7 @@ use App\Service\LodestoneAutoManagers\{
     AutoPvpTeamManager
 };
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -29,9 +30,9 @@ class AutoManagerQueue extends Command
     protected function configure()
     {
         $this
-            ->setName('AutoManagerQueues')
+            ->setName('AutoManagerQueue')
             ->setDescription("Auto manage lodestone population queues.")
-            ->addArgument('direction', 'Incoming or Outgoing queue');
+            ->addArgument('direction', InputArgument::REQUIRED, 'Incoming or Outgoing queue');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
