@@ -130,8 +130,40 @@ class RabbitMQ
             self::QUEUE_OPTIONS['auto_delete'],
             self::QUEUE_OPTIONS['nowait']
         );
-
+        
         $channel->basic_publish(new AMQPMessage($message), '', $this->queue);
+        return $this;
+    }
+    
+    /** @var AMQPChannel */
+    private $batchChannel = null;
+    public function batchMessage($message)
+    {
+        // ensure message is a string, we can pass a string or an array/object
+        $message = is_string($message) ? $message : json_encode($message);
+    
+        if ($this->batchChannel === null) {
+            $this->batchChannel = $this->connection->channel();
+            $this->batchChannel->queue_declare(
+                $this->queue,
+                self::QUEUE_OPTIONS['passive'],
+                self::QUEUE_OPTIONS['durable'],
+                self::QUEUE_OPTIONS['exclusive'],
+                self::QUEUE_OPTIONS['auto_delete'],
+                self::QUEUE_OPTIONS['nowait']
+            );
+        }
+        
+        $this->batchChannel->batch_basic_publish(new AMQPMessage($message), '', $this->queue);
+        return $this;
+    }
+    
+    /**
+     * Send a batch of messages
+     */
+    public function sendBatch()
+    {
+        $this->batchChannel->publish_batch();
         return $this;
     }
 }

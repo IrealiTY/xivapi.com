@@ -46,7 +46,7 @@ class CharacterQueue
         $rabbit->connect($queue .'_request');
 
         foreach ($ids as $id) {
-            $rabbit->sendMessage([
+            $rabbit->batchMessage([
                 'type'          => 'character',
                 'queue'         => $queue,
                 'added'         => microtime(true),
@@ -55,8 +55,8 @@ class CharacterQueue
                 'arguments'     => [ $id ],
             ]);
         }
-
-        $rabbit->close();
+        
+        $rabbit->sendBatch()->close();
     }
     
     /**

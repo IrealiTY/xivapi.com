@@ -1,0 +1,67 @@
+sudo nano /etc/supervisor/conf.d/lodestone_tracking.conf
+
+[program:characters_fast]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_fast
+directory=/home/dalamud/xivapi.com/
+autostart=true
+autorestart=true
+startretries=5
+user=dalamud
+numprocs=1
+startsecs=0
+process_name=%(program_name)s_%(process_num)02d
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)s_stderr.log
+stderr_logfile_maxbytes=10MB
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)s_stdout.log
+stdout_logfile_maxbytes=10MB
+
+[program:characters_auto]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_auto
+directory=/home/dalamud/xivapi.com/
+autostart=true
+autorestart=true
+startretries=5
+user=dalamud
+numprocs=1
+startsecs=0
+process_name=%(program_name)s_%(process_num)02d
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)s_stderr.log
+stderr_logfile_maxbytes=10MB
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)s_stdout.log
+stdout_logfile_maxbytes=10MB
+
+
+--------------------------------------------------------------------------
+
+
+sudo nano /etc/supervisor/conf.d/lodestone_tracking.conf
+
+[program:characters_fast]
+command=/usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_fast
+directory=/home/dalamud/dalamud_staging/
+autostart=true
+autorestart=true
+startretries=5
+user=dalamud
+numprocs=1
+startsecs=0
+process_name=%(program_name)s_%(process_num)02d
+stderr_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stderr.log
+stderr_logfile_maxbytes=10MB
+stdout_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stdout.log
+stdout_logfile_maxbytes=10MB
+
+[program:characters_auto]
+command=/usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_auto
+directory=/home/dalamud/dalamud_staging/
+autostart=true
+autorestart=true
+startretries=5
+user=dalamud
+numprocs=1
+startsecs=0
+process_name=%(program_name)s_%(process_num)02d
+stderr_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stderr.log
+stderr_logfile_maxbytes=10MB
+stdout_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stdout.log
+stdout_logfile_maxbytes=10MB

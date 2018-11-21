@@ -30,3 +30,8 @@ mv composer.phar /usr/local/bin/composer
 chmod +x /usr/local/bin/composer
 
 sudo service php7.2-fpm restart
+
+#
+# Install supervisord
+#
+sudo apt-get install supervisor -y
