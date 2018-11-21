@@ -18,10 +18,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
+ * | This would run on the SYNC side. SYNC processes requests.
  * |
  * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerQueue
  * |
- * | DEV:
  * |    php bin/console AutoManagerQueue
  * |
  */
@@ -30,7 +30,7 @@ class AutoManagerRequest extends Command
     protected function configure()
     {
         $this
-            ->setName('AutoManagerQueue')
+            ->setName('AutoManagerRequest')
             ->setDescription("Auto manage lodestone population queues.")
             ->addArgument('queue', InputArgument::REQUIRED, 'Name of RabbitMQ queue.')
         ;
