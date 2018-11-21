@@ -41,18 +41,18 @@ class Manager
             // read requests
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 $this->io->text(date('Y-m-d H:i:s') . " {$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
-
+                // add a timestamp
+                $request->updated = microtime(true);
+                
                 // call the API class dynamically and record any exceptions
                 try {
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
                     $request->health = true;
                 } catch (\Exception $ex) {
+                    $this->io->error('Exception thrown: '. $ex->getMessage());
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
-                
-                // add a timestamp
-                $request->updated = microtime(true);
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
@@ -61,7 +61,7 @@ class Manager
             // close connections
             $requestRabbit->close();
             $responseRabbit->close();
-            $this->io->success('Completed!');
+            $this->io->success('processRequests Completed!');
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');
@@ -107,7 +107,7 @@ class Manager
             });
     
             $responseRabbit->close();
-            $this->io->success('Completed!');
+            $this->io->success('processResponse Completed!');
         } catch (\Exception $ex) {
             if (get_class($ex) === AMQPTimeoutException::class) {
                 $this->io->text('Connection closed automatically');

@@ -101,14 +101,9 @@ class RabbitMQ
             if ($diff > self::DURATION) {
                 return;
             }
-
-            try {
-                // wait for messages, maximum time of 55 seconds
-                $channel->wait(false, false, self::TIMEOUT);
-            } catch (\Exception $ex) {
-                $this->exception = $ex;
-                return;
-            }
+    
+            // wait for messages, maximum time of 55 seconds
+            $channel->wait(false, false, self::TIMEOUT);
         }
 
         return;
