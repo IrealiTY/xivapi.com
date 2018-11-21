@@ -35,11 +35,13 @@ class CharacterService extends Service
             throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
 
-        $ent = new Character($id);
-        $this->persist($ent);
+        //$ent = new Character($id);
+        //$this->persist($ent);
 
         // send a request to rabbit mq to add this character
-        (new CharacterQueue($this->rabbit))->queue($id);
+        (new CharacterQueue($this->rabbit))->queue($id, true);
+
+        die('in queue');
 
         return [ $ent, null, null ];
     }
