@@ -2,6 +2,7 @@
 
 namespace App\Service\Companion;
 
+use App\Service\Content\GameData;
 use App\Service\Redis\Cache;
 
 trait CompanionEnrich
@@ -19,15 +20,12 @@ trait CompanionEnrich
      */
     protected function getEnrichedItem($itemId): array
     {
-        $item = $this->cache->get("xiv_Item_{$itemId}");
+        $item = GameData::one("Item", $itemId);
     
-        if (!$item) {
-            throw new \Exception("Could not find item: {$itemId}");
-        }
-        
         return [
             'ID'        => $item->ID,
             'Icon'      => $item->Icon,
+            'Icon2x'    => $item->Icon2x,
             'Rarity'    => $item->Rarity,
             'Name_en'   => $item->Name_en,
             'Name_fr'   => $item->Name_fr,

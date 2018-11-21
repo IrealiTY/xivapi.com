@@ -15,10 +15,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # high spec for data importing, realistically would be low
     vb.memory = 8000
     vb.cpus = 4
-       end
+  end
 
   # network
-  config.vm.network "private_network", ip: "69.69.69.69"
+  config.vm.network "private_network", ip: "14.14.14.14"
 
   # host domains
   config.vm.hostname = "xivapi.local"
@@ -33,5 +33,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.hostmanager.manage_host = true
 
   # sync folder (enable NFS on windows)
-  config.vm.synced_folder "../", "/vagrant"#, type: "nfs"
+  config.vm.synced_folder "../", "/vagrant"
 end

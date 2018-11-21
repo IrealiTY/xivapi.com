@@ -29,6 +29,11 @@ class CompanionAppLoginCommand extends Command
             new SymfonyStyle($input, $output)
         );
         
+        if ($input->getArgument('account') === 'debug') {
+            $manager->go('COMPANION_APP_ACCOUNT_A', true);
+            return;
+        }
+        
         $accounts = [
             'A' => 'COMPANION_APP_ACCOUNT_A',
             'B' => 'COMPANION_APP_ACCOUNT_B'

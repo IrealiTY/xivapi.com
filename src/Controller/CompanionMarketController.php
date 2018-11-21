@@ -41,7 +41,7 @@ class CompanionMarketController extends Controller
         
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemPrices($itemId);
-            $this->cache->set($key, $data, 60);
+            $this->cache->set($key, $data, 15);
         }
         
         return $this->json($data);
@@ -59,7 +59,7 @@ class CompanionMarketController extends Controller
     
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemHistory($itemId);
-            $this->cache->set($key, $data, 60);
+            $this->cache->set($key, $data, 15);
         }
     
         return $this->json($data);
@@ -77,7 +77,7 @@ class CompanionMarketController extends Controller
     
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getCategoryList($category);
-            $this->cache->set($key, $data, 60);
+            $this->cache->set($key, $data, 15);
         }
     
         return $this->json($data);

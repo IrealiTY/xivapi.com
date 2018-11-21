@@ -15,14 +15,17 @@ class Welcome extends DocBuilder implements DocInterface
                 a REST API. You can fetch information on all sorts of game content that has been discovered and 
                 mapped in the SaintCoinach Schema. In addition it provides Character, Free Company, Linkshell, PvPTeams 
                 and Lodestone information!')
-            ->gap()
-
+            
+            ->h6('Patreon')
+            ->text('<a href="https://www.patreon.com/bePatron?u=13230932" target="_blank"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png"></a>')
+            ->line()
+            
             //
             // ENDPOINTS
             //
             ->h6("Endpoints")
             ->table(['Production', 'Staging', 'Local'], [
-                [ 'https://xivapi.com', 'https://xivapi.staging.com', 'http://xivapi.local' ]
+                [ 'https://xivapi.com', 'https://staging.xivapi.com', 'http://xivapi.local' ]
             ])
             ->gap()
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MapPosition;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -11,6 +12,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DeprecatedController extends Controller
 {
+    /** @var EntityManagerInterface */
+    private $em;
+    
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em;
+    }
+    
     /**
      * @Route("/mapdata/{name}/{id}")
      */
