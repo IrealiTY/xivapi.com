@@ -38,8 +38,14 @@ class Manager
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 $this->io->text("{$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
 
-                // call the API class dynamically
-                $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
+                // call the API class dynamically and record any exceptions
+                try {
+                    $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
+                    $request->health = true;
+                } catch (\Exception $ex) {
+                    $request->response = get_class($ex);
+                    $request->health = false;
+                }
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
