@@ -85,20 +85,24 @@ class Manager
             
             // read responses
             $responseRabbit->readMessageAsync(function($response) {
-                $this->io->text(date('Y-m-d H:i:s') . " {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
-                
-                // add finished timestamp
-                $response->finished = time();
-                
-                // handle response based on type
-                switch($response->type) {
-                    default:
-                        $this->io->error("Unknown response type: {$response->type}");
-                        return;
-                        
-                    case 'character':
-                        CharacterQueue::response($this->em, $response);
-                        break;
+                try {
+                    $this->io->text(date('Y-m-d H:i:s') . " {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
+    
+                    // add finished timestamp
+                    $response->finished = time();
+    
+                    // handle response based on type
+                    switch($response->type) {
+                        default:
+                            $this->io->error("Unknown response type: {$response->type}");
+                            return;
+        
+                        case 'character':
+                            CharacterQueue::response($this->em, $response);
+                            break;
+                    }
+                } catch (\Exception $ex) {
+                    $this->io->error('Exception thrown: '. $ex->getMessage());
                 }
             });
     

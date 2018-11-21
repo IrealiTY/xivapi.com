@@ -6,6 +6,7 @@ use App\Entity\Character;
 use App\Entity\CharacterAchievements;
 use App\Entity\CharacterFriends;
 use App\Entity\Entity;
+use App\Entity\LodestoneStatistic;
 use App\Service\Content\LodestoneData;
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Exceptions\GenericException;
@@ -72,9 +73,19 @@ class CharacterQueue
         $repo   = $em->getRepository(Character::class);
         $entity = $repo->find($lodestoneId) ?: new Character($lodestoneId);
         
+        // Stats
+        $stat = new LodestoneStatistic();
+        $stat->setType($response->type)
+            ->setQueue($response->queue)
+            ->setMethod($response->method)
+            ->setArguments(implode(',', $response->arguments))
+            ->setStatus($response->health ? 'good' : 'bad')
+            ->setResponse(is_string($response->response) ? $response->response : 'Character Object');
+        
+        $em->persist($stat);
+
         // if there was an error
         if ($response->health === false) {
-            
             switch($response->response) {
                 // unknown error
                 default: break;
