@@ -17,7 +17,7 @@ START_TIME=$SECONDS
 /usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 300 50 1
 /usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 350 50 1
 /usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 400 50 1
-#/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 450 50 1
+/usr/bin/php /vagrant/bin/console SaintCoinachRedisCommand 450 50 1
 
 # Add custom data
 sleep 5
