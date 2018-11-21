@@ -13,8 +13,8 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 class RabbitMQ
 {
-    const DURATION = 55;
-    const TIMEOUT = 55;
+    const DURATION = 60;
+    const TIMEOUT = 30;
     const QUEUE_OPTIONS = [
         'passive'       => false,
         'durable'       => false,
