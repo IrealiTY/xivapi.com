@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Form\AppForm;
 use App\Repository\MapPositionRepository;
 use App\Service\Apps\AppManager;
-use App\Service\Maps\Mappy;
 use App\Service\Redis\Cache;
 use App\Service\User\Time;
 use Doctrine\ORM\EntityManagerInterface;
