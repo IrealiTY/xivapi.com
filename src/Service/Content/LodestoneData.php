@@ -108,6 +108,10 @@ class LodestoneData
      */
     public static function convertCharacterData($data)
     {
+        if (empty(self::$content)) {
+            self::initContentCache(new Cache());
+        }
+        
         self::verification($data);
         
         //

@@ -59,7 +59,6 @@ class BuildCharacterGameCacheCommand extends Command
         $this->cacheItems();
 
         // cache for 100 days!
-        file_put_contents(__DIR__.'/resources/lodestone_data.json', json_encode($this->data, JSON_PRETTY_PRINT));
         $this->cache->set(LodestoneData::CACHE_KEY, $this->data, (60*60*24*100));
         $this->complete();
     }
