@@ -13,8 +13,6 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 class RabbitMQ
 {
-    const DURATION = 60;
-    const TIMEOUT = 55;
     const QUEUE_OPTIONS = [
         'passive'       => false,
         'durable'       => false,
@@ -41,10 +39,7 @@ class RabbitMQ
             getenv('API_RABBIT_IP'),
             getenv('API_RABBIT_PORT'),
             getenv('API_RABBIT_USERNAME'),
-            getenv('API_RABBIT_PASSWORD'),
-            '/', false, 'AMQPLAIN', null, 'en_US',
-            self::TIMEOUT,
-            self::TIMEOUT
+            getenv('API_RABBIT_PASSWORD')
         );
 
         $this->queue = $queue;
@@ -93,23 +88,8 @@ class RabbitMQ
         );
 
         // process messages
-        $time = time();
-        $current = 0;
         while(count($channel->callbacks)) {
-            $diff = time() - $time;
-            
-            if ($current != time()) {
-                $current = time();
-                echo "Alive: ". $current . "\n";
-            }
-
-            // stays alive for a maximum of 60 seconds
-            if ($diff > self::DURATION) {
-                return;
-            }
-    
-            // wait for messages, maximum time of 55 seconds
-            $channel->wait(false, false, self::TIMEOUT);
+            $channel->wait();
         }
 
         return;
