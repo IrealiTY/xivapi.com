@@ -44,10 +44,11 @@ class Manager
 
             // read requests
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
-                $this->io->text(date('Y-m-d H:i:s') . " {$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
-                // add a timestamp
+                // update times
                 $request->updated = microtime(true);
-                
+                $this->now = date('Y-m-d H:i:s');
+                $this->io->text("{$this->now} {$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
+
                 // call the API class dynamically and record any exceptions
                 try {
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
@@ -83,6 +84,8 @@ class Manager
             
             // read responses
             $responseRabbit->readMessageAsync(function($response) {
+                $this->now = date('Y-m-d H:i:s');
+
                 try {
                     // reconnect to database if it has dropped
                     if (!$this->em->getConnection()->isConnected()) {
