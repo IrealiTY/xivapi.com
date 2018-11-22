@@ -52,7 +52,7 @@ class Manager
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
                     $request->health = true;
                 } catch (\Exception $ex) {
-                    $this->io->error("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
+                    $this->io->note("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
@@ -65,7 +65,7 @@ class Manager
             $requestRabbit->close();
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->error("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+            $this->io->note("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
         }
     }
     
@@ -107,13 +107,13 @@ class Manager
                             break;
                     }
                 } catch (\Exception $ex) {
-                    $this->io->error("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+                    $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
                 }
             });
     
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->error("[C] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+            $this->io->note("[C] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
         }
     }
 }
