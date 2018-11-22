@@ -177,6 +177,6 @@ class Manager
         }
 
         // Save
-        file_get_contents(self::LOG_FILENAME, json_encode($stats));
+        file_put_contents(self::LOG_FILENAME, json_encode($stats));
     }
 }
