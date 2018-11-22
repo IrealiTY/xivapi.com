@@ -25,6 +25,6 @@ class ServiceQueues
     const TOTAL_PVP_TEAM_UPDATES     = 50;
     const TOTAL_LINKSHELL_UPDATES    = 50;
     const TOTAL_FREE_COMPANY_UPDATES = 50;
-    const TOTAL_CHARACTER_UPDATES    = 100;
+    const TOTAL_CHARACTER_UPDATES    = 130;
     const TOTAL_CHARACTER_FRIENDS    = 50;
 }
