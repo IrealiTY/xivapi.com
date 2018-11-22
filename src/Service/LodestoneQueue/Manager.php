@@ -123,7 +123,7 @@ class Manager
     /**
      * Record some statistics of the logger
      */
-    private function recordStatistics()
+    private function recordStatistics($name, $request)
     {
         $time = time();
 
