@@ -61,6 +61,7 @@ class Manager
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
+                $this->recordStatistics('processRequests', $request);
             });
 
             // close connections
@@ -117,5 +118,65 @@ class Manager
         } catch (\Exception $ex) {
             $this->io->error("[C] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
         }
+    }
+
+    /**
+     * Record some statistics of the logger
+     */
+    private function recordStatistics()
+    {
+        $time = time();
+
+        // this will only happen first time
+        if (!file_exists(self::LOG_FILENAME)) {
+            file_put_contents(self::LOG_FILENAME, json_encode([]));
+        }
+
+        $stats = json_decode(file_get_contents(self::LOG_FILENAME));
+        $stats = $stats ?: (Object)[
+            'started'   => $this->now,
+            'counter'   => 0,
+            'perMinute' => 0,
+            'perHour'   => 0,
+            'perDay'    => 0,
+            'entries'   => [],
+        ];
+
+        // Record stats
+        $stats->counter++;
+
+        if (array_key_exists($time, $stats->entries) === false) {
+            $stats->entries[$time] = 0;
+        }
+
+        // increment time count
+        $stats->entries[$time]++;
+
+        // average the last 60 seconds
+        $avg = [];
+        foreach (range(0,60) as $second) {
+            $avg[] = $stats->entries[($time - $second)] ?? 0;
+        }
+        $stats->perMinute = array_sum($avg) / count($avg);
+
+        // average the last 3600 (1hr) seconds
+        $avg = [];
+        foreach (range(0,3600) as $second) {
+            $avg[] = $stats->entries[($time - $second)] ?? 0;
+        }
+        $stats->perHour = array_sum($avg) / count($avg);
+
+        // Per day is just average over an hr multiplied, it's roughly... accurate
+        $stats->perDay = ($stats->perHour * 24);
+
+        // Clear our entries older than an hour
+        foreach ($stats->entries as $time => $count) {
+            if ($time < (time() - 3600)) {
+                unset($stats->entries[$time]);
+            }
+        }
+
+        // Save
+        file_get_contents(self::LOG_FILENAME, json_encode($stats));
     }
 }

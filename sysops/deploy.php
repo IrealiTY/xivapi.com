@@ -119,6 +119,15 @@ function deploy($config)
         }
     }
 
+    //
+    // Restart supervisord
+    //
+    writeln('Restart supervisord');
+    run('sudo supervisorctl restart all');
+
+    //
+    // Finished
+    //
     write("Deployed branch {$config->branch} to: {$config->name} environment\n\n");
 
     //
