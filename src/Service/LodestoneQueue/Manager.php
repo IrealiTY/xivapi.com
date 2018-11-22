@@ -133,14 +133,14 @@ class Manager
         }
 
         $stats = json_decode(file_get_contents(self::LOG_FILENAME));
-        $stats = $stats ?: (Object)[
+        $stats = empty($stats) ? (Object)[
             'started'   => $this->now,
             'counter'   => 0,
             'perMinute' => 0,
             'perHour'   => 0,
             'perDay'    => 0,
             'entries'   => [],
-        ];
+        ] : $stats;
 
         // Record stats
         $stats->counter++;
