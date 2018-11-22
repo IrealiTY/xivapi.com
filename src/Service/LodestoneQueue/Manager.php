@@ -4,20 +4,24 @@ namespace App\Service\LodestoneQueue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
-use PhpAmqpLib\Exception\AMQPTimeoutException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Manager
 {
+    const LOG_FILENAME = __DIR__ .'/Manager.json';
+
     /** @var SymfonyStyle */
     private $io;
     /** @var EntityManagerInterface */
     private $em;
+    /** @var string */
+    private $now;
 
     public function __construct(SymfonyStyle $io, EntityManagerInterface $em)
     {
         $this->io = $io;
         $this->em = $em;
+        $this->now = date('Y-m-d H:i:s');
     }
 
     /**
@@ -28,8 +32,7 @@ class Manager
      */
     public function processRequests(string $queue): void
     {
-        $this->io->title("Processing requests: {$queue}");
-        $alive = time();
+        $this->io->title("processRequests: {$queue} - Time: {$this->now}");
 
         try {
             $requestRabbit  = new RabbitMQ();
@@ -50,7 +53,7 @@ class Manager
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
                     $request->health = true;
                 } catch (\Exception $ex) {
-                    $this->io->error('Exception thrown: '. $ex->getMessage());
+                    $this->io->error("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
@@ -62,14 +65,8 @@ class Manager
             // close connections
             $requestRabbit->close();
             $responseRabbit->close();
-            $this->io->text(date('Y-m-d H:i:s') . 'processRequests Completed! Alive for: '. time() - $alive);
         } catch (\Exception $ex) {
-            if (get_class($ex) === AMQPTimeoutException::class) {
-                $this->io->text('Connection closed automatically');
-            } else {
-                $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
-                throw $ex;
-            }
+            $this->io->error("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
         }
     }
     
@@ -78,8 +75,7 @@ class Manager
      */
     public function processResponse(string $queue): void
     {
-        $this->io->title("Processing responses: {$queue}");
-        $alive = time();
+        $this->io->title("processResponse: {$queue} - Time: {$this->now}");
 
         try {
             $responseRabbit = new RabbitMQ();
@@ -96,7 +92,7 @@ class Manager
                     // handle response based on type
                     switch($response->type) {
                         default:
-                            $this->io->error("Unknown response type: {$response->type}");
+                            $this->io->text("Unknown response type: {$response->type}");
                             return;
         
                         case 'character':
@@ -104,19 +100,13 @@ class Manager
                             break;
                     }
                 } catch (\Exception $ex) {
-                    $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
+                    $this->io->error("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
                 }
             });
     
             $responseRabbit->close();
-            $this->io->text(date('Y-m-d H:i:s') . 'processResponse Completed Alive for: '. time() - $alive);
         } catch (\Exception $ex) {
-            if (get_class($ex) === AMQPTimeoutException::class) {
-                $this->io->text('Connection closed automatically');
-            } else {
-                $this->io->error(date('Y-m-d H:i:s') . ' Exception thrown: '. $ex->getMessage());
-                throw $ex;
-            }
+            $this->io->error("[C] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
         }
     }
 }

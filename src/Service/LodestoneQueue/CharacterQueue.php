@@ -86,7 +86,7 @@ class CharacterQueue
         $em->persist($stat);
 
         // if there was an error
-        if ($response->health === false) {
+        if (!$response->health) {
             switch($response->response) {
                 // unknown error
                 default: break;
