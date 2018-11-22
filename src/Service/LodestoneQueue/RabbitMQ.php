@@ -69,11 +69,7 @@ class RabbitMQ
         // callback function for message, use our handler callback
         $callback = function($message) use ($channel, $handler) {
             $handler(json_decode($message->body));
-
-            // if the environment is prod, we will mark the message is read.
-            if (true || getenv('APP_ENV') == 'prod') {
-                $channel->basic_ack($message->delivery_info['delivery_tag']);
-            }
+            $channel->basic_ack($message->delivery_info['delivery_tag']);
         };
 
         // basic message consumer
@@ -103,13 +99,13 @@ class RabbitMQ
         /** @var AMQPChannel $channel */
         $channel = $this->connection->channel();
         $message = $channel->basic_get($this->queue);
+        $channel->basic_ack($message->delivery_info['delivery_tag']);
 
         if (!$message) {
             return false;
         }
 
         // acknowledge the message
-        $channel->basic_ack($message->delivery_info['delivery_tag']);
         return json_decode($message->body);
     }
 
