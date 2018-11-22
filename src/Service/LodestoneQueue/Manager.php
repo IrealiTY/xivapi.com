@@ -84,17 +84,17 @@ class Manager
             // read responses
             $responseRabbit->readMessageAsync(function($response) {
                 try {
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
-    
-                    // add finished timestamp
-                    $response->finished = microtime(true);
-
                     // reconnect to database if it has dropped
                     if (!$this->em->getConnection()->isConnected()) {
                         $this->em->getConnection()->connect();
                         $this->io->text("{$this->now} Reconnected to MySQL.");
                     }
+
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
     
+                    // add finished timestamp
+                    $response->finished = microtime(true);
+
                     // handle response based on type
                     switch($response->type) {
                         default:
