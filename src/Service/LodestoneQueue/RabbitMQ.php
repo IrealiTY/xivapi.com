@@ -15,7 +15,7 @@ class RabbitMQ
 {
     const QUEUE_OPTIONS = [
         'passive'       => false,
-        'durable'       => false,
+        'durable'       => true,
         'exclusive'     => false,
         'auto_delete'   => false,
         'nowait'        => false,
