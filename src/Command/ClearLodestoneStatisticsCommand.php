@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #
-#  */5 * * * * /usr/bin/php /home/dalamud/dalamud/bin/console ClearLodestoneStatisticsCommand
+#  0 * * * * /usr/bin/php /home/dalamud/dalamud_staging/bin/console ClearLodestoneStatisticsCommand
 #
 class ClearLodestoneStatisticsCommand extends Command
 {
