@@ -18,6 +18,8 @@ class ClearLodestoneStatisticsCommand extends Command
     public function __construct(EntityManagerInterface $em, $name = null)
     {
         parent::__construct($name);
+
+        $this->em = $em;
     }
 
     protected function configure()
