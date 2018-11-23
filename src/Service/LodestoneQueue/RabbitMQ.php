@@ -13,11 +13,13 @@ use PhpAmqpLib\Message\AMQPMessage;
  */
 class RabbitMQ
 {
+    const CHANNEL = 1337;
+
     const QUEUE_OPTIONS = [
         'passive'       => false,
         'durable'       => true,
         'exclusive'     => false,
-        'auto_delete'   => false,
+        'auto_delete'   => true,
         'nowait'        => false,
         'no_local'      => false,
         'no_ack'        => false,
@@ -25,10 +27,12 @@ class RabbitMQ
 
     /** @var AMQPStreamConnection */
     private $connection;
+    /** @var AMQPChannel */
+    private $channel;
+    /** @var AMQPChannel */
+    private $channelAsync;
     /** @var string */
     private $queue;
-    /** @var string */
-    public $exception;
 
     /**
      * Connect to a queue and return this class
@@ -51,7 +55,9 @@ class RabbitMQ
      */
     public function close()
     {
-        $this->connection->close();
+        @$this->connection->close();
+        @$this->channel->close();
+        @$this->channelAsync->close();
     }
 
     /**
@@ -64,18 +70,18 @@ class RabbitMQ
     public function readMessageAsync($handler)
     {
         /** @var AMQPChannel $channel */
-        $channel = $this->connection->channel();
+        $this->channelAsync = $this->connection->channel();
 
         // callback function for message, use our handler callback
-        $callback = function($message) use ($channel, $handler) {
+        $callback = function($message) use ($handler) {
             $handler(json_decode($message->body));
-            $channel->basic_ack($message->delivery_info['delivery_tag']);
+            $this->channelAsync->basic_ack($message->delivery_info['delivery_tag']);
         };
 
         // basic message consumer
-        $channel->basic_consume(
+        $this->channelAsync->basic_consume(
             $this->queue,
-            null,
+            'async_consumer',
             self::QUEUE_OPTIONS['no_local'],
             self::QUEUE_OPTIONS['no_ack'],
             self::QUEUE_OPTIONS['exclusive'],
@@ -84,8 +90,8 @@ class RabbitMQ
         );
 
         // process messages
-        while(count($channel->callbacks)) {
-            $channel->wait();
+        while(count($this->channelAsync->callbacks)) {
+            $this->channelAsync->wait();
         }
 
         return;
@@ -96,10 +102,11 @@ class RabbitMQ
      */
     public function readMessageSync()
     {
-        /** @var AMQPChannel $channel */
-        $channel = $this->connection->channel();
-        $message = $channel->basic_get($this->queue);
-        $channel->basic_ack($message->delivery_info['delivery_tag']);
+        // grab message
+        $message = $this->getChannel()->basic_get($this->queue);
+
+        // register as confirmed
+        $this->getChannel()->basic_ack($message->delivery_info['delivery_tag']);
 
         if (!$message) {
             return false;
@@ -114,43 +121,18 @@ class RabbitMQ
      */
     public function sendMessage($message)
     {
-        // ensure message is a string, we can pass a string or an array/object
         $message = is_string($message) ? $message : json_encode($message);
-
-        $channel = $this->connection->channel();
-        $channel->queue_declare(
-            $this->queue,
-            self::QUEUE_OPTIONS['passive'],
-            self::QUEUE_OPTIONS['durable'],
-            self::QUEUE_OPTIONS['exclusive'],
-            self::QUEUE_OPTIONS['auto_delete'],
-            self::QUEUE_OPTIONS['nowait']
-        );
-        
-        $channel->basic_publish(new AMQPMessage($message), '', $this->queue);
+        $this->getChannel()->basic_publish(new AMQPMessage($message), '', $this->queue);
         return $this;
     }
-    
-    /** @var AMQPChannel */
-    private $batchChannel = null;
+
+    /**
+     * Batch submit a message
+     */
     public function batchMessage($message)
     {
-        // ensure message is a string, we can pass a string or an array/object
         $message = is_string($message) ? $message : json_encode($message);
-    
-        if ($this->batchChannel === null) {
-            $this->batchChannel = $this->connection->channel();
-            $this->batchChannel->queue_declare(
-                $this->queue,
-                self::QUEUE_OPTIONS['passive'],
-                self::QUEUE_OPTIONS['durable'],
-                self::QUEUE_OPTIONS['exclusive'],
-                self::QUEUE_OPTIONS['auto_delete'],
-                self::QUEUE_OPTIONS['nowait']
-            );
-        }
-        
-        $this->batchChannel->batch_basic_publish(new AMQPMessage($message), '', $this->queue);
+        $this->getChannel()->batch_basic_publish(new AMQPMessage($message), '', $this->queue);
         return $this;
     }
     
@@ -159,7 +141,27 @@ class RabbitMQ
      */
     public function sendBatch()
     {
-        $this->batchChannel->publish_batch();
+        $this->getChannel()->publish_batch();
         return $this;
+    }
+
+    /**
+     * Get the current active channel
+     */
+    private function getChannel(): AMQPChannel
+    {
+        if ($this->channel === null) {
+            $this->channel = $this->connection->channel(self::CHANNEL);
+            $this->channel->queue_declare(
+                $this->queue,
+                self::QUEUE_OPTIONS['passive'],
+                self::QUEUE_OPTIONS['durable'],
+                self::QUEUE_OPTIONS['exclusive'],
+                self::QUEUE_OPTIONS['auto_delete'],
+                self::QUEUE_OPTIONS['nowait']
+            );
+        }
+
+        return $this->channel;
     }
 }

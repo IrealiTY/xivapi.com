@@ -65,7 +65,7 @@ class Manager
             $requestRabbit->close();
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->note("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+            $this->io->note("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
         }
     }
     
@@ -107,7 +107,7 @@ class Manager
                             break;
                     }
                 } catch (\Exception $ex) {
-                    $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+                    $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
                 }
             });
     
