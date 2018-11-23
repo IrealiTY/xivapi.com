@@ -49,7 +49,7 @@ class CharacterQueue
             $rabbit->batchMessage([
                 'type'          => 'character',
                 'queue'         => $queue,
-                'added'         => microtime(true),
+                'added'         => date('Y-m-d H:i:s'),
                 'requestId'     => Uuid::uuid4()->toString(),
                 'method'        => LodestoneApi::GET_CHARACTER,
                 'arguments'     => [ $id ],
@@ -80,7 +80,7 @@ class CharacterQueue
             ->setMethod($response->method)
             ->setArguments(implode(',', $response->arguments))
             ->setStatus($response->health ? 'good' : 'bad')
-            ->setDuration(round($response->finished - $response->added, 3))
+            ->setDuration(round($response->finished - $response->updated, 3))
             ->setResponse(is_string($response->response) ? $response->response : 'Character Object');
         
         $em->persist($stat);

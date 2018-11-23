@@ -45,7 +45,7 @@ class Manager
                 // update times
                 $request->updated = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("{$this->now} {$request->requestId} | {$request->type} | {$request->queue} | Method: {$request->method} args: ". implode(',', $request->arguments));
+                $this->io->text("{$this->now} {$request->requestId} | {$request->type} | {$request->queue} | {$request->method} ". implode(',', $request->arguments));
 
                 // call the API class dynamically and record any exceptions
                 try {
@@ -91,7 +91,7 @@ class Manager
                         $this->io->text("{$this->now} Reconnected to MySQL.");
                     }
 
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->type} | {$response->queue} | Method: {$response->method} args: ". implode(',', $response->arguments) ." | Heath Status: ". ($response->health ? 'Good' : 'Bad'));
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->type} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad'));
     
                     // add finished timestamp
                     $response->finished = microtime(true);

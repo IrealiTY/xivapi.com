@@ -7,7 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * - This has UpperCase variables as its game content
- * @ORM\Table(name="lodestone_statistic")
+ * @ORM\Table(
+ *     name="lodestone_statistic",
+ *     indexes={
+ *          @ORM\Index(name="added", columns={"added"}),
+ *          @ORM\Index(name="type", columns={"type"}),
+ *          @ORM\Index(name="queue", columns={"queue"}),
+ *          @ORM\Index(name="status", columns={"status"}),
+ *          @ORM\Index(name="duration", columns={"duration"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\LodestoneStatisticRepository")
  */
 class LodestoneStatistic
@@ -49,8 +58,8 @@ class LodestoneStatistic
      */
     private $status;
     /**
-     * @var string
-     * @ORM\Column(type="string", length=10)
+     * @var float
+     * @ORM\Column(type="float")
      */
     private $duration;
     /**
@@ -148,19 +157,19 @@ class LodestoneStatistic
         
         return $this;
     }
-    
-    public function getDuration(): string
+
+    public function getDuration(): float
     {
         return $this->duration;
     }
-    
-    public function setDuration(string $duration)
+
+    public function setDuration(float $duration)
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
-    
+
     public function getResponse(): string
     {
         return $this->response;
