@@ -55,9 +55,9 @@ class RabbitMQ
      */
     public function close()
     {
-        @$this->connection->close();
-        @$this->channel->close();
-        @$this->channelAsync->close();
+        $this->connection ? $this->connection->close() : null;
+        $this->channel ? $this->channel->close() : null;
+        $this->channelAsync ? $this->channelAsync->close() : null;
     }
 
     /**
