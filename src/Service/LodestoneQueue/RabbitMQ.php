@@ -19,7 +19,7 @@ class RabbitMQ
         'passive'       => false,
         'durable'       => true,
         'exclusive'     => false,
-        'auto_delete'   => true,
+        'auto_delete'   => false,
         'nowait'        => false,
         'no_local'      => false,
         'no_ack'        => false,
