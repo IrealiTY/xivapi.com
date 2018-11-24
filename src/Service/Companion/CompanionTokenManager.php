@@ -48,9 +48,10 @@ class CompanionTokenManager
         'Shinryu'       => 'COMPANION_APP_ACCOUNT_B',
         'Titan'         => 'COMPANION_APP_ACCOUNT_B',
     
-        // US Servers
+        // US Servers (Balmung has its own account
+        'Balmung'       => 'COMPANION_APP_ACCOUNT_C',
+
         'Adamantoise'   => 'COMPANION_APP_ACCOUNT_A',
-        'Balmung'       => 'COMPANION_APP_ACCOUNT_A',
         'Cactuar'       => 'COMPANION_APP_ACCOUNT_A',
         'Coeurl'        => 'COMPANION_APP_ACCOUNT_A',
         'Faerie'        => 'COMPANION_APP_ACCOUNT_A',
