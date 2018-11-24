@@ -29,7 +29,7 @@ class ContentList
         $this->appManager = $appManager;
     }
     
-    public function get(Request $request, string $name, App $app)
+    public function get(Request $request, string $name)
     {
         $this->request = $request;
         $this->name    = $name;
