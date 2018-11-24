@@ -36,7 +36,8 @@ class CompanionAppLoginCommand extends Command
         
         $accounts = [
             'A' => 'COMPANION_APP_ACCOUNT_A',
-            'B' => 'COMPANION_APP_ACCOUNT_B'
+            'B' => 'COMPANION_APP_ACCOUNT_B',
+            'C' => 'COMPANION_APP_ACCOUNT_C',
         ];
 
         // grab account and process logins, go, go, go!
