@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\UnauthorizedAccessException;
 use App\Service\Apps\AppManager;
 use App\Service\Common\GoogleAnalytics;
 use App\Service\Companion\Companion;
@@ -27,6 +28,20 @@ class CompanionMarketController extends Controller
         $this->appManager = $appManager;
         $this->companion  = $companion;
         $this->cache      = new Cache();
+    }
+    
+    /**
+     * @Route("/companion/tokens");
+     */
+    public function tokens(Request $request)
+    {
+        if ($request->get('access') != getenv('COMPANION_TOKEN_ACCESS')) {
+            throw new UnauthorizedAccessException();
+        }
+        
+        return $this->json(
+            $this->companion->getTokens()
+        );
     }
     
     /**
