@@ -67,6 +67,11 @@ class User
      * @ORM\Column(type="integer", length=16)
      */
     private $appsMax = 5;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="is_banned")
+     */
+    private $banned = false;
     
     public function __construct()
     {
@@ -197,6 +202,18 @@ class User
     {
         $this->appsMax = $appsMax;
 
+        return $this;
+    }
+    
+    public function isBanned(): bool
+    {
+        return $this->banned;
+    }
+    
+    public function setBanned(bool $banned)
+    {
+        $this->banned = $banned;
+        
         return $this;
     }
 }

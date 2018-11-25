@@ -104,6 +104,11 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+        
+        if ($user->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
 
         if ($id === 'new') {
             $app = $this->appManager->create();
@@ -143,6 +148,11 @@ class ApplicationsController extends Controller
         
         if (!$user) {
             return $this->redirectToRoute('app');
+        }
+    
+        if ($user->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
         }
         
         /** @var App $app */
