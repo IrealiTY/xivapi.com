@@ -14,7 +14,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CompanionTokenManager
 {
     const SERVERS = [
-        // JP Servers
+        // JP Servers (Mandragora is on its own account)
+        'Mandragora'    => 'COMPANION_APP_ACCOUNT_D',
+        
         'Aegis'         => 'COMPANION_APP_ACCOUNT_B',
         'Atomos'        => 'COMPANION_APP_ACCOUNT_B',
         'Carbuncle'     => 'COMPANION_APP_ACCOUNT_B',
@@ -42,12 +44,11 @@ class CompanionTokenManager
         'Chocobo'       => 'COMPANION_APP_ACCOUNT_B',
         'Hades'         => 'COMPANION_APP_ACCOUNT_B',
         'Ixion'         => 'COMPANION_APP_ACCOUNT_B',
-        'Mandragora'    => 'COMPANION_APP_ACCOUNT_B',
         'Masamune'      => 'COMPANION_APP_ACCOUNT_B',
         'Pandaemonium'  => 'COMPANION_APP_ACCOUNT_B',
         'Shinryu'       => 'COMPANION_APP_ACCOUNT_B',
         'Titan'         => 'COMPANION_APP_ACCOUNT_B',
-    
+
         // US Servers (Balmung has its own account
         'Balmung'       => 'COMPANION_APP_ACCOUNT_C',
 

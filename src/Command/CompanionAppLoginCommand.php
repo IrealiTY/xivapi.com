@@ -38,6 +38,7 @@ class CompanionAppLoginCommand extends Command
             'A' => 'COMPANION_APP_ACCOUNT_A',
             'B' => 'COMPANION_APP_ACCOUNT_B',
             'C' => 'COMPANION_APP_ACCOUNT_C',
+            'D' => 'COMPANION_APP_ACCOUNT_D',
         ];
 
         // grab account and process logins, go, go, go!
