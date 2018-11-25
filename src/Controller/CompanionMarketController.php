@@ -54,6 +54,11 @@ class CompanionMarketController extends Controller
         if ($app->isDefault()) {
             throw new Forbidden403Exception('This route requires an API key');
         }
+    
+        if ($app->getUser()->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
         
         GoogleAnalytics::hit(['market',$server,'items',$itemId]);
         
@@ -76,6 +81,11 @@ class CompanionMarketController extends Controller
         if ($app->isDefault()) {
             throw new Forbidden403Exception('This route requires an API key');
         }
+    
+        if ($app->getUser()->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
         
         GoogleAnalytics::hit(['market',$server,'items',$itemId,'history']);
     
@@ -97,6 +107,11 @@ class CompanionMarketController extends Controller
         $app = $this->appManager->fetch($request);
         if ($app->isDefault()) {
             throw new Forbidden403Exception('This route requires an API key');
+        }
+    
+        if ($app->getUser()->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
         }
         
         GoogleAnalytics::hit(['market',$server,'category',$category]);
