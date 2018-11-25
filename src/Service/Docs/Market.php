@@ -20,11 +20,17 @@ class Market extends DocBuilder implements DocInterface
             // beta notes
             ->h4('*beta* note:')
             ->note('**BETA** - This feature is in BETA as it is a very unknown territory for developers, SE have not provided
-                an open API and could break/change things at any time. I highly recommend just building ideas and
-                prototypes for now while we gather confidence in the Companion API.')
+                an open API and could break/change things at any time.')
+    
+            ->note('**DO NOT DO IT** - Are you thinking of scraping the entire market? Just don\'t. You can go make your own
+                implementation, you can find all my stuff open source which includes the logic to connect
+                to the Companion App API and you can mass scrape all you want there. If you attempt to mass
+                scrape on XIVAPI side at this time your key will be deleted, continuous abuse will mean a ban on
+                your account. Please consider what you actually need and come into the discord to talk to
+                one of the developers who can guide you into making things much more efficient.')
             
-            ->note('**SLOW** - The Companion API is not fast and will take 2-3 seconds to response so please consider
-                this when building your apps. The cache on XIVAPI is set to 60 seconds for all Companion
+            ->note('**SLOW** - The Companion API is not fast and will take 1-2 seconds to response so please consider
+                this when building your apps. The cache on XIVAPI is set to 300 seconds for all Companion
                 API calls. It is not know what kind of caching SE use on the app.')
             
             ->note('**SERVERS** - Most servers are supported, however some servers are congested which is preventing
@@ -35,7 +41,7 @@ class Market extends DocBuilder implements DocInterface
             // item prices
             ->h6('Item Prices')
             ->route('/market/[Server]/items/[Item_ID]')
-            ->usage("{endpoint}/market/phoenix/items/5?key=<your_app_key>")
+            ->usage("{endpoint}/market/phoenix/items/5?key=[your_app_key]")
             ->note('You **need** a developer key to access this endpoint.')
             ->text('A list of prices for an item on a specific server.')
             ->h4('Response info')
@@ -79,7 +85,7 @@ class Market extends DocBuilder implements DocInterface
             // item history
             ->h6('Item History')
             ->route('/market/[Server]/items/[Item_ID]/history')
-            ->usage("{endpoint}/market/phoenix/items/5/history?key=<your_app_key>")
+            ->usage("{endpoint}/market/phoenix/items/5/history?key=[your_app_key]")
             ->note('You **need** a developer key to access this endpoint.')
             ->text('Get the price history for an item on a specific server.')
             ->h4('Response info')
@@ -115,7 +121,7 @@ class Market extends DocBuilder implements DocInterface
             // item category listing
             ->h6('Item Category Listing')
             ->route('/market/[Server]/category/[Category_ID]')
-            ->usage("{endpoint}/market/phoenix/category/10?key=<your_app_key>")
+            ->usage("{endpoint}/market/phoenix/category/10?key=[your_app_key]")
             ->note('You **need** a developer key to access this endpoint.')
             ->text('Get the list of items and their sale quantity in this category.')
             ->h4('Response Info')

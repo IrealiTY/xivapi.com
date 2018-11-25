@@ -113,7 +113,7 @@ class Character extends DocBuilder implements DocInterface
             //
             ->h6('Verification')
             ->route('/character/[lodestone_id]/verification *', true)
-            ->usage('{endpoint}/character/730968/verification?key=<your_app_key>')
+            ->usage('{endpoint}/character/730968/verification?key=[your_app_key]')
             ->note('You **need** a developer key to access this endpoint.')
             ->note('These fields are present on the route `/character/<lodestone_id>` however do not update
                 in real-time and you should use the `/Verification` endpoint for a real-time check.')
