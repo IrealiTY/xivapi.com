@@ -188,13 +188,16 @@ class Welcome extends DocBuilder implements DocInterface
                 this further if you wish:')
             ->text('To access the data in `Items` individually you could do')
             ->code('columns=Items.0.Name,Items.1.Name')
-            ->text('If you imagine an array having 50 items, this could be tedious and will eat into your maximum
-                column count. You can therefore use a count format, eg:')
+            ->text('However, if you imagine an array having 50 items this could become tedious. You can therefore use a
+                count format, eg:')
             ->code('columns=Items.*50.Name')
             ->text('This will return 50 rows from the column `Items` using the index `Name`, even if there
                 are only 30 legitimate columns, 50 fields will be returned. This is intentional so you can
                 build models knowing at all times X number of columns will return. You can use the FFXIV CSV
                 files to know exactly how many there are exactly.')
+            ->text('If you are unsure on the exact number of entries in the array or you do not mind a flexiable amount
+                you can ignore the number to get all entries in the array, eg:')
+            ->code('columns=Items.*.Name')
 
             ->gap(2)
 

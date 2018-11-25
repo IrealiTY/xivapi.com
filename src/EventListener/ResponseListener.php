@@ -45,13 +45,15 @@ class ResponseListener
                 if ($columns = $request->get('columns')) {
                     // get columns param
                     $columns = array_unique(explode(',', $columns));
-
+                    
                     if (isset($json['Pagination']) && !empty($json['Results'])) {
                         foreach ($json['Results'] as $r => $result) {
+                            $columns = Arrays::extractColumnsCount($result, $columns);
                             $json['Results'][$r] = Arrays::extractColumns($result, $columns);
                         }
                     } else if (!isset($json['Pagination'])) {
-                        $json = Arrays::extractColumns($json, $columns);
+                        $columns = Arrays::extractColumnsCount($json, $columns);
+                        $json    = Arrays::extractColumns($json, $columns);
                     }
                 }
 

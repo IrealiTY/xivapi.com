@@ -36,6 +36,28 @@ class Arrays
 
         return $newData;
     }
+    
+    /**
+     * Extra columns
+     */
+    public static function extractColumnsCount(array $array, $columns): array
+    {
+        foreach ($columns as $i => $col) {
+            if (stripos($col, '.*.') !== false) {
+                $col = explode('.*.', $col);
+            
+                $total = is_array($array[$col[0]]) ? count($array[$col[0]])-1 : null;
+            
+                if ($total === null) {
+                    throw new \Exception("The column {$col[0]} is not an array.");
+                }
+            
+                $columns[$i] = "{$col[0]}.*{$total}.${col[1]}";
+            }
+        }
+        
+        return $columns;
+    }
 
     /**
      * Convert dot notations into arrays
