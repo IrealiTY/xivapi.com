@@ -35,7 +35,8 @@ class Market extends DocBuilder implements DocInterface
             // item prices
             ->h6('Item Prices')
             ->route('/market/[Server]/items/[Item_ID]')
-            ->usage("{endpoint}/market/phoenix/items/5")
+            ->usage("{endpoint}/market/phoenix/items/5?key=<your_app_key>")
+            ->note('You **need** a developer key to access this endpoint.')
             ->text('A list of prices for an item on a specific server.')
             ->h4('Response info')
             ->code(json_encode([
@@ -78,7 +79,8 @@ class Market extends DocBuilder implements DocInterface
             // item history
             ->h6('Item History')
             ->route('/market/[Server]/items/[Item_ID]/history')
-            ->usage("{endpoint}/market/phoenix/items/5/history")
+            ->usage("{endpoint}/market/phoenix/items/5/history?key=<your_app_key>")
+            ->note('You **need** a developer key to access this endpoint.')
             ->text('Get the price history for an item on a specific server.')
             ->h4('Response info')
             ->code(json_encode([
@@ -113,7 +115,8 @@ class Market extends DocBuilder implements DocInterface
             // item category listing
             ->h6('Item Category Listing')
             ->route('/market/[Server]/category/[Category_ID]')
-            ->usage("{endpoint}/market/phoenix/category/10")
+            ->usage("{endpoint}/market/phoenix/category/10?key=<your_app_key>")
+            ->note('You **need** a developer key to access this endpoint.')
             ->text('Get the list of items and their sale quantity in this category.')
             ->h4('Response Info')
             ->text(' The response is just an array of results.')
