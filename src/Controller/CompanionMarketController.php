@@ -7,6 +7,7 @@ use App\Service\Apps\AppManager;
 use App\Service\Common\GoogleAnalytics;
 use App\Service\Companion\Companion;
 use App\Service\Redis\Cache;
+use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,7 +50,11 @@ class CompanionMarketController extends Controller
      */
     public function itemPrices(Request $request, string $server, int $itemId)
     {
-        $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request);
+        if ($app->isDefault()) {
+            throw new Forbidden403Exception('This route requires an API key');
+        }
+        
         GoogleAnalytics::hit(['market',$server,'items',$itemId]);
         
         $key = 'companion_market_items_'. md5($server . $itemId);
@@ -67,7 +72,11 @@ class CompanionMarketController extends Controller
      */
     public function itemHistory(Request $request, string $server, int $itemId)
     {
-        $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request);
+        if ($app->isDefault()) {
+            throw new Forbidden403Exception('This route requires an API key');
+        }
+        
         GoogleAnalytics::hit(['market',$server,'items',$itemId,'history']);
     
         $key = 'companion_market_items_history_'. md5($server . $itemId);
@@ -85,7 +94,11 @@ class CompanionMarketController extends Controller
      */
     public function categoryList(Request $request, string $server, int $category)
     {
-        $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request);
+        if ($app->isDefault()) {
+            throw new Forbidden403Exception('This route requires an API key');
+        }
+        
         GoogleAnalytics::hit(['market',$server,'category',$category]);
     
         $key = 'companion_market_category_'. md5($server . $category);
