@@ -15,7 +15,7 @@ class App
     const DEFAULT_RATE_LIMIT = 5;
     const DEFAULT_API_KEY = 'default';
     const LV2_LEVEL = 2;
-    const LV2_RATE_LIMIT = 20;
+    const LV2_RATE_LIMIT = 10;
     const MAX_HISTORY = 50;
 
     /**
