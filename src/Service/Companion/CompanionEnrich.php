@@ -25,7 +25,6 @@ trait CompanionEnrich
         return [
             'ID'        => $item->ID,
             'Icon'      => $item->Icon,
-            'Icon2x'    => $item->Icon2x,
             'Rarity'    => $item->Rarity,
             'Name_en'   => $item->Name_en,
             'Name_fr'   => $item->Name_fr,
