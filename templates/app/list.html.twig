@@ -3,9 +3,14 @@
     <small>&nbsp;&nbsp;&nbsp; Max {{ auth.user.appsMax }}</small>
 </h1>
 
-{% if not auth.user.isBanned() or auth.user.appsMax < auth.user.apps|length %}
+{% if not auth.user.isBanned() %}
 <p>
-    <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
+    {% if auth.user.apps|length < auth.user.appsMax %}
+        <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
+    {% else %}
+        You cannot make anymore dev applications at this time.
+        {% if auth.user.level === 2 %}Your limit will increase to 5 after 1 hour{% endif %}
+    {% endif %}
 </p>
 {% endif %}
 
