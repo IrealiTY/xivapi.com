@@ -55,11 +55,7 @@ class AppManager
             throw new UnauthorizedAccessException();
         }
 
-        // ban check
-        if ($app->getUser()->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $app->getUser()->checkBannedStatus();
 
         //
         // rate limit check
