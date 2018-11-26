@@ -2,8 +2,6 @@
 
 namespace App\Service\Docs;
 
-use App\Entity\App;
-
 class Welcome extends DocBuilder implements DocInterface
 {
     public function build()
@@ -30,58 +28,13 @@ class Welcome extends DocBuilder implements DocInterface
             ->gap()
 
             //
-            // Open source
-            //
-            ->h6('Open Source')
-            ->text('XIVAPI is all open source with many prototypes, libraries and other resources available on
-                github:')
-            ->list([
-                '**Organisation**: https://github.com/xivapi',
-                '**Source Code**: https://github.com/xivapi/xivapi.com',
-            ])
-            ->note('The xivapi.com is not really looking for contributions at this time as much of the
-                functionality is being moved to micro services.')
-            ->gap()
-
-            ->h6('Other libraries')
-            ->text('Other cool stuff for you!')
-            ->table(
-                [
-                    'Name', 'Info'
-                ],
-                [
-                    [
-                        'Angular-Client',
-                        '[https://github.com/xivapi/angular-client](https://github.com/xivapi/angular-client)<br>An Angular client for interacting with the XIVAPI'
-                    ],
-                    [
-                        'Lodestone Parser PHP',
-                        '[https://github.com/xivapi/lodestone-parser](https://github.com/xivapi/lodestone-parser)<br>A Lodestone Parser written in PHP',
-                    ],
-                    [
-                        'Game Data',
-                        '[https://github.com/xivapi/xivapi-data](https://github.com/xivapi/xivapi-data)<br>Extracting game data using SaintCoinach and automatically building content documents for the REST API'
-                    ],
-                    [
-                        'Mappy',
-                        '[https://github.com/xivapi/xivapi-mappy](https://github.com/xivapi/xivapi-mappy)<br>Parse map information from FFXIV via the games memory'
-                    ],
-                    [
-                        'Companion PHP',
-                        '[https://github.com/xivapi/companion-php](https://github.com/xivapi/companion-php)<br>A PHP library that exposes the FFXIV Companion App API'
-                    ]
-                ]
-            )
-            ->gap()
-            ->line()
-
-            //
             // API Keys
             //
             ->h6('Apps & API Keys')
+            ->h4('Obtain a key: [Create an application](/app)')
             ->text('The API is very public and can be used without any keys but this will have 
                 some restrictions. Without using a key you will have restricted access, this is to reduce
-                abuse and web crawling, below are the restrictions:')
+                abuse and web crawling. Keys are free so please get one! Below are the restrictions:')
             ->table(
                 [ 'State', 'Rate Limit', 'Information' ],
                 [
@@ -104,25 +57,22 @@ class Welcome extends DocBuilder implements DocInterface
             )
             ->text('Endpoint restrictions for "No Key":')
             ->list([
-                '/market/{server}/items/{itemId}',
-                '/market/{server}/items/{itemId}/history',
-                '/market/{server}/category/{category}',
-                '/market/categories',
-
-                '/character/search',
-                '/character/{id}/verification',
-                '/character/{id}/delete',
-                '/freecompany/search',
-                '/freecompany/{id}/delete',
-                '/linkshell/search',
-                '/linkshell/{id}/delete',
-                '/pvpteam/search',
-                '/pvpteam/{id}/delete',
-                '/lodestone/devposts'
+                '`/market/{server}/items/{itemId}`',
+                '`/market/{server}/items/{itemId}/history`',
+                '`/market/{server}/category/{category}`',
+                '`/market/categories`',
+                '`/character/search`',
+                '`/character/{id}/verification`',
+                '`/character/{id}/delete`',
+                '`/freecompany/search`',
+                '`/freecompany/{id}/delete`',
+                '`/linkshell/search`',
+                '`/linkshell/{id}/delete`',
+                '`/pvpteam/search`',
+                '`/pvpteam/{id}/delete`',
+                '`/lodestone/devpost`s'
             ])
 
-            ->h4('Obtain a key: [Create an application](/app)')
-            ->text('Obtaining a key is free and obtained by creating a Developer App.')
             ->gap()
             ->h3('key')
             ->usage('{endpoint}/Item?key=[your_api_key]')
@@ -332,6 +282,52 @@ class Welcome extends DocBuilder implements DocInterface
                     [ 'Chocobo Companion', 'Buddy', 'Again, confusing with Minions...' ]
                 ]
             )
+            ->line()
+
+            //
+            // Open source
+            //
+            ->h6('Open Source')
+            ->text('XIVAPI is all open source with many prototypes, libraries and other resources available on
+                github:')
+            ->list([
+                '**Organisation**: https://github.com/xivapi',
+                '**Source Code**: https://github.com/xivapi/xivapi.com',
+            ])
+            ->note('The xivapi.com is not really looking for contributions at this time as much of the
+                functionality is being moved to micro services.')
+            ->gap()
+
+            ->h6('Other libraries')
+            ->text('Other cool stuff for you!')
+            ->table(
+                [
+                    'Name', 'Info'
+                ],
+                [
+                    [
+                        'Angular-Client',
+                        '[https://github.com/xivapi/angular-client](https://github.com/xivapi/angular-client)<br>An Angular client for interacting with the XIVAPI'
+                    ],
+                    [
+                        'Lodestone Parser PHP',
+                        '[https://github.com/xivapi/lodestone-parser](https://github.com/xivapi/lodestone-parser)<br>A Lodestone Parser written in PHP',
+                    ],
+                    [
+                        'Game Data',
+                        '[https://github.com/xivapi/xivapi-data](https://github.com/xivapi/xivapi-data)<br>Extracting game data using SaintCoinach and automatically building content documents for the REST API'
+                    ],
+                    [
+                        'Mappy',
+                        '[https://github.com/xivapi/xivapi-mappy](https://github.com/xivapi/xivapi-mappy)<br>Parse map information from FFXIV via the games memory'
+                    ],
+                    [
+                        'Companion PHP',
+                        '[https://github.com/xivapi/companion-php](https://github.com/xivapi/companion-php)<br>A PHP library that exposes the FFXIV Companion App API'
+                    ]
+                ]
+            )
+            ->gap()
             ->line()
 
             //
