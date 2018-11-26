@@ -101,7 +101,8 @@ class ApplicationsController extends Controller
         /** @var User $user */
         $user = $this->userService->getUser();
 
-        if (!$user || $user->getAppsMax() >= count($user->getApps())) {
+        if (!$user || count($user->getApps()) >= $user->getAppsMax()) {
+            $message = 'You cannot create anymore apps at this time.';
             return $this->redirectToRoute('app');
         }
         

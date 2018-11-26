@@ -3,7 +3,7 @@
     <small>&nbsp;&nbsp;&nbsp; Max {{ auth.user.appsMax }}</small>
 </h1>
 
-{% if not auth.user.isBanned() and auth.user.appsMax < auth.user.apps|length %}
+{% if not auth.user.isBanned() or auth.user.appsMax < auth.user.apps|length %}
 <p>
     <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
 </p>
@@ -71,11 +71,19 @@
                     <div>
                         <small>{{ app.description }}</small>
                     </div>
+                    <br>
                     {% if app.isRestricted() %}
                     <div class="alert alert-danger">
                         Mass crawling detected, this key has been restricted.
                         Please <a href="https://discord.gg/MFFVHWC">Join Discord</a> for help regarding this.
                     </div>
+                    {% endif %}
+                    {% if app.isRestricted() %}
+                        <div class="alert alert-warning">
+                            <strong>New Key!</strong><br>
+                            This key is limited to 2 requests per second. This restriction will be
+                            lifted: {{ (app.added+3600)|dateRelative }}
+                        </div>
                     {% endif %}
                 </td>
                 <td valign="center">
