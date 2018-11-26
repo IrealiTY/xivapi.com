@@ -293,4 +293,9 @@ class User
     {
         return (time() - $this->added) < 3600;
     }
+
+    public function hasMapAccess()
+    {
+        return $this->level >= 4;
+    }
 }

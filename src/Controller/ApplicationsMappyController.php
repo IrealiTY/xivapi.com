@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\App;
 use App\Entity\MapCompletion;
+use App\Exception\UnauthorizedAccessException;
 use App\Service\Apps\AppManager;
 use App\Service\Maps\Mappy;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,10 +32,12 @@ class ApplicationsMappyController extends Controller
     /**
      * @Route("/mappy/verify")
      */
-    public function verify()
+    public function verify(Request $request)
     {
+        $app = $this->appManager->fetch($request);
+
         return $this->json([
-            'allowed' => true
+            'allowed' => $app->getUser()->hasMapAccess()
         ]);
     }
     
@@ -43,7 +46,11 @@ class ApplicationsMappyController extends Controller
      */
     public function markComplete(Request $request)
     {
-        $this->appManager->fetch($request, true);
+        $app = $this->appManager->fetch($request);
+
+        if (!$app->getUser()->hasMapAccess()) {
+            throw new UnauthorizedHttpException("You are not allowed!");
+        }
 
         $repo = $this->em->getRepository(MapCompletion::class);
         $complete = $repo->findOneBy([ 'MapID' => $request->get('map') ]) ?: new MapCompletion();
@@ -66,7 +73,11 @@ class ApplicationsMappyController extends Controller
      */
     public function openMap(request $request)
     {
-        $app = $this->appManager->fetch($request, true);
+        $app = $this->appManager->fetch($request);
+
+        if (!$app->getUser()->hasMapAccess()) {
+            throw new UnauthorizedAccessException();
+        }
 
         return $this->redirectToRoute('app_manage_map_view', [
             'id' => $app->getId(),
@@ -80,9 +91,13 @@ class ApplicationsMappyController extends Controller
     public function submit(Request $request)
     {
         /** @var App $app */
-        $this->appManager->fetch($request, true);
+        $app = $this->appManager->fetch($request);
         
         $json = json_decode($request->getContent());
+
+        if ($request->getMethod() !== 'POST' || !$app->getUser()->hasMapAccess() || empty($json)) {
+            throw new UnauthorizedAccessException();
+        }
         
         # file_put_contents(__DIR__.'/data'. $json->id .'.json', json_encode($json, JSON_PRETTY_PRINT));
         # $json = json_decode(file_get_contents(__DIR__.'/data839898.json'));

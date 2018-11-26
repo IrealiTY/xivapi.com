@@ -102,7 +102,6 @@ class ApplicationsController extends Controller
         $user = $this->userService->getUser();
 
         if (!$user || count($user->getApps()) >= $user->getAppsMax()) {
-            $message = 'You cannot create anymore apps at this time.';
             return $this->redirectToRoute('app');
         }
         
@@ -315,7 +314,7 @@ class ApplicationsController extends Controller
         ksort($regions);
         
         return $this->render('app/mappy.html.twig', [
-            'allowed'           => $app->hasMappyAccess(),
+            'allowed'           => $user->hasMapAccess(),
             'app'               => $app,
             'maps'              => $maps,
             'regions'           => $regions,
@@ -351,7 +350,7 @@ class ApplicationsController extends Controller
         $complete = $repo->findOneBy([ 'MapID' => $map->ID ]) ?: new MapCompletion();
         
         return $this->render('app/mappy_view.html.twig', [
-            'allowed'   => $app->hasMappyAccess(),
+            'allowed'   => $user->hasMapAccess(),
             'app'       => $app,
             'map'       => $map,
             'complete'  => $complete,
