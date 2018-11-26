@@ -42,3 +42,5 @@ yarn-error.log
 .phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+src/Service/Common/Statistics\.php\.log

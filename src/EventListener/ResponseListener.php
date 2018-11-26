@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Service\Common\Arrays;
 use App\Service\Common\DataType;
+use App\Service\Common\Statistics;
 use App\Service\Content\ContentMinified;
 use App\Service\Common\Language;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -113,5 +114,7 @@ class ResponseListener
             $response->headers->set('Access-Control-Allow-Origin','*');
             $event->setResponse($response);
         }
+    
+        Statistics::response($event);
     }
 }

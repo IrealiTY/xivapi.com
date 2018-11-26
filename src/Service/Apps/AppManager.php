@@ -252,8 +252,15 @@ class AppManager
      */
     public function get(string $id)
     {
-        $repo = $this->em->getRepository(App::class);
-        return $repo->findOneBy([ 'id' => $id ]);
+        return $this->em->getRepository(App::class)->findOneBy([ 'id' => $id ]);
+    }
+    
+    /**
+     * Fetch an app via its key
+     */
+    public function getByKey(string $id)
+    {
+        return $this->em->getRepository(App::class)->findOneBy([ 'apiKey' => $id ]);
     }
 
     /**
