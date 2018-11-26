@@ -31,6 +31,11 @@ class User
     private $sso;
     /**
      * @var string
+     * @ORM\Column(type="string", length=128)
+     */
+    private $ssoId;
+    /**
+     * @var string
      * A random hash saved to cookie to retrieve the token
      * @ORM\Column(type="string", length=128, unique=true)
      */
@@ -107,6 +112,30 @@ class User
     {
         $this->sso = $sso;
 
+        return $this;
+    }
+    
+    public function getAdded(): int
+    {
+        return $this->added;
+    }
+    
+    public function setAdded(int $added)
+    {
+        $this->added = $added;
+        
+        return $this;
+    }
+    
+    public function getSsoId(): string
+    {
+        return $this->ssoId;
+    }
+    
+    public function setSsoId(string $ssoId)
+    {
+        $this->ssoId = $ssoId;
+        
         return $this;
     }
 

@@ -75,7 +75,7 @@ class UserService
         
         $repo = $this->em->getRepository(User::class);
         $user = $repo->findOneBy([
-            'email' => $ssoAccess->email
+            'id' => $ssoAccess->id
         ]);
         
         if (!$user) {
