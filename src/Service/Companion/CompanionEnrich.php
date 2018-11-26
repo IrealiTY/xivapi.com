@@ -55,7 +55,16 @@ trait CompanionEnrich
         foreach ($materia as $mat) {
             $row  = $this->cache->get("xiv_Materia_{$mat->key}");
             $item = $row->{"Item{$mat->grade}"};
-            $arr[] = $this->getEnrichedItem(null, $item);
+            $arr[] = [
+                'ID'        => $item->ID,
+                'Icon'      => $item->Icon,
+                'Rarity'    => $item->Rarity,
+                'Name_en'   => $item->Name_en,
+                'Name_fr'   => $item->Name_fr,
+                'Name_de'   => $item->Name_de,
+                'Name_ja'   => $item->Name_ja,
+                'Url'       => $item->Url,
+            ];
         }
         
         return $arr;
