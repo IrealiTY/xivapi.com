@@ -31,7 +31,7 @@ class User
     private $sso;
     /**
      * @var string
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="string", length=128, unique=true)
      */
     private $ssoId;
     /**
