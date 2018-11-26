@@ -82,12 +82,12 @@ class Content extends DocBuilder implements DocInterface
             ->h6('Common Parameters')
             
             // max items
-            ->h3('max_items')
-            ->usage('{endpoint}/Item?columns=ID,Icon,Name&pretty=1&max_items=5')
+            ->h3('limit')
+            ->usage('{endpoint}/Item?columns=ID,Icon,Name&pretty=1&limit=5')
             ->text('Limit the number of items returned by the API.')
             ->list([
                 'Default: 100',
-                'Maximum: 5000',
+                'Maximum: 3000',
             ])
             ->gap()
             
