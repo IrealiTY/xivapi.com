@@ -14,7 +14,7 @@ class App
     const DEFAULT_API_KEY = 'default';
 
     const RATE_LIMITS = [
-        1 => 1,
+        1 => 2,
         2 => 2,
         3 => 10,
         4 => 20,
