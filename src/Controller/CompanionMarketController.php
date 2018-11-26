@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CompanionMarketController extends Controller
 {
+    const ENDPOINT_CACHE_DURATION = 300;
+
     /** @var AppManager */
     private $appManager;
     /** @var Companion */
@@ -50,23 +52,13 @@ class CompanionMarketController extends Controller
      */
     public function itemPrices(Request $request, string $server, int $itemId)
     {
-        $app = $this->appManager->fetch($request);
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
-    
-        if ($app->getUser()->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
-        
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['market',$server,'items',$itemId]);
         
         $key = 'companion_market_items_'. md5($server . $itemId);
-        
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemPrices($itemId);
-            $this->cache->set($key, $data, 15);
+            $this->cache->set($key, $data, self::ENDPOINT_CACHE_DURATION);
         }
         
         return $this->json($data);
@@ -77,23 +69,13 @@ class CompanionMarketController extends Controller
      */
     public function itemHistory(Request $request, string $server, int $itemId)
     {
-        $app = $this->appManager->fetch($request);
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
-    
-        if ($app->getUser()->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
-        
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['market',$server,'items',$itemId,'history']);
     
         $key = 'companion_market_items_history_'. md5($server . $itemId);
-    
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemHistory($itemId);
-            $this->cache->set($key, $data, 15);
+            $this->cache->set($key, $data, self::ENDPOINT_CACHE_DURATION);
         }
     
         return $this->json($data);
@@ -104,23 +86,13 @@ class CompanionMarketController extends Controller
      */
     public function categoryList(Request $request, string $server, int $category)
     {
-        $app = $this->appManager->fetch($request);
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
-    
-        if ($app->getUser()->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
-        
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['market',$server,'category',$category]);
     
         $key = 'companion_market_category_'. md5($server . $category);
-    
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getCategoryList($category);
-            $this->cache->set($key, $data, 15);
+            $this->cache->set($key, $data, self::ENDPOINT_CACHE_DURATION);
         }
     
         return $this->json($data);
@@ -131,7 +103,7 @@ class CompanionMarketController extends Controller
      */
     public function categories(Request $request)
     {
-        $this->appManager->fetch($request);
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['market','categories']);
         
         return $this->json(
