@@ -19,6 +19,11 @@ class User
      */
     private $id;
     /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $added;
+    /**
      * The name of the SSO provider
      * @var string
      * @ORM\Column(type="string", length=32)
@@ -78,6 +83,7 @@ class User
         $this->id = Uuid::uuid4();
         $this->session = Uuid::uuid4()->toString() . Uuid::uuid4()->toString() . Uuid::uuid4()->toString();
         $this->apps = new ArrayCollection();
+        $this->added = time();
     }
 
     public function getId()

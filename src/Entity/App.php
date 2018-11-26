@@ -25,6 +25,11 @@ class App
      */
     private $id;
     /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $added;
+    /**
      * @var bool
      * @ORM\Column(type="boolean", name="is_default")
      */
@@ -71,6 +76,7 @@ class App
     {
         $this->id = Uuid::uuid4();
         $this->generateApiKey();
+        $this->added = time();
     }
     
     public function generateApiKey()
