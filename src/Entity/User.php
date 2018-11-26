@@ -257,6 +257,14 @@ class User
     {
         return $this->banned;
     }
+
+    public function checkBannedStatus()
+    {
+        if ($this->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
+    }
     
     public function setBanned(bool $banned)
     {

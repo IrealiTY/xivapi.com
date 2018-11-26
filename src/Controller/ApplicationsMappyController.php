@@ -31,15 +31,10 @@ class ApplicationsMappyController extends Controller
     /**
      * @Route("/mappy/verify")
      */
-    public function verify(Request $request)
+    public function verify()
     {
-        $app = $this->appManager->fetch($request);
-        $app->setToolAccessMappy(true);
-        $this->em->persist($app);
-        $this->em->flush();
-        
         return $this->json([
-            'allowed' => $app->hasMappyAccess()
+            'allowed' => true
         ]);
     }
     
@@ -48,12 +43,8 @@ class ApplicationsMappyController extends Controller
      */
     public function markComplete(Request $request)
     {
-        $app = $this->appManager->fetch($request);
-        
-        if (!$app->hasMappyAccess()) {
-            throw new UnauthorizedHttpException("You are not allowed!");
-        }
-        
+        $this->appManager->fetch($request, true);
+
         $repo = $this->em->getRepository(MapCompletion::class);
         $complete = $repo->findOneBy([ 'MapID' => $request->get('map') ]) ?: new MapCompletion();
         
@@ -75,12 +66,8 @@ class ApplicationsMappyController extends Controller
      */
     public function openMap(request $request)
     {
-        $app = $this->appManager->fetch($request);
-    
-        if (!$app->hasMappyAccess()) {
-            throw new UnauthorizedHttpException("You are not allowed!");
-        }
-        
+        $app = $this->appManager->fetch($request, true);
+
         return $this->redirectToRoute('app_manage_map_view', [
             'id' => $app->getId(),
             'map' => $request->get('map')
@@ -93,13 +80,9 @@ class ApplicationsMappyController extends Controller
     public function submit(Request $request)
     {
         /** @var App $app */
-        $app = $this->appManager->fetch($request);
+        $this->appManager->fetch($request, true);
         
         $json = json_decode($request->getContent());
-        
-        if ($request->getMethod() !== 'POST' || !$app->hasMappyAccess() || empty($json)) {
-            throw new UnauthorizedHttpException("You are not allowed!");
-        }
         
         # file_put_contents(__DIR__.'/data'. $json->id .'.json', json_encode($json, JSON_PRETTY_PRINT));
         # $json = json_decode(file_get_contents(__DIR__.'/data839898.json'));

@@ -33,11 +33,6 @@ class App
      */
     private $added;
     /**
-     * @var bool
-     * @ORM\Column(type="boolean", name="is_default")
-     */
-    private $default = false;
-    /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User", inversedBy="apps")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
@@ -64,16 +59,20 @@ class App
      */
     private $apiKey;
     /**
-     * the number of requests per second per ip
      * @var integer
      * @ORM\Column(type="integer", length=4)
      */
-    private $apiRateLimit = 5;
+    private $apiRateLimit = 2;
     /**
      * @var bool
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
-    private $toolAccessMappy = false;
+    private $restricted = false;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="is_default")
+     */
+    private $default = false;
     
     public function __construct()
     {
@@ -197,24 +196,20 @@ class App
         return $this;
     }
 
-    public function isToolAccessMappy(): bool
-    {
-        return $this->toolAccessMappy;
-    }
-
-    public function setToolAccessMappy(bool $toolAccessMappy)
-    {
-        $this->toolAccessMappy = $toolAccessMappy;
-        return $this;
-    }
-
-    public function hasMappyAccess(): bool
-    {
-        return $this->toolAccessMappy;
-    }
-
     public function isLimited()
     {
         return (time() - $this->added) < 3600;
+    }
+
+    public function isRestricted(): bool
+    {
+        return $this->restricted;
+    }
+
+    public function setRestricted(bool $restricted)
+    {
+        $this->restricted = $restricted;
+
+        return $this;
     }
 }
