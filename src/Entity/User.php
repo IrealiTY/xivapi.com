@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
+    const MAX_APPS = [
+        1 => 1,
+        2 => 1,
+        3 => 5,
+        4 => 10,
+        5 => 20,
+    ];
+
     /**
      * @var string
      * @ORM\Id
@@ -69,6 +77,11 @@ class User
      */
     private $avatar;
     /**
+     * @var int
+     * @ORM\Column(type="integer", length=2)
+     */
+    private $level = 2;
+    /**
      * @ORM\OneToMany(targetEntity="App", mappedBy="user")
      */
     private $apps;
@@ -76,7 +89,7 @@ class User
      * @var int
      * @ORM\Column(type="integer", length=16)
      */
-    private $appsMax = 5;
+    private $appsMax = 1;
     /**
      * @var bool
      * @ORM\Column(type="boolean", name="is_banned")
@@ -250,5 +263,26 @@ class User
         $this->banned = $banned;
         
         return $this;
+    }
+
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    public function setLevel($level)
+    {
+        $this->level = $level;
+
+        $this->setAppsMax(
+            self::MAX_APPS[$this->level]
+        );
+
+        return $this;
+    }
+
+    public function isLimited()
+    {
+        return (time() - $this->added) < 3600;
     }
 }

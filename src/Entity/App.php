@@ -11,12 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class App
 {
-    const DEFAULT_LEVEL = 1;
-    const DEFAULT_RATE_LIMIT = 5;
     const DEFAULT_API_KEY = 'default';
-    const LV2_LEVEL = 2;
-    const LV2_RATE_LIMIT = 1;
-    const MAX_HISTORY = 50;
+
+    const RATE_LIMITS = [
+        1 => 1,
+        2 => 2,
+        3 => 10,
+        4 => 20,
+        5 => 30,
+    ];
 
     /**
      * @var string
@@ -105,9 +108,21 @@ class App
     public function setDefault(bool $default)
     {
         $this->default = $default;
-        $this->level = self::DEFAULT_LEVEL;
-        $this->apiRateLimit = self::DEFAULT_RATE_LIMIT;
-        $this->apiKey = self::DEFAULT_API_KEY;
+        $this->level = 1;
+        $this->apiRateLimit = self::RATE_LIMITS[1];
+        $this->apiKey = 'default';
+        return $this;
+    }
+
+    public function getAdded(): int
+    {
+        return $this->added;
+    }
+
+    public function setAdded(int $added)
+    {
+        $this->added = $added;
+
         return $this;
     }
 
@@ -152,6 +167,11 @@ class App
     public function setLevel(int $level)
     {
         $this->level = $level;
+
+        $this->setApiRateLimit(
+            self::RATE_LIMITS[$this->level]
+        );
+
         return $this;
     }
 
@@ -191,5 +211,10 @@ class App
     public function hasMappyAccess(): bool
     {
         return $this->toolAccessMappy;
+    }
+
+    public function isLimited()
+    {
+        return (time() - $this->added) < 3600;
     }
 }

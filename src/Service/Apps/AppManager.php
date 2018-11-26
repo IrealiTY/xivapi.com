@@ -4,6 +4,7 @@ namespace App\Service\Apps;
 
 use App\Entity\App;
 use App\Exception\ApiRateLimitException;
+use App\Exception\UnauthorizedAccessException;
 use App\Service\Redis\Cache;
 use App\Service\User\Time;
 use App\Service\User\UserService;
@@ -37,9 +38,11 @@ class AppManager
     }
 
     /**
-     * Fetch an API app from the request
+     * Fetch an API app from the request, if $keyRequired is set then
+     * an exception is thrown if no key is provided (eg the endpoint
+     * requires a key to be accessed)
      */
-    public function fetch(Request $request)
+    public function fetch(Request $request, $keyRequired = false)
     {
         // attempt to fetch users app
         $key  = $request->get('key');
@@ -48,6 +51,15 @@ class AppManager
         // use fetched key otherwise use default
         /** @var App $app */
         $app  = $repo->findOneBy([ 'apiKey' => $key ]) ?: $this->getDefaultKey();
+        if ($keyRequired && $app->isDefault()) {
+            throw new UnauthorizedAccessException();
+        }
+
+        // ban check
+        if ($app->getUser()->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
 
         //
         // rate limit check
@@ -260,8 +272,8 @@ class AppManager
         $app = new App();
         $app->setUser($user)
             ->setName('App #'. (count($user->getApps()) + 1))
-            ->setLevel(App::LV2_LEVEL)
-            ->setApiRateLimit(App::LV2_RATE_LIMIT);
+            ->setLevel(2)
+            ->setApiRateLimit(App::RATE_LIMITS[2]);
 
         $this->em->persist($app);
         $this->em->flush();
