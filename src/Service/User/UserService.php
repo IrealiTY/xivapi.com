@@ -70,12 +70,12 @@ class UserService
         if (!$this->sso->isCsrfValid()) {
             //throw new CsrfInvalidException();
         }
-        
+
         $ssoAccess = $this->sso->setLoginAuthorizationState();
         
         $repo = $this->em->getRepository(User::class);
         $user = $repo->findOneBy([
-            'id' => $ssoAccess->id
+            'ssoId' => $ssoAccess->id
         ]);
         
         if (!$user) {
@@ -144,6 +144,7 @@ class UserService
         $user = new User();
         $user
             ->setSso($sso)
+            ->setSsoId($ssoAccess->id)
             ->setToken(json_encode($ssoAccess))
             ->setUsername($ssoAccess->username)
             ->setEmail($ssoAccess->email)

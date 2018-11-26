@@ -2,8 +2,6 @@
 
 namespace App\Service\Docs;
 
-use App\Entity\App;
-
 class Welcome extends DocBuilder implements DocInterface
 {
     public function build()
@@ -30,50 +28,67 @@ class Welcome extends DocBuilder implements DocInterface
             ->gap()
 
             //
-            // Open source
+            // API Keys
             //
-            ->h6('Open Source')
-            ->text('XIVAPI is all open source with many prototypes, libraries and other resources available on
-                github:')
-            ->list([
-                '**Organisation**: https://github.com/xivapi',
-                '**Source Code**: https://github.com/xivapi/xivapi.com',
-            ])
-            ->note('The xivapi.com is not really looking for contributions at this time as much of the
-                functionality is being moved to micro services.')
-            ->gap()
-
-            ->h6('Other libraries')
-            ->text('Other cool stuff for you!')
+            ->h6('Apps & API Keys')
+            ->h4('Obtain a key: [Create an application](/app)')
+            ->text('The API is very public and can be used without any keys but this will have 
+                some restrictions. Without using a key you will have restricted access, this is to reduce
+                abuse and web crawling. Keys are free so please get one! Below are the restrictions:')
             ->table(
-                [
-                    'Name', 'Info'
-                ],
+                [ 'State', 'Rate Limit', 'Information' ],
                 [
                     [
-                        'Angular-Client',
-                        '[https://github.com/xivapi/angular-client](https://github.com/xivapi/angular-client)<br>An Angular client for interacting with the XIVAPI'
+                        'No Key',
+                        '1/req/second',
+                        'This is the default state when no key is provided. Some endpoints cannot be accessed using the default key.'
                     ],
                     [
-                        'Lodestone Parser PHP',
-                        '[https://github.com/xivapi/lodestone-parser](https://github.com/xivapi/lodestone-parser)<br>A Lodestone Parser written in PHP',
+                        'Limited Key',
+                        '2/req/second',
+                        'A key that has just been created will be "limited" for the first hour.'
                     ],
                     [
-                        'Game Data',
-                        '[https://github.com/xivapi/xivapi-data](https://github.com/xivapi/xivapi-data)<br>Extracting game data using SaintCoinach and automatically building content documents for the REST API'
-                    ],
-                    [
-                        'Mappy',
-                        '[https://github.com/xivapi/xivapi-mappy](https://github.com/xivapi/xivapi-mappy)<br>Parse map information from FFXIV via the games memory'
-                    ],
-                    [
-                        'Companion PHP',
-                        '[https://github.com/xivapi/companion-php](https://github.com/xivapi/companion-php)<br>A PHP library that exposes the FFXIV Companion App API'
+                        'Full Key',
+                        '10/req/second',
+                        'An unrestricted key.'
                     ]
                 ]
             )
+            ->text('Endpoint restrictions for "No Key":')
+            ->list([
+                '`/market/{server}/items/{itemId}`',
+                '`/market/{server}/items/{itemId}/history`',
+                '`/market/{server}/category/{category}`',
+                '`/market/categories`',
+                '`/character/search`',
+                '`/character/{id}/verification`',
+                '`/character/{id}/delete`',
+                '`/freecompany/search`',
+                '`/freecompany/{id}/delete`',
+                '`/linkshell/search`',
+                '`/linkshell/{id}/delete`',
+                '`/pvpteam/search`',
+                '`/pvpteam/{id}/delete`',
+                '`/lodestone/devposts`'
+            ])
+
             ->gap()
-            ->line()
+            ->h3('key')
+            ->usage('{endpoint}/Item?key=_your_api_key_')
+            ->text('Keys provide usage statistics and have rate limits on them to prevent abuse of 
+                the API. You can re-generate your API key at any time, make as many apps as you like 
+                and use them freely.')
+
+
+            ->text('A default key also has the following restrictions as they interact with The Lodestone:')
+
+            ->h4('Rate-Limiting')
+            ->text('Apps have their own individual rate limits. This is per ip per key. IPs are not stored in 
+                the system but instead are hashed and used as a tracking point for that "second". Your number of 
+                hits per second can be viewed in your app as the current requests per/second can be seen.')
+            ->gap()
+            ->gap()
 
             //
             //  GLOBAL QUERIES
@@ -201,40 +216,6 @@ class Welcome extends DocBuilder implements DocInterface
 
             ->gap(2)
 
-            //
-            // API Keys
-            //
-            ->h6('Apps & API Keys')
-            ->text('The API is very public and can be used without any keys but this will have 
-                some restrictions, for example non-key apps have a Rate-Limit of 5/second.')
-            ->list([ 'You can create a developer app by going to: [Applications](/app)' ])
-            ->gap()
-            ->h3('key')
-            ->usage('{endpoint}/Item?key=xxxx')
-            ->text('Keys provide usage statistics and have rate limits on them to prevent abuse of 
-                the API. You can re-generate your API key at any time, make as many apps as you like 
-                and use them freely.')
-            
-            ->table(
-                [ 'Default Rate Limit', 'App Rate Limit' ],
-                [
-                    [ App::DEFAULT_RATE_LIMIT, App::LV2_RATE_LIMIT ]
-                ]
-            )
-            ->text('Rate limits are per hashed IP, per second, if you need a higher limit. Please ask in Discord.')
-
-            ->text('A default key also has the following restrictions as they interact with The Lodestone:')
-            ->list([
-                'Cannot delete characters',
-                'Cannot delete free companies',
-                'Cannot delete linkshells',
-                'Cannot delete pvp teams',
-                'Cannot request character bio verification',
-                'Cannot request dev forum posts',
-                'Cannot request any market information'
-            ])
-            ->gap()
-
             ->h3('tags')
             ->usage('{endpoint}/servers?key=xxxx&tags=lorem,ipsum')
             ->text('You can add tracking counters to your app for whatever purpose using "tags". Separate tags 
@@ -242,12 +223,6 @@ class Welcome extends DocBuilder implements DocInterface
                 as many tags you would like and counts will store for a period of 30 days before taping off and 
                 being removed if they become inactive.')
             ->text('A tag must be alpha numeric and allows dashes and underscores.')
-            ->gap()
-
-            ->h4('Rate-Limiting')
-            ->text('Apps have their own individual rate limits. This is per ip per key. IPs are not stored in 
-                the system but instead are hashed and used as a tracking point for that "second". Your number of 
-                hits per second can be viewed in your app as the current requests per/second can be seen.')
             ->gap()
             
             ->h4('Ints')
@@ -307,6 +282,52 @@ class Welcome extends DocBuilder implements DocInterface
                     [ 'Chocobo Companion', 'Buddy', 'Again, confusing with Minions...' ]
                 ]
             )
+            ->line()
+
+            //
+            // Open source
+            //
+            ->h6('Open Source')
+            ->text('XIVAPI is all open source with many prototypes, libraries and other resources available on
+                github:')
+            ->list([
+                '**Organisation**: https://github.com/xivapi',
+                '**Source Code**: https://github.com/xivapi/xivapi.com',
+            ])
+            ->note('The xivapi.com is not really looking for contributions at this time as much of the
+                functionality is being moved to micro services.')
+            ->gap()
+
+            ->h6('Other libraries')
+            ->text('Other cool stuff for you!')
+            ->table(
+                [
+                    'Name', 'Info'
+                ],
+                [
+                    [
+                        'Angular-Client',
+                        '[https://github.com/xivapi/angular-client](https://github.com/xivapi/angular-client)<br>An Angular client for interacting with the XIVAPI'
+                    ],
+                    [
+                        'Lodestone Parser PHP',
+                        '[https://github.com/xivapi/lodestone-parser](https://github.com/xivapi/lodestone-parser)<br>A Lodestone Parser written in PHP',
+                    ],
+                    [
+                        'Game Data',
+                        '[https://github.com/xivapi/xivapi-data](https://github.com/xivapi/xivapi-data)<br>Extracting game data using SaintCoinach and automatically building content documents for the REST API'
+                    ],
+                    [
+                        'Mappy',
+                        '[https://github.com/xivapi/xivapi-mappy](https://github.com/xivapi/xivapi-mappy)<br>Parse map information from FFXIV via the games memory'
+                    ],
+                    [
+                        'Companion PHP',
+                        '[https://github.com/xivapi/companion-php](https://github.com/xivapi/companion-php)<br>A PHP library that exposes the FFXIV Companion App API'
+                    ]
+                ]
+            )
+            ->gap()
             ->line()
 
             //

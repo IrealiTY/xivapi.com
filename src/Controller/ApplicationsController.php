@@ -101,14 +101,11 @@ class ApplicationsController extends Controller
         /** @var User $user */
         $user = $this->userService->getUser();
 
-        if (!$user) {
+        if (!$user || count($user->getApps()) >= $user->getAppsMax()) {
             return $this->redirectToRoute('app');
         }
         
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
 
         if ($id === 'new') {
             $app = $this->appManager->create();
@@ -150,10 +147,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
     
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -189,10 +183,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
         
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -225,10 +216,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
     
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -258,6 +246,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -324,7 +314,7 @@ class ApplicationsController extends Controller
         ksort($regions);
         
         return $this->render('app/mappy.html.twig', [
-            'allowed'           => $app->hasMappyAccess(),
+            'allowed'           => $user->hasMapAccess(),
             'app'               => $app,
             'maps'              => $maps,
             'regions'           => $regions,
@@ -344,6 +334,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -358,7 +350,7 @@ class ApplicationsController extends Controller
         $complete = $repo->findOneBy([ 'MapID' => $map->ID ]) ?: new MapCompletion();
         
         return $this->render('app/mappy_view.html.twig', [
-            'allowed'   => $app->hasMappyAccess(),
+            'allowed'   => $user->hasMapAccess(),
             'app'       => $app,
             'map'       => $map,
             'complete'  => $complete,
@@ -376,6 +368,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -418,6 +412,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -443,6 +439,4 @@ class ApplicationsController extends Controller
             'map' => $map
         ]);
     }
-    
-    
 }

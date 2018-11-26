@@ -38,7 +38,7 @@
             <div>
                 {% if auth.user %}
                     <span class="header-user">
-                        {{ auth.user.username|title }}
+                        {{ auth.user.username }}
                         <img src="{{ auth.user.avatar }}" height="38">
                         <a href="{{ path('app_logout') }}" class="btn btn-secondary">Logout</a>
                     </span>

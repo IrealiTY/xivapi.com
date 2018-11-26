@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\MapPosition;
+use App\Entity\User;
 use App\Service\Redis\Cache;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -19,11 +20,8 @@ class GenericCommand extends Command
     /** @var Cache */
     private $cache;
     
-    public function __construct(
-        ?string $name = null,
-        EntityManagerInterface $em,
-        Cache $cache
-    ) {
+    public function __construct(?string $name = null, EntityManagerInterface $em, Cache $cache)
+    {
         $this->em     = $em;
         $this->cache  = $cache;
         parent::__construct($name);
@@ -34,69 +32,31 @@ class GenericCommand extends Command
         $this
             ->setName('GenericCommand')
             ->setDescription('Generic command.')
-            ->addArgument('a', InputArgument::OPTIONAL, 'A')
-            ->addArgument('b', InputArgument::OPTIONAL, 'B')
         ;
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->setSymfonyStyle($input, $output);
-        $this->io->title("Generic");
+        $output->writeln('getting users');
 
-        $data = explode("\n", file_get_contents(__DIR__.'/../../data/csv/MapData.csv'));
-        unset($data[0]);
 
-        $count = 0;
-        foreach ($data as $i => $row) {
-            $row = str_getcsv($row);
+        $users = $this->em->getRepository(User::class)->findAll();
 
-            $map = new MapPosition();
-            $fields = [
-                'Hash',
-                'ContentIndex',
-                'ENpcResidentID',
-                'BNpcNameID',
-                'BNpcBaseID',
-                'Name',
-                'Type',
-                'MapID',
-                'MapIndex',
-                'MapTerritoryID',
-                'PlaceNameID',
-                'CoordinateX',
-                'CoordinateY',
-                'CoordinateZ',
-                'PosX',
-                'PosY',
-                'PixelX',
-                'PixelY'
-            ];
+        /** @var User $user */
+        foreach ($users as $user) {
+            $id = $user->getToken()->id;
 
-            foreach ($fields as $j => $field) {
-                $value = $row[$j];
-
-                if (empty($value)) {
-                    break;
-                }
-
-                $method = "set{$field}";
-                $map->{$method}($value);
+            if (empty($id)) {
+                print_r($user);
+                die('no id for user');
             }
 
-            if (empty($map->getHash())) {
-                continue;
-            }
+            $user->setSsoId($id);
 
-            $count++;
-            $this->em->persist($map);
-
-            if ($count > 250) {
-                $this->io->text('Saving 250 map positions');
-                $this->em->flush();
-                $count = 0;
-            }
+            $output->writeln('.');
+            $this->em->persist($user);
         }
 
+        $this->em->flush();
     }
 }
