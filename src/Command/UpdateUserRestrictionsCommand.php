@@ -41,7 +41,7 @@ class UpdateUserRestrictionsCommand extends Command
         // Update Apps
         //
 
-        $apps = $this->em->getRepository(App::class)->findOneBy([ 'level' => 2 ]);
+        $apps = $this->em->getRepository(App::class)->findBy([ 'level' => 2 ]);
 
         /** @var App $app */
         foreach ($apps as $app) {
