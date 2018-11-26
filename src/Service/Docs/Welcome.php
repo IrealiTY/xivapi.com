@@ -76,6 +76,71 @@ class Welcome extends DocBuilder implements DocInterface
             ->line()
 
             //
+            // API Keys
+            //
+            ->h6('Apps & API Keys')
+            ->text('The API is very public and can be used without any keys but this will have 
+                some restrictions. Without using a key you will have restricted access, this is to reduce
+                abuse and web crawling, below are the restrictions:')
+            ->table(
+                [ 'State', 'Rate Limit', 'Information' ],
+                [
+                    [
+                        'No Key',
+                        '1/req/second',
+                        'This is the default state when no key is provided. Some endpoints cannot be accessed using the default key.'
+                    ],
+                    [
+                        'Limited Key',
+                        '2/req/second',
+                        'A key that has just been created will be "limited" for the first hour.'
+                    ],
+                    [
+                        'Full Key',
+                        '10/req/second',
+                        'An unrestricted key.'
+                    ]
+                ]
+            )
+            ->text('Endpoint restrictions for "No Key":')
+            ->list([
+                '/market/{server}/items/{itemId}',
+                '/market/{server}/items/{itemId}/history',
+                '/market/{server}/category/{category}',
+                '/market/categories',
+
+                '/character/search',
+                '/character/{id}/verification',
+                '/character/{id}/delete',
+                '/freecompany/search',
+                '/freecompany/{id}/delete',
+                '/linkshell/search',
+                '/linkshell/{id}/delete',
+                '/pvpteam/search',
+                '/pvpteam/{id}/delete',
+                '/lodestone/devposts'
+            ])
+
+            ->h4('Obtain a key: [Create an application](/app)')
+            ->text('Obtaining a key is free and obtained by creating a Developer App.')
+            ->gap()
+            ->h3('key')
+            ->usage('{endpoint}/Item?key=[your_api_key]')
+            ->text('Keys provide usage statistics and have rate limits on them to prevent abuse of 
+                the API. You can re-generate your API key at any time, make as many apps as you like 
+                and use them freely.')
+
+
+            ->text('A default key also has the following restrictions as they interact with The Lodestone:')
+
+            ->h4('Rate-Limiting')
+            ->text('Apps have their own individual rate limits. This is per ip per key. IPs are not stored in 
+                the system but instead are hashed and used as a tracking point for that "second". Your number of 
+                hits per second can be viewed in your app as the current requests per/second can be seen.')
+            ->gap()
+            ->gap()
+
+            //
             //  GLOBAL QUERIES
             //
             ->h6('Global Queries')
@@ -201,40 +266,6 @@ class Welcome extends DocBuilder implements DocInterface
 
             ->gap(2)
 
-            //
-            // API Keys
-            //
-            ->h6('Apps & API Keys')
-            ->text('The API is very public and can be used without any keys but this will have 
-                some restrictions, for example non-key apps have a Rate-Limit of 5/second.')
-            ->list([ 'You can create a developer app by going to: [Applications](/app)' ])
-            ->gap()
-            ->h3('key')
-            ->usage('{endpoint}/Item?key=xxxx')
-            ->text('Keys provide usage statistics and have rate limits on them to prevent abuse of 
-                the API. You can re-generate your API key at any time, make as many apps as you like 
-                and use them freely.')
-            
-            ->table(
-                [ 'Default Rate Limit', 'App Rate Limit' ],
-                [
-                    [ App::DEFAULT_RATE_LIMIT, App::LV2_RATE_LIMIT ]
-                ]
-            )
-            ->text('Rate limits are per hashed IP, per second, if you need a higher limit. Please ask in Discord.')
-
-            ->text('A default key also has the following restrictions as they interact with The Lodestone:')
-            ->list([
-                'Cannot delete characters',
-                'Cannot delete free companies',
-                'Cannot delete linkshells',
-                'Cannot delete pvp teams',
-                'Cannot request character bio verification',
-                'Cannot request dev forum posts',
-                'Cannot request any market information'
-            ])
-            ->gap()
-
             ->h3('tags')
             ->usage('{endpoint}/servers?key=xxxx&tags=lorem,ipsum')
             ->text('You can add tracking counters to your app for whatever purpose using "tags". Separate tags 
@@ -242,12 +273,6 @@ class Welcome extends DocBuilder implements DocInterface
                 as many tags you would like and counts will store for a period of 30 days before taping off and 
                 being removed if they become inactive.')
             ->text('A tag must be alpha numeric and allows dashes and underscores.')
-            ->gap()
-
-            ->h4('Rate-Limiting')
-            ->text('Apps have their own individual rate limits. This is per ip per key. IPs are not stored in 
-                the system but instead are hashed and used as a tracking point for that "second". Your number of 
-                hits per second can be viewed in your app as the current requests per/second can be seen.')
             ->gap()
             
             ->h4('Ints')

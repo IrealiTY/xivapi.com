@@ -10,7 +10,7 @@ class PatchList extends DocBuilder implements DocInterface
             ->h1('Patch List')
             
             // Lodestone
-            ->route('/patchlist', true)
+            ->route('/patchlist')
             ->usage("{endpoint}/patchlist")
             ->text('The API keeps a track record of when a piece of content is updated, this is based on which
                 patch version the ID appears; ignoring all "dummy" rows. This patch list is handled manually

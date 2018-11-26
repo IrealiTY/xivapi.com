@@ -22,8 +22,8 @@ class PvPTeam extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/pvpteam/search *', true)
-            ->usage("{endpoint}/pvpteam/search?name=LeAwesome&server=Phoenix")
+            ->route('/pvpteam/search *')
+            ->usage("{endpoint}/pvpteam/search?name=LeAwesome&server=Phoenix&key=[key]", true)
             ->text('Search for pvp team on The Lodestone. This parses the lodestone in real time so it will be 
                 slow for uncached responses. All search queries are cached for 1 hour. This does not search XIVAPI 
                 so pvp team found may not be on the service and will be added when requested by their specified 
@@ -41,7 +41,7 @@ class PvPTeam extends DocBuilder implements DocInterface
             // Get
             //
             ->h6('PvP Team Members')
-            ->route('/pvpteam/[lodestone_id]', true)
+            ->route('/pvpteam/[lodestone_id]')
             ->usage('{endpoint}/pvpteam/8e0bcac3c1380c9b08f104aab4c9605dfd846a1b')
             ->text('Get PVP Team data, due to the nature of availability on the service this 
                 endpoint will return either populated data or nothing, you will have to check the `Info` 
