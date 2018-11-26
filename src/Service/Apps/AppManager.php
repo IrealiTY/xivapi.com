@@ -55,7 +55,9 @@ class AppManager
             throw new UnauthorizedAccessException();
         }
 
-        $app->getUser()->checkBannedStatus();
+        if ($app->getUser()) {
+            $app->getUser()->checkBannedStatus();
+        }
 
         //
         // rate limit check
