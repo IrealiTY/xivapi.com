@@ -5,6 +5,7 @@ namespace App\Service\Redis;
 use Redis;
 
 /**
+ * todo - this whole class can be static
  * Requires: https://github.com/phpredis/phpredis
  */
 class Cache
