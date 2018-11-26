@@ -23,7 +23,7 @@ class Linkshell extends DocBuilder implements DocInterface
             //
             ->h6('Search')
             ->route('/linkshell/search *')
-            ->usage("{endpoint}/linkshell/search?name=LeAwesome&server=Phoenix&key=[key]", true)
+            ->usage("{endpoint}/linkshell/search?name=LeAwesome&server=Phoenix&key=_your_api_key_", true)
             ->text('Search for linkshells on The Lodestone. This parses the lodestone in real time so it will 
                 be slow for uncached responses. All search queries are cached for 1 hour. This does not search 
                 XIVAPI so linkshells found may not be on the service and will be added when requested by their 

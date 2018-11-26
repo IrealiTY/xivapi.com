@@ -200,7 +200,7 @@ class DocBuilder
         $this->text("**Usage** ⇢ {$text}");
 
         if ($keyRequired) {
-            $this->note('✖ This endpoint requires a **developer key** to access. Create one under **Applications**.');
+            $this->note('This endpoint requires a **developer key** to access. Create one under **Applications**.');
         }
 
         return $this;

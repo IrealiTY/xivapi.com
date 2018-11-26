@@ -41,7 +41,7 @@ class Market extends DocBuilder implements DocInterface
             // item prices
             ->h6('Item Prices')
             ->route('/market/[Server]/items/[Item_ID]')
-            ->usage("{endpoint}/market/phoenix/items/5?key=[key]", true)
+            ->usage("{endpoint}/market/phoenix/items/5?key=_your_api_key_", true)
             ->text('A list of prices for an item on a specific server.')
             ->h4('Response info')
             ->code(json_encode([
@@ -84,7 +84,7 @@ class Market extends DocBuilder implements DocInterface
             // item history
             ->h6('Item History')
             ->route('/market/[Server]/items/[Item_ID]/history')
-            ->usage("{endpoint}/market/phoenix/items/5/history?key=[key]", true)
+            ->usage("{endpoint}/market/phoenix/items/5/history?key=_your_api_key_", true)
             ->text('Get the price history for an item on a specific server.')
             ->h4('Response info')
             ->code(json_encode([
@@ -119,7 +119,7 @@ class Market extends DocBuilder implements DocInterface
             // item category listing
             ->h6('Item Category Listing')
             ->route('/market/[Server]/category/[Category_ID]')
-            ->usage("{endpoint}/market/phoenix/category/10?key=[key]", true)
+            ->usage("{endpoint}/market/phoenix/category/10?key=_your_api_key_", true)
             ->text('Get the list of items and their sale quantity in this category.')
             ->h4('Response Info')
             ->text(' The response is just an array of results.')
@@ -152,7 +152,7 @@ class Market extends DocBuilder implements DocInterface
             // market categories
             ->h6('Market Categories')
             ->route('/market/categories')
-            ->usage("{endpoint}/market/categories?key=[key]", true)
+            ->usage("{endpoint}/market/categories?key=_your_api_key_", true)
             ->text('Get a list of market categories, this is the ID used in the endpoint:
                 `/market/[server]/category/[category_id]`')
             ->h4('Response Info')

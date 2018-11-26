@@ -24,7 +24,7 @@ class FreeCompany extends DocBuilder implements DocInterface
             //
             ->h6('Search')
             ->route('/freecompany/search *')
-            ->usage("{endpoint}/freecompany/search?name=LeAwesome&server=Phoenix&key=[key]", true)
+            ->usage("{endpoint}/freecompany/search?name=LeAwesome&server=Phoenix&key=_your_api_key_", true)
             ->text('Search for free companies on The Lodestone. This parses the lodestone in real time 
                 so it will be slow for non-cached responses. All search queries are cached for 1 hour,
                 it is important to know that Lodestone has a ~6 hour varnish and CDN cache.

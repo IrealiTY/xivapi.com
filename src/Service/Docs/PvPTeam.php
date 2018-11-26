@@ -23,7 +23,7 @@ class PvPTeam extends DocBuilder implements DocInterface
             //
             ->h6('Search')
             ->route('/pvpteam/search *')
-            ->usage("{endpoint}/pvpteam/search?name=LeAwesome&server=Phoenix&key=[key]", true)
+            ->usage("{endpoint}/pvpteam/search?name=LeAwesome&server=Phoenix&key=_your_api_key_", true)
             ->text('Search for pvp team on The Lodestone. This parses the lodestone in real time so it will be 
                 slow for uncached responses. All search queries are cached for 1 hour. This does not search XIVAPI 
                 so pvp team found may not be on the service and will be added when requested by their specified 
