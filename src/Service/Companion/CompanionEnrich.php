@@ -18,9 +18,9 @@ trait CompanionEnrich
     /**
      * Get better item info
      */
-    protected function getEnrichedItem($itemId): array
+    protected function getEnrichedItem($itemId, $item = null): array
     {
-        $item = GameData::one("Item", $itemId);
+        $item = $item ?: GameData::one("Item", $itemId);
     
         return [
             'ID'        => $item->ID,
@@ -55,7 +55,7 @@ trait CompanionEnrich
         foreach ($materia as $mat) {
             $row  = $this->cache->get("xiv_Materia_{$mat->key}");
             $item = $row->{"Item{$mat->grade}"};
-            $arr[] = $item;
+            $arr[] = $this->getEnrichedItem(null, $item);
         }
         
         return $arr;
