@@ -70,7 +70,7 @@ class Welcome extends DocBuilder implements DocInterface
                 '`/linkshell/{id}/delete`',
                 '`/pvpteam/search`',
                 '`/pvpteam/{id}/delete`',
-                '`/lodestone/devpost`s'
+                '`/lodestone/devposts`'
             ])
 
             ->gap()
