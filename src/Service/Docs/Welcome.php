@@ -75,7 +75,7 @@ class Welcome extends DocBuilder implements DocInterface
 
             ->gap()
             ->h3('key')
-            ->usage('{endpoint}/Item?key=[your_api_key]')
+            ->usage('{endpoint}/Item?key=_your_api_key_')
             ->text('Keys provide usage statistics and have rate limits on them to prevent abuse of 
                 the API. You can re-generate your API key at any time, make as many apps as you like 
                 and use them freely.')
