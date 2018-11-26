@@ -17,10 +17,8 @@ class ClearDevAppStatisticsCommand extends Command
     /** @var Cache */
     private $cache;
     
-    public function __construct(
-        ?string $name = null,
-        Cache $cache
-    ) {
+    public function __construct(?string $name = null, Cache $cache)
+    {
         $this->cache = $cache;
 
         parent::__construct($name);
