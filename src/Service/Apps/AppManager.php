@@ -51,7 +51,7 @@ class AppManager
         // use fetched key otherwise use default
         /** @var App $app */
         $app  = $repo->findOneBy([ 'apiKey' => $key ]) ?: $this->getDefaultKey();
-        if ($keyRequired && $app->isDefault()) {
+        if ($keyRequired && $app->isDefault() && getenv('APP_ENV') === 'prod') {
             throw new UnauthorizedAccessException();
         }
 
@@ -80,8 +80,8 @@ class AppManager
         $this->cache->increment($keys->CACHE_HITS_TOTAL);
         $this->cache->increment($keys->CACHE_RATE_LIMIT);
 
-        if ($this->cache->getCount($keys->CACHE_RATE_LIMIT) > $app->getApiRateLimit()) {
-            $this->cache->increment($key->CACHE_HITS_LIMITED);
+        if (getenv('APP_ENV') === 'prod' && $this->cache->getCount($keys->CACHE_RATE_LIMIT) > $app->getApiRateLimit()) {
+            $this->cache->increment($keys->CACHE_HITS_LIMITED);
             throw new ApiRateLimitException(
                 ApiRateLimitException::CODE,
                 'App receiving too many requests from this IP'
