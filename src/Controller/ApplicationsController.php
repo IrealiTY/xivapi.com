@@ -101,14 +101,11 @@ class ApplicationsController extends Controller
         /** @var User $user */
         $user = $this->userService->getUser();
 
-        if (!$user) {
+        if (!$user || $user->getAppsMax() >= count($user->getApps())) {
             return $this->redirectToRoute('app');
         }
         
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
 
         if ($id === 'new') {
             $app = $this->appManager->create();
@@ -150,10 +147,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
     
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -189,10 +183,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
         
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -225,10 +216,7 @@ class ApplicationsController extends Controller
             return $this->redirectToRoute('app');
         }
     
-        if ($user->isBanned()) {
-            header("Location: https://discord.gg/MFFVHWC");
-            die();
-        }
+        $user->checkBannedStatus();
         
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -258,6 +246,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -344,6 +334,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -376,6 +368,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -418,6 +412,8 @@ class ApplicationsController extends Controller
         if (!$user) {
             return $this->redirectToRoute('app');
         }
+
+        $user->checkBannedStatus();
     
         /** @var App $app */
         $app = $this->appManager->get($id);
@@ -443,6 +439,4 @@ class ApplicationsController extends Controller
             'map' => $map
         ]);
     }
-    
-    
 }
