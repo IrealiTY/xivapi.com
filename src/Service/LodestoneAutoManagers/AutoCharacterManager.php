@@ -129,7 +129,6 @@ class AutoCharacterManager extends LodestoneManager
     
                 // skip
                 if (!$ent
-                    || empty($row->data)
                     || $row->data === GenericException::class
                     || $ent->getState() == Entity::STATE_BLACKLISTED)
                 {
@@ -179,7 +178,6 @@ class AutoCharacterManager extends LodestoneManager
     
                 // skip
                 if (!$ent
-                    || empty($row->data)
                     || $row->data === GenericException::class
                     || $ent->getState() == Entity::STATE_BLACKLISTED)
                 {
