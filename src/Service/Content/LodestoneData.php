@@ -425,6 +425,8 @@ class LodestoneData
                     'Url',
                     'Name_[LANG]',
                     'Abbreviation_[LANG]',
+                    'ClassJobCategory.ID',
+                    'ClassJobCategory.Name_[LANG]',
                 ]
             );
 
@@ -435,6 +437,8 @@ class LodestoneData
                     'Url',
                     'Name_[LANG]',
                     'Abbreviation_[LANG]',
+                    'ClassJobCategory.ID',
+                    'ClassJobCategory.Name_[LANG]',
                 ]
             );
 
@@ -451,6 +455,8 @@ class LodestoneData
                 'Url',
                 'Name_[LANG]',
                 'Abbreviation_[LANG]',
+                'ClassJobCategory.ID',
+                'ClassJobCategory.Name_[LANG]',
             ]
         );
         $data->ActiveClassJob->Job = self::extendCharacterDataHandlerSimple(
