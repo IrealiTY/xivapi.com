@@ -81,7 +81,7 @@ class ApplicationsStatisticsController extends Controller
         
         return $this->render('statistics/index.html.twig',[
             'report'       => Statistics::report(),
-            'app_records'  => isset($app) ? Statistics::findReportEntriesForKey($app) : null,
+            'app_records'  => isset($app) ? Statistics::findReportEntriesForKey($app->getApiKey()) : null,
             'app'          => $app ?? null,
             'user'         => $user ?? null,
         ]);
