@@ -176,16 +176,14 @@ class Cache
     /**
      * Set an object
      */
-    public function set($key, $data, $ttl = self::DEFAULT_TIME)
+    public function set($key, $data, $ttl = self::DEFAULT_TIME, $serialize = false)
     {
         if ($this->isCacheDisabled()) {
             return null;
         }
 
         try {
-            $data = $this->options->useSerializer
-                ? serialize($data)
-                : gzcompress(json_encode($data), self::COMPRESSION_LEVEL);
+            $data = ($this->options->useSerializer || $serialize) ? serialize($data) : gzcompress(json_encode($data), self::COMPRESSION_LEVEL);
 
             if (json_last_error()) {
                 throw new \Exception("COULD NOT SAVE TO REDIS, JSON ERROR: ". json_last_error_msg());
@@ -195,9 +193,7 @@ class Cache
                 throw new \Exception('GZCompress Data is empty');
             }
 
-            $this->pipeline
-                ? $this->pipeline->set($key, $data, $ttl)
-                : $this->instance->set($key, $data, $ttl);
+            $this->pipeline ? $this->pipeline->set($key, $data, $ttl) : $this->instance->set($key, $data, $ttl);
 
         } catch (\Exception $ex) {
             throw $ex;
@@ -227,21 +223,17 @@ class Cache
     /**
      * Get object for key
      */
-    public function get($key)
+    public function get($key, $serialize = false)
     {
         if ($this->isCacheDisabled()) {
             return null;
         }
         
         try {
-            $data = $this->pipeline
-                ? $this->pipeline->get($key)
-                : $this->instance->get($key);
+            $data = $this->pipeline ? $this->pipeline->get($key) : $this->instance->get($key);
 
             if ($data) {
-                $data = $this->options->useSerializer
-                    ? unserialize($data)
-                    : json_decode(gzuncompress($data));
+                $data = ($this->options->useSerializer || $serialize) ? unserialize($data) : json_decode(gzuncompress($data));
             }
 
             return $data;
@@ -260,9 +252,7 @@ class Cache
         }
 
         try {
-            return $this->pipeline
-                ? $this->pipeline->get($key)
-                : $this->instance->get($key);
+            return $this->pipeline ? $this->pipeline->get($key) : $this->instance->get($key);
         } catch (\Exception $ex) {
             throw $ex;
         }

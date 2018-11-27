@@ -45,18 +45,24 @@ class AppManager
     public function fetch(Request $request, $keyRequired = false)
     {
         // attempt to fetch users app
-        $key  = $request->get('key');
-        $repo = $this->em->getRepository(App::class);
+        if ($key = $request->get('key')) {
+            // check cache for dev app key
+            if (!$app = $this->cache->get('app_' . $key, true)) {
+                /** @var App $app */
+                $app = $this->em->getRepository(App::class)->findOneBy(['apiKey' => $key]) ?: $this->getDefaultKey();
+                if ($keyRequired && $app->isDefault() && getenv('APP_ENV') === 'prod') {
+                    throw new UnauthorizedAccessException();
+                }
 
-        // use fetched key otherwise use default
-        /** @var App $app */
-        $app  = $repo->findOneBy([ 'apiKey' => $key ]) ?: $this->getDefaultKey();
-        if ($keyRequired && $app->isDefault() && getenv('APP_ENV') === 'prod') {
-            throw new UnauthorizedAccessException();
-        }
+                // cache for 30 minutes
+                $this->cache->set('app_' . $key, $app, (60 * 30), true);
+            }
 
-        if ($app->getUser()) {
-            $app->getUser()->checkBannedStatus();
+            if ($app->getUser()) {
+                $app->getUser()->checkBannedStatus();
+            }
+        } else {
+            $app = $this->getDefaultKey();
         }
 
         //
