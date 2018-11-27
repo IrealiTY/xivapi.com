@@ -37,7 +37,7 @@ class ApplicationsMappyController extends Controller
         $app = $this->appManager->fetch($request);
 
         return $this->json([
-            'allowed' => $app->getUser()->hasMapAccess()
+            'allowed' => $app->getUser()->getLevel() >= 5
         ]);
     }
     
