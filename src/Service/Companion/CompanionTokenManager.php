@@ -251,21 +251,14 @@ class CompanionTokenManager
         ];
         
         foreach (self::SERVERS as $server => $account) {
-            $temp = $json->{"xivapi_{$server}_temp"} ?? null;
             $main = $json->{"xivapi_{$server}"} ?? null;
-
-            $information = implode("", [
-                '<span style="font-size:14px">',
-                '`MAIN` ' . ($main ? $main->status : 'No logged in session information for this server.') .'<br>',
-                '`TEMP` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
-                '</span>',
-            ]);
+            $information = ($main ? $main->status : 'No logged in session information for this server.');
 
             $data[] = [
                 "**{$server}**",
 
                 // we only care about the status of the main session
-                ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
+                ($main ? (isset($main->ok) && $main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
                 $information
             ];
         }
