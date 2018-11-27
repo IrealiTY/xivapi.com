@@ -5,8 +5,8 @@ namespace App\EventListener;
 use App\Service\Common\Arrays;
 use App\Service\Common\DataType;
 use App\Service\Common\Statistics;
-use App\Service\Content\ContentMinified;
 use App\Service\Common\Language;
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -108,6 +108,21 @@ class ResponseListener
                         json_decode($response->getContent()), JSON_PRETTY_PRINT
                     )
                 );
+            }
+            
+            $response
+                ->setMaxAge((3600*4))
+                ->setExpires((new Carbon())->addHour(4))
+                ->setPublic();
+            
+            $uri = $event->getRequest()->getPathInfo();
+            
+            if (strpos($uri, '/verification') !== false) {
+                $response->setMaxAge(15)->setExpires((new Carbon())->addSeconds(15));
+            }
+    
+            if (strpos($uri, '/market') !== false) {
+                $response->setMaxAge(300)->setExpires((new Carbon())->addSeconds(300));
             }
 
             $response->headers->set('Content-Type','application/json');
