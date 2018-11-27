@@ -47,7 +47,7 @@ class ApplicationsStatisticsController extends Controller
         if ($request->get('app')) {
             /** @var App $app */
             $app  = $this->appManager->getByKey($request->get('app'));
-            $user = $user ? $app->getUser() : null;
+            $user = $app ? $app->getUser() : null;
             
             if ($request->isMethod('POST')) {
                 $ban        = (int)$request->get('ban');
