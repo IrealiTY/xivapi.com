@@ -83,6 +83,13 @@ class UserService
             
             // todo - send email?
         }
+
+        // update user
+        $user
+            ->setUsername($ssoAccess->username)
+            ->setEmail($ssoAccess->email)
+            ->setAvatar($ssoAccess->avatar ?: 'http://xivapi.com/img-misc/chat_messengericon_goldsaucer.png');
+        $this->updateUser($user);
         
         $this->setCookie($user->getSession());
         return $user;
@@ -151,8 +158,7 @@ class UserService
             ->setAvatar($ssoAccess->avatar ?: 'http://xivapi.com/img-misc/chat_messengericon_goldsaucer.png');
     
         // save user
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->updateUser($user);
         
         return $user;
     }
