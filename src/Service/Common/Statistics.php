@@ -144,9 +144,8 @@ class Statistics
      */
     public static function clean()
     {
-        $deadline = (time() + (60*60*24));
-
-        $data = explode(PHP_EOL, file_get_contents(self::FILENAME));
+        $deadline = (time() - (60*60*24));
+        $data     = explode(PHP_EOL, file_get_contents(self::FILENAME));
 
         foreach ($data as $i => $stat) {
             if (empty($stat)) {
