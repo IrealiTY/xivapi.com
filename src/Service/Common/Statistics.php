@@ -47,7 +47,7 @@ class Statistics
 
             [$time, $micro, $duration, $class, $ip, $key, $uri, $lang] = explode("|", $stat);
 
-            if ($appKey === $key) {
+            if ($appKey == $key) {
                 $entries[] = "[{$time}] {$ip} {$key} - {$uri}";
             }
         }
