@@ -48,7 +48,7 @@ class ApplicationsMappyController extends Controller
     {
         $app = $this->appManager->fetch($request);
 
-        if (!$app->getUser()->hasMapAccess()) {
+        if (!$app->getUser()->getLevel() >= 5) {
             throw new UnauthorizedHttpException("You are not allowed!");
         }
 
@@ -75,7 +75,7 @@ class ApplicationsMappyController extends Controller
     {
         $app = $this->appManager->fetch($request);
 
-        if (!$app->getUser()->hasMapAccess()) {
+        if (!$app->getUser()->getLevel() >= 5) {
             throw new UnauthorizedAccessException();
         }
 
@@ -95,7 +95,7 @@ class ApplicationsMappyController extends Controller
         
         $json = json_decode($request->getContent());
 
-        if ($request->getMethod() !== 'POST' || !$app->getUser()->hasMapAccess() || empty($json)) {
+        if ($request->getMethod() !== 'POST' || !$app->getUser()->getLevel() >= 5 || empty($json)) {
             throw new UnauthorizedAccessException();
         }
         
