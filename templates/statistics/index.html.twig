@@ -6,9 +6,10 @@
     <div class="two-pane">
 
         <aside>
-            <h3>monitor</h3>
+            <h3>Warden</h3>
 
-            <a href="{{ path('statistics') }}">statistics</a>
+            <a href="{{ path('statistics') }}">Statistics</a>
+            <a href="#">Exceptions</a>
         </aside>
 
         <main class="stats">
@@ -138,6 +139,19 @@
                             </div>
                         </form>
                     </div>
+
+                    <!-- entries -->
+                    <h3>Log Entries</h3>
+                    <table class="table table-bordered table-sm">
+                        <tbody>
+                        {% for i, line in report.lines %}
+                            <tr>
+                                <td width="1%">{{ (i+1) }}</td>
+                                <td><code>{{ line }}</code></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
 
                 </div>
             </div>

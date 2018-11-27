@@ -34,10 +34,14 @@ class ApplicationsStatisticsController extends Controller
      */
     public function index(Request $request)
     {
+        // clean and build report
+        Statistics::clean();
+        Statistics::buildReport();
+
         /** @var User $user */
         $user = $this->userService->getUser();
         if (!$user || $user->getLevel() < 10) {
-            throw new UnauthorizedAccessException();
+            return $this->redirectToRoute('home');
         }
         
         if ($request->get('app')) {
@@ -76,9 +80,10 @@ class ApplicationsStatisticsController extends Controller
         }
         
         return $this->render('statistics/index.html.twig',[
-            'report' => Statistics::report(),
-            'app'    => $app ?? null,
-            'user'   => $user ?? null,
+            'report'       => Statistics::report(),
+            'app_records'  => isset($app) ? Statistics::findReportEntriesForKey($app) : null,
+            'app'          => $app ?? null,
+            'user'         => $user ?? null,
         ]);
     }
 }

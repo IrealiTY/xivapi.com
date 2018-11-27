@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 class Statistics
 {
     const FILENAME          = __DIR__.'/Statistics.php.log';
+    const FILENAME_REPORT   = __DIR__.'/Statistics_Report.php.log';
     const DATA              = 'stats_data_%s';
     const DATA_ENDPOINTS    = 'stats_endpoints';
     const DATA_TIMES        = 'stats_response_times';
@@ -19,8 +20,45 @@ class Statistics
     
     /** @var \stdClass */
     private static $request;
-    
+
+    /**
+     * Get the current built report
+     */
     public static function report()
+    {
+        return json_decode(
+            file_get_contents(self::FILENAME_REPORT),
+            true
+        );
+    }
+
+    /**
+     * Find entries for a specific IP
+     */
+    public static function findReportEntriesForKey(string $appKey): array
+    {
+        $entries = [];
+        $data = explode(PHP_EOL, file_get_contents(self::FILENAME));
+
+        foreach ($data as $i => $stat) {
+            if (empty($stat)) {
+                continue;
+            }
+
+            [$time, $micro, $duration, $class, $ip, $key, $uri, $lang] = explode("|", $stat);
+
+            if ($appKey === $key) {
+                $entries[] = "[{$time}] {$ip} {$key} - {$uri}";
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Build a statistics report
+     */
+    public static function buildReport()
     {
         $data = explode(PHP_EOL, file_get_contents(self::FILENAME));
         $info = (Object)[
@@ -38,7 +76,9 @@ class Statistics
         ];
         
         foreach ($data as $stat) {
-            if (empty($stat)) { continue; }
+            if (empty($stat)) {
+                continue;
+            }
             
             [$time, $micro, $duration, $class, $ip, $key, $uri, $lang] = explode("|", $stat);
             
@@ -85,23 +125,58 @@ class Statistics
         
         // if someone is "crawling" they're likely to have low durations between each call
         foreach ($info->ip_req_sec as $ip => $times) {
-            $times = array_slice(array_reverse($times), 0, 100);
+            // 18,000 = 10/req/sec * 30 minutes
+            $times = array_slice(array_reverse($times), 0, 18000);
             $info->ip_durations_avg[$ip] = round(array_sum($times) / count($times), 3);
         }
     
         foreach ($info->key_req_sec as $ip => $times) {
-            $times = array_slice(array_reverse($times), 0, 100);
+            // 18,000 = 10/req/sec * 30 minutes
+            $times = array_slice(array_reverse($times), 0, 18000);
             $info->key_durations_avg[$ip] = round(array_sum($times) / count($times), 3);
         }
 
         return $info;
     }
-    
+
+    /**
+     * Clean out statistics older than a day
+     */
+    public static function clean()
+    {
+        $deadline = (time() + (60*60*24));
+
+        $data = explode(PHP_EOL, file_get_contents(self::FILENAME));
+
+        foreach ($data as $i => $stat) {
+            if (empty($stat)) {
+                continue;
+            }
+
+            [$time, $micro, $duration, $class, $ip, $key, $uri, $lang] = explode("|", $stat);
+
+            if ($time < $deadline) {
+                unset($data[$i]);
+                continue;
+            }
+
+            break;
+        }
+
+        file_put_contents(self::FILENAME, implode(PHP_EOL, $data));
+    }
+
+    /**
+     * Track a request
+     */
     public static function request(Request $request)
     {
         self::setRequest($request);
     }
-    
+
+    /**
+     * Track a response
+     */
     public static function response(FilterResponseEvent $event)
     {
         // add some info
@@ -111,12 +186,19 @@ class Statistics
         $data = implode("|", (array)self::$request) . PHP_EOL;
         file_put_contents(self::FILENAME, $data, FILE_APPEND);
     }
-    
+
+    /**
+     * todo - record exceptions
+     * Track exceptions
+     */
     public static function exception(GetResponseForExceptionEvent $event)
     {
     
     }
-    
+
+    /**
+     * Set request object
+     */
     private static function setRequest(Request $request)
     {
         self::$request = (Object)[
