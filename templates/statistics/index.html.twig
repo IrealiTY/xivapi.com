@@ -144,7 +144,7 @@
                     <h3>Log Entries</h3>
                     <table class="table table-bordered table-sm">
                         <tbody>
-                        {% for i, line in report.lines %}
+                        {% for i, line in report.app_records %}
                             <tr>
                                 <td width="1%">{{ (i+1) }}</td>
                                 <td><code>{{ line }}</code></td>
