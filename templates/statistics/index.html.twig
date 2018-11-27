@@ -144,7 +144,7 @@
                     <h3>Log Entries</h3>
                     <table class="table table-bordered table-sm">
                         <tbody>
-                        {% for i, line in app_records %}
+                        {% for i, line in app_records|reverse if i < 100 %}
                             <tr>
                                 <td width="1%">{{ (i+1) }}</td>
                                 <td><code>{{ line }}</code></td>
