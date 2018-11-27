@@ -129,27 +129,28 @@
             </tr>
 
             {# Tags #}
+            <tr>
+                <td colspan="2" class="table-title">
+                    <h3>Tags</h3>
+                </td>
+            </tr>
+            
+            {% for tag, value in stats.TAGS %}
                 <tr>
-                    <td colspan="2" class="table-title">
-                        <h3>Tags</h3>
+                    <td><strong>{{ tag }}</strong></td>
+                    <td>{{ value|number_format }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">
+                        If you are interested in recording stat counters,
+                        <a href="/docs#section-3">view the documentation on tags.</a>
+                        <br>
+                        <strong>Usage</strong>
+                        <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
                     </td>
                 </tr>
-                {% for tag, value in stats.TAGS %}
-                    <tr>
-                        <td><strong>{{ tag }}</strong></td>
-                        <td>{{ value|number_format }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">
-                                If you are interested in recording stat counters,
-                                <a href="/docs#section-3">view the documentation on tags.</a>
-                                <br>
-                                <strong>Usage</strong>
-                                <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
-                        </td>
-                    </tr>
-                {% endfor %}
+            {% endfor %}
         </table>
 
         <br>
@@ -215,7 +216,6 @@
                 }
             })
         </script>
-
 
         <p>
             <small>The last <strong>1,000</strong> records out of <strong>{{ stats.HISTORY|length }}</strong> requests over the past {{ stats.CHART_LENGTH_HRS }} hours</small>

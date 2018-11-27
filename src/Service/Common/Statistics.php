@@ -74,7 +74,7 @@ class Statistics
             'uri'          => [],
             'lang'         => [],
             'lines'        => [],
-            'ip_req_sec'  => [],
+            'ip_req_sec'   => [],
         ];
         
         foreach ($data as $stat) {
