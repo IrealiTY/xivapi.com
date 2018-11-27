@@ -17,6 +17,8 @@ class RequestListener
             return;
         }
 
+        (new \Raven_Client(getenv('SENTRY')))->install();
+
         /** @var Request $request */
         $request = $event->getRequest();
         Environment::set($request);
