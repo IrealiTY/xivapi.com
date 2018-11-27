@@ -35,7 +35,7 @@ class ApplicationsStatisticsController extends Controller
     public function index(Request $request)
     {
         // clean and build report
-        Statistics::clean();
+        Statistics::purgeReport();
         Statistics::buildReport();
 
         /** @var User $user */

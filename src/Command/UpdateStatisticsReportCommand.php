@@ -20,10 +20,10 @@ class UpdateStatisticsReportCommand extends Command
     {
         $this->setSymfonyStyle($input, $output);
         $this->io->title(__CLASS__);
-        
+
         // clean the report
-        $this->io->text('Cleaning report');
-        Statistics::clean();
+        $this->io->text('Purging old data from report');
+        Statistics::purgeReport();
 
         // generate the report
         $this->io->text('Building report');

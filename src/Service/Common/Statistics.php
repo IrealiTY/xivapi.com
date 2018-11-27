@@ -136,13 +136,15 @@ class Statistics
             $info->key_durations_avg[$ip] = round(array_sum($times) / count($times), 3);
         }
 
+        file_put_contents(self::FILENAME_REPORT, json_encode($info));
+
         return $info;
     }
 
     /**
      * Clean out statistics older than a day
      */
-    public static function clean()
+    public static function purgeReport()
     {
         $deadline = (time() - (60*60*24));
         $data     = explode(PHP_EOL, file_get_contents(self::FILENAME));
