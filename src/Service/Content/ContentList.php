@@ -56,8 +56,8 @@ class ContentList
         }
         
         // max_items (alias limit, deprecate max_items)
-        $maxItems = $this->request->get('max_items') | $this->request->get('limit');
-        $maxItems = intval($maxItems) ?: 100;
+        $maxItems = $this->request->get('max_items') ?: $this->request->get('limit');
+        $maxItems = intval($maxItems ?: 100) ?: 100;
         $maxItems = $maxItems < 3000 ? $maxItems : 3000;
         
         // ----------------------------------------------------------------------
