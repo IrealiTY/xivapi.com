@@ -393,31 +393,37 @@ class LodestoneData
             "IconFlames"
         ];
 
-        $gcName = self::extendCharacterDataHandlerSimple(
-            self::getContent("xiv_GrandCompany_{$data->GrandCompany->NameID}"),
-            [
-                'ID',
-                'Url',
-                'Name_[LANG]',
-            ]
-        );
+        if (isset($data->GrandCompany->NameID) && !isset($data->GrandCompany->RankID)) {
+            throw new \Exception('Fatal error: Grand Company Name ID found but Rank ID not found');
+        }
 
-        $gcRankName = self::extendCharacterDataHandlerSimple(
-            self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
-            [
-                'ID',
-                'Url',
-                'Name_[LANG]',
-            ]
-        );
+        if (isset($data->GrandCompany->NameID) && isset($data->GrandCompany->RankID)) {
+            $gcName = self::extendCharacterDataHandlerSimple(
+                self::getContent("xiv_GrandCompany_{$data->GrandCompany->NameID}"),
+                [
+                    'ID',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
 
-        $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
-        $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->NameID]};
-        unset($gcRank);
+            $gcRankName = self::extendCharacterDataHandlerSimple(
+                self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
+                [
+                    'ID',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
+
+            $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
+            $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->NameID]};
+            unset($gcRank);
+        }
         
         $data->GrandCompany = [
-            'Company' => $gcName,
-            'Rank'    => $gcRankName
+            'Company' => $gcName ?? null,
+            'Rank'    => $gcRankName ?? null
         ];
         
         //
