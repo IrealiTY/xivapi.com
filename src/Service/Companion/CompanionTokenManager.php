@@ -14,7 +14,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CompanionTokenManager
 {
     const SERVERS = [
-        // JP Servers
+        // JP Servers (Mandragora is on its own account)
+        'Mandragora'    => 'COMPANION_APP_ACCOUNT_D',
+        
         'Aegis'         => 'COMPANION_APP_ACCOUNT_B',
         'Atomos'        => 'COMPANION_APP_ACCOUNT_B',
         'Carbuncle'     => 'COMPANION_APP_ACCOUNT_B',
@@ -42,15 +44,15 @@ class CompanionTokenManager
         'Chocobo'       => 'COMPANION_APP_ACCOUNT_B',
         'Hades'         => 'COMPANION_APP_ACCOUNT_B',
         'Ixion'         => 'COMPANION_APP_ACCOUNT_B',
-        'Mandragora'    => 'COMPANION_APP_ACCOUNT_B',
         'Masamune'      => 'COMPANION_APP_ACCOUNT_B',
         'Pandaemonium'  => 'COMPANION_APP_ACCOUNT_B',
         'Shinryu'       => 'COMPANION_APP_ACCOUNT_B',
         'Titan'         => 'COMPANION_APP_ACCOUNT_B',
-    
-        // US Servers
+
+        // US Servers (Balmung has its own account
+        'Balmung'       => 'COMPANION_APP_ACCOUNT_C',
+
         'Adamantoise'   => 'COMPANION_APP_ACCOUNT_A',
-        'Balmung'       => 'COMPANION_APP_ACCOUNT_A',
         'Cactuar'       => 'COMPANION_APP_ACCOUNT_A',
         'Coeurl'        => 'COMPANION_APP_ACCOUNT_A',
         'Faerie'        => 'COMPANION_APP_ACCOUNT_A',
@@ -249,21 +251,14 @@ class CompanionTokenManager
         ];
         
         foreach (self::SERVERS as $server => $account) {
-            $temp = $json->{"xivapi_{$server}_temp"} ?? null;
             $main = $json->{"xivapi_{$server}"} ?? null;
-
-            $information = implode("", [
-                '<span style="font-size:14px">',
-                '`MAIN` ' . ($main ? $main->status : 'No logged in session information for this server.') .'<br>',
-                '`TEMP` ' . ($temp ? $temp->status : 'No logged in session information for this server.'),
-                '</span>',
-            ]);
+            $information = (isset($main->status) && $main->status ? $main->status : 'No logged in session information for this server.');
 
             $data[] = [
                 "**{$server}**",
 
                 // we only care about the status of the main session
-                ($main ? ($main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
+                ($main ? (isset($main->ok) && $main->ok ? '✅ LIVE!' : '❌ Offline') : '❌ Offline'),
                 $information
             ];
         }

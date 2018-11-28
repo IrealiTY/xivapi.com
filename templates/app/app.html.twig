@@ -28,6 +28,20 @@
 
         <br><br>
 
+        {% if app.isRestricted() %}
+            <div class="alert alert-danger">
+                Mass crawling detected, this key has been restricted.
+                Please <a href="https://discord.gg/MFFVHWC">Join Discord</a> for help regarding this.
+            </div>
+        {% endif %}
+        {% if app.isLimited() %}
+            <div class="alert alert-warning">
+                <strong>New Key!</strong><br>
+                This key is limited to 2 requests per second. This restriction will be
+                lifted: {{ (app.added+3600)|dateRelative }}
+            </div>
+        {% endif %}
+
         <div class="card">
             <div class="card-body">
                 {{ form_start(form) }}
@@ -64,7 +78,7 @@
                 <td>
                     <h3><code>{{ app.apiKey }}</code></h3>
                     <strong>Example usage:</strong>
-                    <pre style="margin: 4px 0;"><code>$ curl http://xivapi.com/Item/1675?key={{ app.apiKey }}</code></pre>
+                    <pre style="margin: 4px 0;"><code>$ curl https://xivapi.com/Item/1675?key={{ app.apiKey }}</code></pre>
                 </td>
             </tr>
             <tr>
@@ -72,8 +86,8 @@
                 <td>{{ app.id }}</td>
             </tr>
             <tr>
-                <td><strong>Status</strong></td>
-                <td>{{ ['None','Default','App Developer','Patreon','Admin'][app.level] ?: 'Too good for labels' }}</td>
+                <td><strong>Level</strong></td>
+                <td>{{ app.level }}</td>
             </tr>
             <tr>
                 <td colspan="2" class="table-title">
@@ -115,27 +129,28 @@
             </tr>
 
             {# Tags #}
+            <tr>
+                <td colspan="2" class="table-title">
+                    <h3>Tags</h3>
+                </td>
+            </tr>
+            
+            {% for tag, value in stats.TAGS %}
                 <tr>
-                    <td colspan="2" class="table-title">
-                        <h3>Tags</h3>
+                    <td><strong>{{ tag }}</strong></td>
+                    <td>{{ value|number_format }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">
+                        If you are interested in recording stat counters,
+                        <a href="/docs#section-3">view the documentation on tags.</a>
+                        <br>
+                        <strong>Usage</strong>
+                        <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
                     </td>
                 </tr>
-                {% for tag, value in stats.TAGS %}
-                    <tr>
-                        <td><strong>{{ tag }}</strong></td>
-                        <td>{{ value|number_format }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="2">
-                                If you are interested in recording stat counters,
-                                <a href="/docs#section-3">view the documentation on tags.</a>
-                                <br>
-                                <strong>Usage</strong>
-                                <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
-                        </td>
-                    </tr>
-                {% endfor %}
+            {% endfor %}
         </table>
 
         <br>
@@ -201,7 +216,6 @@
                 }
             })
         </script>
-
 
         <p>
             <small>The last <strong>1,000</strong> records out of <strong>{{ stats.HISTORY|length }}</strong> requests over the past {{ stats.CHART_LENGTH_HRS }} hours</small>

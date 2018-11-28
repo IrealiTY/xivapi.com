@@ -260,6 +260,9 @@
             "ref": "aaddfdf43cdecd4cf91f992052d76c2cadc04543"
         }
     },
+    "sentry/sentry": {
+        "version": "1.10.0"
+    },
     "symfony/asset": {
         "version": "v4.1.2"
     },

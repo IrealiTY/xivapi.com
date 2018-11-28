@@ -96,9 +96,9 @@ class XivGameContentController extends Controller
         }
         
         $start = microtime(true);
-        $app = $this->appManager->fetch($request);
+        $this->appManager->fetch($request);
         
-        $content = $this->contentList->get($request, $name, $app);
+        $content = $this->contentList->get($request, $name);
         
         $duration = microtime(true) - $start;
         GoogleAnalytics::hit([$name]);

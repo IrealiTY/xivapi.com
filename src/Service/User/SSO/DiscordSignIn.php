@@ -12,7 +12,6 @@ class DiscordSignIn implements SignInInterface
     const STATE_KEY       = 'oauth2state';
     const CLIENT_RETURN   = '/app/login/discord/success';
     CONST CLIENT_OPTIONS  = [
-        'state' => 'OPTIONAL_CUSTOM_CONFIGURED_STATE',
         'scope' => ['identify','email']
     ];
     

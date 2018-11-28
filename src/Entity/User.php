@@ -12,6 +12,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
+    const MAX_APPS = [
+        1 => 1,
+        2 => 1,
+        3 => 5,
+        4 => 10,
+        5 => 20,
+    ];
+
     /**
      * @var string
      * @ORM\Id
@@ -19,11 +27,21 @@ class User
      */
     private $id;
     /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $added;
+    /**
      * The name of the SSO provider
      * @var string
      * @ORM\Column(type="string", length=32)
      */
     private $sso;
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=128, unique=true)
+     */
+    private $ssoId;
     /**
      * @var string
      * A random hash saved to cookie to retrieve the token
@@ -59,6 +77,11 @@ class User
      */
     private $avatar;
     /**
+     * @var int
+     * @ORM\Column(type="integer", length=2)
+     */
+    private $level = 2;
+    /**
      * @ORM\OneToMany(targetEntity="App", mappedBy="user")
      */
     private $apps;
@@ -66,13 +89,19 @@ class User
      * @var int
      * @ORM\Column(type="integer", length=16)
      */
-    private $appsMax = 5;
+    private $appsMax = 1;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="is_banned")
+     */
+    private $banned = false;
     
     public function __construct()
     {
         $this->id = Uuid::uuid4();
         $this->session = Uuid::uuid4()->toString() . Uuid::uuid4()->toString() . Uuid::uuid4()->toString();
         $this->apps = new ArrayCollection();
+        $this->added = time();
     }
 
     public function getId()
@@ -96,6 +125,30 @@ class User
     {
         $this->sso = $sso;
 
+        return $this;
+    }
+    
+    public function getAdded(): int
+    {
+        return $this->added;
+    }
+    
+    public function setAdded(int $added)
+    {
+        $this->added = $added;
+        
+        return $this;
+    }
+    
+    public function getSsoId(): string
+    {
+        return $this->ssoId;
+    }
+    
+    public function setSsoId(string $ssoId)
+    {
+        $this->ssoId = $ssoId;
+        
         return $this;
     }
 
@@ -198,5 +251,51 @@ class User
         $this->appsMax = $appsMax;
 
         return $this;
+    }
+    
+    public function isBanned(): bool
+    {
+        return $this->banned;
+    }
+
+    public function checkBannedStatus()
+    {
+        if ($this->isBanned()) {
+            header("Location: https://discord.gg/MFFVHWC");
+            die();
+        }
+    }
+    
+    public function setBanned(bool $banned)
+    {
+        $this->banned = $banned;
+        
+        return $this;
+    }
+
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    public function setLevel($level)
+    {
+        $this->level = $level;
+
+        $this->setAppsMax(
+            self::MAX_APPS[$this->level]
+        );
+
+        return $this;
+    }
+
+    public function isLimited()
+    {
+        return (time() - $this->added) < 3600;
+    }
+
+    public function hasMapAccess()
+    {
+        return $this->level >= 4;
     }
 }

@@ -49,7 +49,7 @@ class LodestoneCharacterController extends Controller
      */
     public function search(Request $request)
     {
-        $this->appManager->fetch($request);
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['Character','Search']);
         
         return $this->json(
@@ -192,11 +192,7 @@ class LodestoneCharacterController extends Controller
      */
     public function verification(Request $request, $id)
     {
-        $app = $this->appManager->fetch($request);
-
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
+        $this->appManager->fetch($request, true);
 
         $key = __METHOD__ . $id;
         if ($data = $this->service->cache->get($key)) {
@@ -226,11 +222,7 @@ class LodestoneCharacterController extends Controller
      */
     public function delete(Request $request, $id)
     {
-        $app = $this->appManager->fetch($request);
-
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
+        $this->appManager->fetch($request, true);
 
         /** @var Character $ent */
         [$ent, $data] = $this->service->get($id);
@@ -264,8 +256,6 @@ class LodestoneCharacterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // todo this should bump achievements
-
         $this->appManager->fetch($request);
 
         /** @var Character $ent */
@@ -291,7 +281,7 @@ class LodestoneCharacterController extends Controller
         [$entAchievements, $data] = $this->service->getAchievements($id);
 
         if ($this->service->cache->get(__METHOD__.$id)) {
-            // return $this->json(0);
+            return $this->json(0);
         }
 
         // Bump to front

@@ -9,14 +9,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class CompanionAppLoginCommand extends Command
+class UpdateCompanionAppLoginCommand extends Command
 {
     use CommandHelperTrait;
     
     protected function configure()
     {
         $this
-            ->setName('CompanionAppLoginCommand')
+            ->setName('UpdateCompanionAppLoginCommand')
             ->setDescription('Re-login to each character')
             ->addArgument('account', InputArgument::REQUIRED, 'Which account to login to, A or B')
         ;
@@ -36,7 +36,9 @@ class CompanionAppLoginCommand extends Command
         
         $accounts = [
             'A' => 'COMPANION_APP_ACCOUNT_A',
-            'B' => 'COMPANION_APP_ACCOUNT_B'
+            'B' => 'COMPANION_APP_ACCOUNT_B',
+            'C' => 'COMPANION_APP_ACCOUNT_C',
+            'D' => 'COMPANION_APP_ACCOUNT_D',
         ];
 
         // grab account and process logins, go, go, go!

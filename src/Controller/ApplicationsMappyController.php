@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\App;
 use App\Entity\MapCompletion;
+use App\Exception\UnauthorizedAccessException;
 use App\Service\Apps\AppManager;
 use App\Service\Maps\Mappy;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,12 +35,9 @@ class ApplicationsMappyController extends Controller
     public function verify(Request $request)
     {
         $app = $this->appManager->fetch($request);
-        $app->setToolAccessMappy(true);
-        $this->em->persist($app);
-        $this->em->flush();
-        
+
         return $this->json([
-            'allowed' => $app->hasMappyAccess()
+            'allowed' => $app->getUser()->getLevel() >= 5
         ]);
     }
     
@@ -49,11 +47,11 @@ class ApplicationsMappyController extends Controller
     public function markComplete(Request $request)
     {
         $app = $this->appManager->fetch($request);
-        
-        if (!$app->hasMappyAccess()) {
+
+        if (!$app->getUser()->getLevel() >= 5) {
             throw new UnauthorizedHttpException("You are not allowed!");
         }
-        
+
         $repo = $this->em->getRepository(MapCompletion::class);
         $complete = $repo->findOneBy([ 'MapID' => $request->get('map') ]) ?: new MapCompletion();
         
@@ -76,11 +74,11 @@ class ApplicationsMappyController extends Controller
     public function openMap(request $request)
     {
         $app = $this->appManager->fetch($request);
-    
-        if (!$app->hasMappyAccess()) {
-            throw new UnauthorizedHttpException("You are not allowed!");
+
+        if (!$app->getUser()->getLevel() >= 5) {
+            throw new UnauthorizedAccessException();
         }
-        
+
         return $this->redirectToRoute('app_manage_map_view', [
             'id' => $app->getId(),
             'map' => $request->get('map')
@@ -96,9 +94,9 @@ class ApplicationsMappyController extends Controller
         $app = $this->appManager->fetch($request);
         
         $json = json_decode($request->getContent());
-        
-        if ($request->getMethod() !== 'POST' || !$app->hasMappyAccess() || empty($json)) {
-            throw new UnauthorizedHttpException("You are not allowed!");
+
+        if ($request->getMethod() !== 'POST' || !$app->getUser()->getLevel() >= 5 || empty($json)) {
+            throw new UnauthorizedAccessException();
         }
         
         # file_put_contents(__DIR__.'/data'. $json->id .'.json', json_encode($json, JSON_PRETTY_PRINT));

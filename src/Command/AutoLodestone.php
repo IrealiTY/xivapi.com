@@ -44,7 +44,7 @@ class AutoLodestone extends Command
     public function __construct(?string $name = null,Cache $cache)
     {
         parent::__construct($name);
-        $this->cache = $cache->connect('REDIS_SERVER_PROD');
+        $this->cache = $cache->connect('REDIS_SERVER_LOCAL');
         $this->api   = new Api();
     }
 

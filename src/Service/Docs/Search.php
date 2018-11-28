@@ -30,7 +30,7 @@ class Search extends DocBuilder implements DocInterface
             // Search
             //
             ->h6('Search')
-            ->route('/search', true)
+            ->route('/search')
             ->usage("{endpoint}/search?string=allagan+visor&pretty=1")
             ->text('Search for something! The Search is multi-content and contains combined data, 
                 this means your search request covers a vast amount of selected content 
