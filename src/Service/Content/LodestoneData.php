@@ -60,6 +60,10 @@ class LodestoneData
     public static function modified($type, $filename, $id)
     {
         $filename = self::folder($type, $id) .'/'. $filename .'.json';
+
+        if (!file_exists($filename)) {
+            return [null, null];
+        }
         
         $key      = 'content_modified_'. md5($filename);
         $cache    = new Cache();
