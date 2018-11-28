@@ -103,6 +103,10 @@ class ContentList
             
             if ($content) {
                 $content = Language::handle($content, $this->request->get('language'));
+
+                $columns = Arrays::extractColumnsCount($content, $columns);
+                $columns = Arrays::extractMultiLanguageColumns($columns);
+
                 $data[] = Arrays::extractColumns($content, $columns);
             }
 
