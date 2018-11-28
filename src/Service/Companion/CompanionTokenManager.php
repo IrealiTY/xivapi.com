@@ -252,7 +252,7 @@ class CompanionTokenManager
         
         foreach (self::SERVERS as $server => $account) {
             $main = $json->{"xivapi_{$server}"} ?? null;
-            $information = ($main ? $main->status : 'No logged in session information for this server.');
+            $information = (isset($main->status) && $main->status ? $main->status : 'No logged in session information for this server.');
 
             $data[] = [
                 "**{$server}**",
