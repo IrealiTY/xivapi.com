@@ -20,6 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # network
   config.vm.network "private_network", ip: "14.14.14.14"
 
+
   # host domains
   config.vm.hostname = "xivapi.local"
   config.hostmanager.aliases = %w(
@@ -33,5 +34,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.hostmanager.manage_host = true
 
   # sync folder (enable NFS on windows)
-  config.vm.synced_folder "../", "/vagrant"
+  config.vm.synced_folder "../", "/vagrant", type: "nfs"
 end
