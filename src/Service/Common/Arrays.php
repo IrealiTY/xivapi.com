@@ -61,6 +61,24 @@ class Arrays
     }
 
     /**
+     * Allows _* for all languages
+     */
+    public static function extractMultiLanguageColumns(array $columns): array
+    {
+        foreach ($columns as $i => $col) {
+            if (stripos($col, '_*') !== false) {
+                unset($columns[$i]);
+
+                foreach (Language::LANGUAGES_ACTIVE as $lang) {
+                    $columns[] = str_ireplace('_*', "_{$lang}", $col);
+                }
+            }
+        }
+
+        return $columns;
+    }
+
+    /**
      * Convert dot notations into arrays
      */
     public static function handleDotNotationToArray(array &$array, string $key, $value)

@@ -50,10 +50,12 @@ class ResponseListener
                     if (isset($json['Pagination']) && !empty($json['Results'])) {
                         foreach ($json['Results'] as $r => $result) {
                             $columns = Arrays::extractColumnsCount($result, $columns);
+                            $columns = Arrays::extractMultiLanguageColumns($columns);
                             $json['Results'][$r] = Arrays::extractColumns($result, $columns);
                         }
                     } else if (!isset($json['Pagination'])) {
                         $columns = Arrays::extractColumnsCount($json, $columns);
+                        $columns = Arrays::extractMultiLanguageColumns($columns);
                         $json    = Arrays::extractColumns($json, $columns);
                     }
                 }
