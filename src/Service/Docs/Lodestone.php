@@ -85,6 +85,13 @@ class Lodestone extends DocBuilder implements DocInterface
             ->usage('{endpoint}/lodestone/devblogs')
             ->text('Get the latest DevBlogs information, this is pulled from an XML feed.')
             ->gap()
+
+            // DevPosts
+            ->h6('Dev Posts (forums)')
+            ->route('/lodestone/devposts')
+            ->usage('{endpoint}/lodestone/devposts')
+            ->text('Get the latest Dev posts from the official forums.')
+            ->gap()
     
             // Feats
             ->h6('Feasts')
