@@ -21,7 +21,7 @@ class SearchRequest
     const STRING_SIMILAR             = 'similar';
 
     const MIN_LIMIT = 1;
-    const MAX_LIMIT = 500;
+    const MAX_LIMIT = 1000;
     
     const STRING_ALGORITHMS = [
         self::STRING_CUSTOM,

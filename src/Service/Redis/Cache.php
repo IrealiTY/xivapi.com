@@ -117,26 +117,7 @@ class Cache
 
         return $this;
     }
-
-    /**
-     * Migrate a bunch of keys
-     */
-    public function migrate(array $connection, array $keys, int $destinationDb, int $timeout, ?bool $shouldCopy = true, ?bool $shouldReplace = true)
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        try {
-            [$ip, $port, $password] = $connection;
-            $this->instance->migrate($ip, $port, $keys, $destinationDb, $timeout, $shouldCopy, $shouldReplace);
-        } catch (\Exception $ex) {
-            throw $ex;
-        }
-
-        return $this;
-    }
-
+    
     /**
      * Increment an object
      */
@@ -259,28 +240,6 @@ class Cache
     }
 
     /**
-     * Append onto an array
-     */
-    public function append($key, $value)
-    {
-        $existing = $this->get($key) ?: new \stdClass();
-        $existing->{$value} = time();
-        $this->set($key, $existing);
-    }
-
-    /**
-     * Get object ttl for key
-     */
-    public function getTtl($key)
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        return $this->instance->ttl($key);
-    }
-
-    /**
      * Delete an object
      */
     public function delete($key)
@@ -352,26 +311,6 @@ class Cache
         }
 
         return $this->instance->keys($prefix);
-    }
-
-    /**
-     * Get all keys with ttl + size
-     */
-    public function keysList($prefix = '*')
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        $keys = [];
-        foreach($this->instance->keys($prefix) as $key) {
-            $keys[$key] = [
-                'ttl' => $this->instance->ttl($key),
-                'size' => $this->instance->strlen($key),
-            ];
-        }
-
-        return $keys;
     }
 
     /**
