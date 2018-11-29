@@ -38,7 +38,7 @@ class CompanionMarketController extends Controller
      */
     public function tokens(Request $request)
     {
-        if ($request->get('access') != getenv('COMPANION_TOKEN_ACCESS')) {
+        if ($request->get('password') != getenv('COMPANION_TOKEN_PASS')) {
             throw new UnauthorizedAccessException();
         }
         
