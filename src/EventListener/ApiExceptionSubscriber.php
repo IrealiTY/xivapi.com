@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Service\Common\Statistics;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,9 +31,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $path       = $event->getRequest()->getPathInfo();
         $pathinfo   = pathinfo($path);
     
-        // record exception
-        $message = "{$ex->getMessage()}\n\n{$ex->getTraceAsString()}\n-------\n";
-        file_put_contents(__DIR__.'/Exceptions.txt', $message, FILE_APPEND);
         
         if (isset($pathinfo['extension'])) {
             $event->setResponse(new Response("File not found: ". $path, 404));
@@ -59,5 +57,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $response->headers->set('Content-Type','application/json');
         $response->headers->set('Access-Control-Allow-Origin','*');
         $event->setResponse($response);
+    
+        Statistics::exception($event);
     }
 }

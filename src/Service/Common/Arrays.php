@@ -36,6 +36,47 @@ class Arrays
 
         return $newData;
     }
+    
+    /**
+     * Extra columns
+     */
+    public static function extractColumnsCount(array $array, $columns): array
+    {
+        foreach ($columns as $i => $col) {
+            if (stripos($col, '.*.') !== false) {
+                $col = explode('.*.', $col);
+                
+                $columnValue = self::getArrayValueFromDotNotation($array, $col[0]);
+                $total = is_array($columnValue) ? count($columnValue)-1 : null;
+            
+                if ($total === null) {
+                    throw new \Exception("The column {$col[0]} is not an array.");
+                }
+            
+                $columns[$i] = "{$col[0]}.*{$total}.${col[1]}";
+            }
+        }
+        
+        return $columns;
+    }
+
+    /**
+     * Allows _* for all languages
+     */
+    public static function extractMultiLanguageColumns(array $columns): array
+    {
+        foreach ($columns as $i => $col) {
+            if (stripos($col, '_*') !== false) {
+                unset($columns[$i]);
+
+                foreach (Language::LANGUAGES_ACTIVE as $lang) {
+                    $columns[] = str_ireplace('_*', "_{$lang}", $col);
+                }
+            }
+        }
+
+        return $columns;
+    }
 
     /**
      * Convert dot notations into arrays

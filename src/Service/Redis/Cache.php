@@ -5,6 +5,7 @@ namespace App\Service\Redis;
 use Redis;
 
 /**
+ * todo - this whole class can be static
  * Requires: https://github.com/phpredis/phpredis
  */
 class Cache
@@ -116,26 +117,7 @@ class Cache
 
         return $this;
     }
-
-    /**
-     * Migrate a bunch of keys
-     */
-    public function migrate(array $connection, array $keys, int $destinationDb, int $timeout, ?bool $shouldCopy = true, ?bool $shouldReplace = true)
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        try {
-            [$ip, $port, $password] = $connection;
-            $this->instance->migrate($ip, $port, $keys, $destinationDb, $timeout, $shouldCopy, $shouldReplace);
-        } catch (\Exception $ex) {
-            throw $ex;
-        }
-
-        return $this;
-    }
-
+    
     /**
      * Increment an object
      */
@@ -175,16 +157,14 @@ class Cache
     /**
      * Set an object
      */
-    public function set($key, $data, $ttl = self::DEFAULT_TIME)
+    public function set($key, $data, $ttl = self::DEFAULT_TIME, $serialize = false)
     {
         if ($this->isCacheDisabled()) {
             return null;
         }
 
         try {
-            $data = $this->options->useSerializer
-                ? serialize($data)
-                : gzcompress(json_encode($data), self::COMPRESSION_LEVEL);
+            $data = ($this->options->useSerializer || $serialize) ? serialize($data) : gzcompress(json_encode($data), self::COMPRESSION_LEVEL);
 
             if (json_last_error()) {
                 throw new \Exception("COULD NOT SAVE TO REDIS, JSON ERROR: ". json_last_error_msg());
@@ -194,9 +174,7 @@ class Cache
                 throw new \Exception('GZCompress Data is empty');
             }
 
-            $this->pipeline
-                ? $this->pipeline->set($key, $data, $ttl)
-                : $this->instance->set($key, $data, $ttl);
+            $this->pipeline ? $this->pipeline->set($key, $data, $ttl) : $this->instance->set($key, $data, $ttl);
 
         } catch (\Exception $ex) {
             throw $ex;
@@ -226,21 +204,17 @@ class Cache
     /**
      * Get object for key
      */
-    public function get($key)
+    public function get($key, $serialize = false)
     {
         if ($this->isCacheDisabled()) {
             return null;
         }
         
         try {
-            $data = $this->pipeline
-                ? $this->pipeline->get($key)
-                : $this->instance->get($key);
+            $data = $this->pipeline ? $this->pipeline->get($key) : $this->instance->get($key);
 
             if ($data) {
-                $data = $this->options->useSerializer
-                    ? unserialize($data)
-                    : json_decode(gzuncompress($data));
+                $data = ($this->options->useSerializer || $serialize) ? unserialize($data) : json_decode(gzuncompress($data));
             }
 
             return $data;
@@ -259,34 +233,10 @@ class Cache
         }
 
         try {
-            return $this->pipeline
-                ? $this->pipeline->get($key)
-                : $this->instance->get($key);
+            return $this->pipeline ? $this->pipeline->get($key) : $this->instance->get($key);
         } catch (\Exception $ex) {
             throw $ex;
         }
-    }
-
-    /**
-     * Append onto an array
-     */
-    public function append($key, $value)
-    {
-        $existing = $this->get($key) ?: new \stdClass();
-        $existing->{$value} = time();
-        $this->set($key, $existing);
-    }
-
-    /**
-     * Get object ttl for key
-     */
-    public function getTtl($key)
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        return $this->instance->ttl($key);
     }
 
     /**
@@ -361,26 +311,6 @@ class Cache
         }
 
         return $this->instance->keys($prefix);
-    }
-
-    /**
-     * Get all keys with ttl + size
-     */
-    public function keysList($prefix = '*')
-    {
-        if ($this->isCacheDisabled()) {
-            return null;
-        }
-
-        $keys = [];
-        foreach($this->instance->keys($prefix) as $key) {
-            $keys[$key] = [
-                'ttl' => $this->instance->ttl($key),
-                'size' => $this->instance->strlen($key),
-            ];
-        }
-
-        return $keys;
     }
 
     /**

@@ -17,7 +17,7 @@ class DeprecatedController extends Controller
     
     public function __construct(EntityManagerInterface $em)
     {
-        $this->em;
+        $this->em = $em;
     }
     
     /**

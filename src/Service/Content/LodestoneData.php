@@ -49,21 +49,23 @@ class LodestoneData
     
     public static function load($type, $filename, $id)
     {
+        $json = null;
         $jsonFilename = self::folder($type, $id) .'/'. $filename .'.json';
-        
-        return [
-            file_exists($jsonFilename)
-                ? json_decode(file_get_contents($jsonFilename))
-                : null,
-            file_exists($jsonFilename)
-                ? self::modified($type, $filename, $id)
-                : null,
-        ];
+
+        if (file_exists($jsonFilename)) {
+            $json = json_decode(file_get_contents($jsonFilename));
+        }
+
+        return [ $json, self::modified($type, $filename, $id) ];
     }
     
     public static function modified($type, $filename, $id)
     {
         $filename = self::folder($type, $id) .'/'. $filename .'.json';
+
+        if (!file_exists($filename)) {
+            return [null, null];
+        }
         
         $key      = 'content_modified_'. md5($filename);
         $cache    = new Cache();
@@ -395,31 +397,37 @@ class LodestoneData
             "IconFlames"
         ];
 
-        $gcName = self::extendCharacterDataHandlerSimple(
-            self::getContent("xiv_GrandCompany_{$data->GrandCompany->NameID}"),
-            [
-                'ID',
-                'Url',
-                'Name_[LANG]',
-            ]
-        );
+        if (isset($data->GrandCompany->NameID) && !isset($data->GrandCompany->RankID)) {
+            throw new \Exception('Fatal error: Grand Company Name ID found but Rank ID not found');
+        }
 
-        $gcRankName = self::extendCharacterDataHandlerSimple(
-            self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
-            [
-                'ID',
-                'Url',
-                'Name_[LANG]',
-            ]
-        );
+        if (isset($data->GrandCompany->NameID) && isset($data->GrandCompany->RankID)) {
+            $gcName = self::extendCharacterDataHandlerSimple(
+                self::getContent("xiv_GrandCompany_{$data->GrandCompany->NameID}"),
+                [
+                    'ID',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
 
-        $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
-        $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->NameID]};
-        unset($gcRank);
+            $gcRankName = self::extendCharacterDataHandlerSimple(
+                self::getContent(sprintf($gcRankKeyArray[$data->GrandCompany->NameID], $data->GrandCompany->RankID)),
+                [
+                    'ID',
+                    'Url',
+                    'Name_[LANG]',
+                ]
+            );
+
+            $gcRank = self::getContent("xiv_GrandCompanyRank_{$data->GrandCompany->RankID}");
+            $gcRankName->Icon = $gcRank->{$gcRankIconKeyArray[$data->GrandCompany->NameID]};
+            unset($gcRank);
+        }
         
         $data->GrandCompany = [
-            'Company' => $gcName,
-            'Rank'    => $gcRankName
+            'Company' => $gcName ?? null,
+            'Rank'    => $gcRankName ?? null
         ];
         
         //
@@ -433,6 +441,8 @@ class LodestoneData
                     'Url',
                     'Name_[LANG]',
                     'Abbreviation_[LANG]',
+                    'ClassJobCategory.ID',
+                    'ClassJobCategory.Name_[LANG]',
                 ]
             );
 
@@ -443,6 +453,8 @@ class LodestoneData
                     'Url',
                     'Name_[LANG]',
                     'Abbreviation_[LANG]',
+                    'ClassJobCategory.ID',
+                    'ClassJobCategory.Name_[LANG]',
                 ]
             );
 
@@ -459,6 +471,8 @@ class LodestoneData
                 'Url',
                 'Name_[LANG]',
                 'Abbreviation_[LANG]',
+                'ClassJobCategory.ID',
+                'ClassJobCategory.Name_[LANG]',
             ]
         );
         $data->ActiveClassJob->Job = self::extendCharacterDataHandlerSimple(

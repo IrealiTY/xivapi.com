@@ -37,7 +37,7 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function search(Request $request)
     {
-        $this->appManager->fetch($request);
+        $this->appManager->fetch($request, true);
         GoogleAnalytics::hit(['FreeCompany','Search']);
         
         return $this->json(
@@ -112,11 +112,7 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function delete(Request $request, $id)
     {
-        $app = $this->appManager->fetch($request);
-
-        if ($app->isDefault()) {
-            throw new Forbidden403Exception('This route requires an API key');
-        }
+        $this->appManager->fetch($request, true);
 
         /** @var FreeCompany $ent */
         [$ent, $data] = $this->service->get($id);

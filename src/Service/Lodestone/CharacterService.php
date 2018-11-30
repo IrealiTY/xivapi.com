@@ -10,6 +10,7 @@ use App\Service\Content\LodestoneData;
 use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CharacterService extends Service
 {
@@ -57,6 +58,10 @@ class CharacterService extends Service
     {
         /** @var Character $ent */
         $ent = $this->getRepository(CharacterAchievements::class)->find($id);
+
+        if (!$ent) {
+            throw new NotFoundHttpException();
+        }
         
         if ($ent->getState() == Entity::STATE_CACHED) {
             $data = LodestoneData::load('character', 'achievements', $id);
@@ -69,6 +74,10 @@ class CharacterService extends Service
     {
         /** @var Character $ent */
         $ent = $this->getRepository(CharacterFriends::class)->find($id);
+
+        if (!$ent) {
+            throw new NotFoundHttpException();
+        }
     
         if ($ent->getState() == Entity::STATE_CACHED) {
             $data = LodestoneData::load('character', 'friends', $id);

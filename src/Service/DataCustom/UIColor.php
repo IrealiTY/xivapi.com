@@ -6,10 +6,11 @@ use App\Service\Helpers\ManualHelper;
 
 class UIColor extends ManualHelper
 {
-    const PRIORITY = 20;
+    const PRIORITY = 800;
     
     public function handle()
     {
+        /*
         foreach ($this->redis->get("ids_UIColor") as $id) {
             $color = $this->redis->get("xiv_UIColor{$id}");
 
@@ -22,5 +23,6 @@ class UIColor extends ManualHelper
 
             $this->redis->set("xiv_UIColor{$id}", $color, self::REDIS_DURATION);
         }
+        */
     }
 }

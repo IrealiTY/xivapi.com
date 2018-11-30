@@ -31,13 +31,13 @@ class DocBuilder
         return implode("\n", $this->doc);
     }
 
-    protected function space()
+    protected function space(): DocBuilder
     {
         $this->doc[] = " ";
         return $this;
     }
 
-    protected function add($text, $removeNewlines = true)
+    protected function add($text, $removeNewlines = true): DocBuilder
     {
         $text = $removeNewlines ? str_ireplace(PHP_EOL, ' ', $text) : $text;
 
@@ -51,13 +51,13 @@ class DocBuilder
         return $this;
     }
     
-    protected function startSection()
+    protected function startSection(): DocBuilder
     {
         $this->doc[] = '<div class="doc-section">';
         return $this;
     }
     
-    protected function endSection()
+    protected function endSection(): DocBuilder
     {
         $this->doc[] = '</div>';
         return $this;
@@ -67,17 +67,17 @@ class DocBuilder
     // Markdown
     //
 
-    protected function h1($title)
+    protected function h1($title): DocBuilder
     {
         return $this->add("# {$title}")->space();
     }
 
-    protected function h2($title)
+    protected function h2($title): DocBuilder
     {
         return $this->add("## {$title}")->space();
     }
 
-    protected function h3($title)
+    protected function h3($title): DocBuilder
     {
         $anchor = str_ireplace(' ', '-', $title);
         
@@ -86,17 +86,17 @@ class DocBuilder
             ->add("### {$title} [#](#{$anchor})")->space();
     }
 
-    protected function h4($title)
+    protected function h4($title): DocBuilder
     {
         return $this->add("#### {$title}")->space();
     }
 
-    protected function h5($title)
+    protected function h5($title): DocBuilder
     {
         return $this->add("##### {$title}")->space();
     }
 
-    protected function h6($title)
+    protected function h6($title): DocBuilder
     {
         $this->headings[] = $title;
         $anchor = 'section-'. count($this->headings);
@@ -106,12 +106,12 @@ class DocBuilder
             ->add("<h6>{$title} <a href=\"#{$anchor}\">#</a></h6>")->space();
     }
 
-    protected function text($text)
+    protected function text($text): DocBuilder
     {
         return $this->add(trim($text))->space();
     }
 
-    protected function list($items)
+    protected function list($items): DocBuilder
     {
         foreach ($items as $text) {
             $this->add("- {$text}");
@@ -120,7 +120,7 @@ class DocBuilder
         return $this->space();
     }
 
-    protected function json($json)
+    protected function json($json): DocBuilder
     {
         $json = json_decode(trim($json));
         $json = json_encode($json, JSON_PRETTY_PRINT);
@@ -128,22 +128,22 @@ class DocBuilder
         return $this;
     }
 
-    protected function code($code, $language = '')
+    protected function code($code, $language = ''): DocBuilder
     {
         return $this->add("```{$language}\n$code\n```", false)->space();
     }
 
-    protected function bold($text)
+    protected function bold($text): DocBuilder
     {
         return $this->add("**{$text}**")->space();
     }
 
-    protected function italic($text)
+    protected function italic($text): DocBuilder
     {
         return $this->add("*{$text}*")->space();
     }
 
-    protected function table($headings, $rows)
+    protected function table($headings, $rows): DocBuilder
     {
         $this->add('| ' . implode(" | ", $headings) .' |');
         $this->add('| ' . implode(" | ", array_map(function($a) { return "---"; }, $headings)) .' |');
@@ -155,27 +155,27 @@ class DocBuilder
         return $this->space();
     }
 
-    protected function link($name, $url)
+    protected function link($name, $url): DocBuilder
     {
         return $this->add("[{$name}]({$url})");
     }
     
-    protected function image($name, $url)
+    protected function image($name, $url): DocBuilder
     {
         return $this->add("![{$name}]({$url})")->space();
     }
 
-    protected function note($text)
+    protected function note($text): DocBuilder
     {
         return $this->add("> **NOTE:** {$text}")->space();
     }
 
-    protected function line()
+    protected function line(): DocBuilder
     {
         return $this->add("---")->space();
     }
 
-    protected function gap($length = 1)
+    protected function gap($length = 1): DocBuilder
     {
         foreach (range(1, $length) as $i) {
             $this->text('&nbsp;');
@@ -187,7 +187,7 @@ class DocBuilder
     //
     // Custom
     //
-    protected function queryParams($params)
+    protected function queryParams($params): DocBuilder
     {
         return $this->table(
             ['Param', 'Details'],
@@ -195,25 +195,26 @@ class DocBuilder
         );
     }
 
-    protected function usage($text)
+    protected function usage($text, $keyRequired = false): DocBuilder
     {
-        return $this->text("**Usage** ⇢ {$text}");
-    }
+        $this->text("**Usage** ⇢ {$text}");
 
-    protected function route($route, $canBeLowerCase = false)
-    {
-        $this->doc[] = "## `{$route}`";
-
-        if ($canBeLowerCase) {
-            //$this->doc[] = 'lower-case supported: `'. strtolower($route) .'`';
+        if ($keyRequired) {
+            $this->note('This endpoint requires a **developer key** to access. Create one under **Applications**.');
         }
 
+        return $this;
+    }
+
+    protected function route($route): DocBuilder
+    {
+        $this->doc[] = "## `{$route}`";
         $this->doc[] = ' ';
 
         return $this;
     }
 
-    protected function auto($values)
+    protected function auto($values): DocBuilder
     {
         return $this->table(
             [ 'Type', 'per Queue', 'per Minute' ],
@@ -221,7 +222,7 @@ class DocBuilder
         );
     }
 
-    protected function terms()
+    protected function terms(): DocBuilder
     {
         return $this
             ->h5('Terminology')
@@ -233,7 +234,7 @@ class DocBuilder
             );
     }
     
-    protected function states()
+    protected function states(): DocBuilder
     {
         return $this
             ->table(
@@ -249,7 +250,7 @@ class DocBuilder
         );
     }
 
-    protected function lodestoneNotice()
+    protected function lodestoneNotice(): DocBuilder
     {
         return $this->note('All routes marked with `*` will query the lodestone directly in real-time. 
             XIVAPI will cache the lodestone response for a set amount of time. Please do not hammer 

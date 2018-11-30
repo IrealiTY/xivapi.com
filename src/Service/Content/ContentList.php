@@ -29,7 +29,7 @@ class ContentList
         $this->appManager = $appManager;
     }
     
-    public function get(Request $request, string $name, App $app)
+    public function get(Request $request, string $name)
     {
         $this->request = $request;
         $this->name    = $name;
@@ -56,9 +56,9 @@ class ContentList
         }
         
         // max_items (alias limit, deprecate max_items)
-        $maxItems = $this->request->get('max_items') | $this->request->get('limit');
-        $maxItems = intval($maxItems) ?: 100;
-        $maxItems = $maxItems < 5000 ? $maxItems : 5000;
+        $maxItems = $this->request->get('max_items') ?: $this->request->get('limit');
+        $maxItems = intval($maxItems ?: 100) ?: 100;
+        $maxItems = $maxItems < 3000 ? $maxItems : 3000;
         
         // ----------------------------------------------------------------------
         
@@ -103,6 +103,10 @@ class ContentList
             
             if ($content) {
                 $content = Language::handle($content, $this->request->get('language'));
+
+                $columns = Arrays::extractColumnsCount($content, $columns);
+                $columns = Arrays::extractMultiLanguageColumns($columns);
+
                 $data[] = Arrays::extractColumns($content, $columns);
             }
 

@@ -4,8 +4,9 @@ namespace App\EventListener;
 
 use App\Service\Common\Arrays;
 use App\Service\Common\DataType;
-use App\Service\Content\ContentMinified;
+use App\Service\Common\Statistics;
 use App\Service\Common\Language;
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -45,13 +46,17 @@ class ResponseListener
                 if ($columns = $request->get('columns')) {
                     // get columns param
                     $columns = array_unique(explode(',', $columns));
-
+                    
                     if (isset($json['Pagination']) && !empty($json['Results'])) {
                         foreach ($json['Results'] as $r => $result) {
+                            $columns = Arrays::extractColumnsCount($result, $columns);
+                            $columns = Arrays::extractMultiLanguageColumns($columns);
                             $json['Results'][$r] = Arrays::extractColumns($result, $columns);
                         }
                     } else if (!isset($json['Pagination'])) {
-                        $json = Arrays::extractColumns($json, $columns);
+                        $columns = Arrays::extractColumnsCount($json, $columns);
+                        $columns = Arrays::extractMultiLanguageColumns($columns);
+                        $json    = Arrays::extractColumns($json, $columns);
                     }
                 }
 
@@ -106,10 +111,27 @@ class ResponseListener
                     )
                 );
             }
+            
+            $response
+                ->setMaxAge((3600*4))
+                ->setExpires((new Carbon())->addHour(4))
+                ->setPublic();
+            
+            $uri = $event->getRequest()->getPathInfo();
+            
+            if (strpos($uri, '/verification') !== false) {
+                $response->setMaxAge(15)->setExpires((new Carbon())->addSeconds(15));
+            }
+    
+            if (strpos($uri, '/market') !== false) {
+                $response->setMaxAge(300)->setExpires((new Carbon())->addSeconds(300));
+            }
 
             $response->headers->set('Content-Type','application/json');
             $response->headers->set('Access-Control-Allow-Origin','*');
             $event->setResponse($response);
         }
+    
+        Statistics::response($event);
     }
 }

@@ -70,12 +70,12 @@ class UserService
         if (!$this->sso->isCsrfValid()) {
             //throw new CsrfInvalidException();
         }
-        
+
         $ssoAccess = $this->sso->setLoginAuthorizationState();
         
         $repo = $this->em->getRepository(User::class);
         $user = $repo->findOneBy([
-            'email' => $ssoAccess->email
+            'ssoId' => $ssoAccess->id
         ]);
         
         if (!$user) {
@@ -83,6 +83,13 @@ class UserService
             
             // todo - send email?
         }
+
+        // update user
+        $user
+            ->setUsername($ssoAccess->username)
+            ->setEmail($ssoAccess->email)
+            ->setAvatar($ssoAccess->avatar ?: 'http://xivapi.com/img-misc/chat_messengericon_goldsaucer.png');
+        $this->updateUser($user);
         
         $this->setCookie($user->getSession());
         return $user;
@@ -144,14 +151,14 @@ class UserService
         $user = new User();
         $user
             ->setSso($sso)
+            ->setSsoId($ssoAccess->id)
             ->setToken(json_encode($ssoAccess))
             ->setUsername($ssoAccess->username)
             ->setEmail($ssoAccess->email)
             ->setAvatar($ssoAccess->avatar ?: 'http://xivapi.com/img-misc/chat_messengericon_goldsaucer.png');
     
         // save user
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->updateUser($user);
         
         return $user;
     }

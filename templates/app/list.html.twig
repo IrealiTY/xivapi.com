@@ -3,9 +3,61 @@
     <small>&nbsp;&nbsp;&nbsp; Max {{ auth.user.appsMax }}</small>
 </h1>
 
+{% if not auth.user.isBanned() %}
 <p>
-    <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
+    {% if auth.user.apps|length < auth.user.appsMax %}
+        <a href="{{ path('app_manage', { id: 'new' }) }}" class="btn btn-primary">Create a new app</a>
+    {% else %}
+        You cannot make anymore dev applications at this time.
+        {% if auth.user.level == 2 %}Your limit will increase to 5 after 1 hour{% endif %}
+    {% endif %}
 </p>
+{% endif %}
+
+{% if auth.user.isBanned() %}
+<div class="alert alert-danger">
+    <h4>Account Banned</h4>
+    <p>Hello, your account has been banned on XIVAPI. This is likely due to API abuse or crawl detection, if you
+        believe this is in error or want to know more please <a href="https://discord.gg/MFFVHWC">Join Discord</a>
+        and ask one of the moderators for assistance.</p>
+</div>
+{% endif %}
+
+{% if auth.user.isLimited() %}
+    <div class="alert alert-warning">
+        <h4>Account Limited</h4>
+        <p><strong>Welcome to XIVAPI!</strong></p>
+        <p>As your account is new you are currently in a limited state. This means you can create
+            <strong>1 App</strong> with <strong>2/req/sec</strong> rate limit. This restriction
+            will be lifted after 1 hour. This gives you time to have a play with some of the
+            API endpoints and think about what you really need to do!</p>
+        <p>If you have any questions, please: <a href="https://discord.gg/MFFVHWC">Join Discord</a></p>
+    </div>
+{% endif %}
+
+<div class="alert alert-secondary" role="alert">
+    <h4>Crawling and API scraping</h4>
+    <p>
+        If you are creating an app to crawl the site, it will very likely be deleted and your account
+        will be banned. If you are using the API it is very important you understand
+        how to manage static data and how to cache. It is important you read and understand the
+        documentation and have a decent understanding of how FFXIV works (eg Trying to scrape non-purchasable
+        items from the market board is a red flag that you don't know what you're doing).
+    </p>
+    <p>
+        Here are some resources that may help you get started:
+        <ul>
+            <li><strong>Datamining:</strong> <a href="https://github.com/viion/ffxiv-datamining">https://github.com/viion/ffxiv-datamining</a></li>
+            <li><strong>Companion App PHP:</strong> <a href="https://github.com/xivapi/companion-php">https://github.com/xivapi/companion-php</a></li>
+            <li><strong>Companion App C#:</strong> <a href="https://github.com/viion/libpompom-sharp">https://github.com/viion/libpompom-sharp</a></li>
+        </ul>
+    </p>
+    <p>
+        If you are unsure of anything or looking to obtain mass data for analysis then <strong>please talk to us!</strong>,
+        this data may be obtainable much easier than scraping the entire API and wasting everyones time.
+        <a href="https://discord.gg/MFFVHWC">Join Discord</a> if you need any help.
+    </p>
+</div>
 
 <br>
 
@@ -24,6 +76,20 @@
                     <div>
                         <small>{{ app.description }}</small>
                     </div>
+                    <br>
+                    {% if app.isRestricted() %}
+                    <div class="alert alert-danger">
+                        Mass crawling detected, this key has been restricted.
+                        Please <a href="https://discord.gg/MFFVHWC">Join Discord</a> for help regarding this.
+                    </div>
+                    {% endif %}
+                    {% if app.isLimited() %}
+                        <div class="alert alert-warning">
+                            <strong>New Key!</strong><br>
+                            This key is limited to 2 requests per second. This restriction will be
+                            lifted: {{ (app.added+3600)|dateRelative }}
+                        </div>
+                    {% endif %}
                 </td>
                 <td valign="center">
                     <code>{{ app.apiKey }}</code>

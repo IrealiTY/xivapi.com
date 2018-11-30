@@ -38,6 +38,7 @@ class PatchContent extends ManualHelper
         'Title',
         'Trait',
         'Weather',
+        'TripleTriadCard',
     ];
 
     public function handle($single = null)

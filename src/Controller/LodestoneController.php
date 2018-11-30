@@ -213,7 +213,7 @@ class LodestoneController extends Controller
      */
     public function lodestoneDevPosts(Request $request)
     {
-        $this->appManager->fetch($request);
+        $this->appManager->fetch($request, true);
 
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getDevPosts();

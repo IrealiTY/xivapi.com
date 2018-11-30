@@ -11,12 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class App
 {
-    const DEFAULT_LEVEL = 1;
-    const DEFAULT_RATE_LIMIT = 5;
     const DEFAULT_API_KEY = 'default';
-    const LV2_LEVEL = 2;
-    const LV2_RATE_LIMIT = 20;
-    const MAX_HISTORY = 50;
+
+    const RATE_LIMITS = [
+        1 => 2,
+        2 => 2,
+        3 => 10,
+        4 => 20,
+        5 => 30,
+    ];
 
     /**
      * @var string
@@ -25,10 +28,10 @@ class App
      */
     private $id;
     /**
-     * @var bool
-     * @ORM\Column(type="boolean", name="is_default")
+     * @var int
+     * @ORM\Column(type="integer")
      */
-    private $default = false;
+    private $added;
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User", inversedBy="apps")
@@ -56,21 +59,26 @@ class App
      */
     private $apiKey;
     /**
-     * the number of requests per second per ip
      * @var integer
      * @ORM\Column(type="integer", length=4)
      */
-    private $apiRateLimit = 5;
+    private $apiRateLimit = 2;
     /**
      * @var bool
      * @ORM\Column(type="boolean", options={"default" : 0})
      */
-    private $toolAccessMappy = false;
+    private $restricted = false;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="is_default")
+     */
+    private $default = false;
     
     public function __construct()
     {
         $this->id = Uuid::uuid4();
         $this->generateApiKey();
+        $this->added = time();
     }
     
     public function generateApiKey()
@@ -99,13 +107,25 @@ class App
     public function setDefault(bool $default)
     {
         $this->default = $default;
-        $this->level = self::DEFAULT_LEVEL;
-        $this->apiRateLimit = self::DEFAULT_RATE_LIMIT;
-        $this->apiKey = self::DEFAULT_API_KEY;
+        $this->level = 1;
+        $this->apiRateLimit = self::RATE_LIMITS[1];
+        $this->apiKey = 'default';
         return $this;
     }
 
-    public function getUser(): User
+    public function getAdded(): int
+    {
+        return $this->added;
+    }
+
+    public function setAdded(int $added)
+    {
+        $this->added = $added;
+
+        return $this;
+    }
+
+    public function getUser():?User
     {
         return $this->user;
     }
@@ -146,6 +166,11 @@ class App
     public function setLevel(int $level)
     {
         $this->level = $level;
+
+        $this->setApiRateLimit(
+            self::RATE_LIMITS[$this->level]
+        );
+
         return $this;
     }
 
@@ -171,19 +196,20 @@ class App
         return $this;
     }
 
-    public function isToolAccessMappy(): bool
+    public function isLimited()
     {
-        return $this->toolAccessMappy;
+        return (time() - $this->added) < 3600;
     }
 
-    public function setToolAccessMappy(bool $toolAccessMappy)
+    public function isRestricted(): bool
     {
-        $this->toolAccessMappy = $toolAccessMappy;
+        return $this->restricted;
+    }
+
+    public function setRestricted(bool $restricted)
+    {
+        $this->restricted = $restricted;
+
         return $this;
-    }
-
-    public function hasMappyAccess(): bool
-    {
-        return $this->toolAccessMappy;
     }
 }

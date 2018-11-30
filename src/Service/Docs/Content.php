@@ -14,7 +14,7 @@ class Content extends DocBuilder implements DocInterface
             ->gap()
 
             ->h6('Content')
-            ->route('/content', true)
+            ->route('/content')
             ->usage('{endpoint}/content')
             ->text('View a list of available content that is accessible in the API. Content is added rapidly 
                 when discovered and mapped to the SaintCoincach Schema, with huge effort from the community 
@@ -60,7 +60,7 @@ class Content extends DocBuilder implements DocInterface
             // schema
             //
             ->h6('Content Schema')
-                ->route('/[ContentName]/schema')
+            ->route('/[ContentName]/schema')
             ->usage('{endpoint}/Item/schema?pretty=1')
             ->text('View the current column and schema information of the content. Schema is automatically built 
                 from the "biggest" document for that specific content.')
@@ -82,12 +82,12 @@ class Content extends DocBuilder implements DocInterface
             ->h6('Common Parameters')
             
             // max items
-            ->h3('max_items')
-            ->usage('{endpoint}/Item?columns=ID,Icon,Name&pretty=1&max_items=5')
+            ->h3('limit')
+            ->usage('{endpoint}/Item?columns=ID,Icon,Name&pretty=1&limit=5')
             ->text('Limit the number of items returned by the API.')
             ->list([
                 'Default: 100',
-                'Maximum: 5000',
+                'Maximum: 3000',
             ])
             ->gap()
             

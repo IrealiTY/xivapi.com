@@ -4,6 +4,7 @@ namespace App\Service\Apps;
 
 use App\Entity\App;
 use App\Exception\ApiRateLimitException;
+use App\Exception\UnauthorizedAccessException;
 use App\Service\Redis\Cache;
 use App\Service\User\Time;
 use App\Service\User\UserService;
@@ -37,17 +38,34 @@ class AppManager
     }
 
     /**
-     * Fetch an API app from the request
+     * Fetch an API app from the request, if $keyRequired is set then
+     * an exception is thrown if no key is provided (eg the endpoint
+     * requires a key to be accessed)
      */
-    public function fetch(Request $request)
+    public function fetch(Request $request, $keyRequired = false)
     {
         // attempt to fetch users app
-        $key  = $request->get('key');
-        $repo = $this->em->getRepository(App::class);
+        if ($key = $request->get('key')) {
+            // check cache for dev app key
+            if (!$app = $this->cache->get('app_' . $key, true)) {
+                /** @var App $app */
+                $app = $this->em->getRepository(App::class)->findOneBy(['apiKey' => $key]) ?: $this->getDefaultKey();
+                if ($keyRequired && $app->isDefault() && getenv('APP_ENV') === 'prod') {
+                    throw new UnauthorizedAccessException();
+                }
 
-        // use fetched key otherwise use default
-        /** @var App $app */
-        $app  = $repo->findOneBy([ 'apiKey' => $key ]) ?: $this->getDefaultKey();
+                // cache for 30 minutes
+                $this->cache->set('app_' . $key, $app, (60 * 30), true);
+            }
+
+            if ($app->getUser()) {
+                $app->getUser()->checkBannedStatus();
+            }
+        } else if (!$keyRequired) {
+            $app = $this->getDefaultKey();
+        } else if ($keyRequired) {
+            throw new UnauthorizedAccessException();
+        }
 
         //
         // rate limit check
@@ -70,8 +88,8 @@ class AppManager
         $this->cache->increment($keys->CACHE_HITS_TOTAL);
         $this->cache->increment($keys->CACHE_RATE_LIMIT);
 
-        if ($this->cache->getCount($keys->CACHE_RATE_LIMIT) > $app->getApiRateLimit()) {
-            $this->cache->increment($key->CACHE_HITS_LIMITED);
+        if (getenv('APP_ENV') === 'prod' && $this->cache->getCount($keys->CACHE_RATE_LIMIT) > $app->getApiRateLimit()) {
+            $this->cache->increment($keys->CACHE_HITS_LIMITED);
             throw new ApiRateLimitException(
                 ApiRateLimitException::CODE,
                 'App receiving too many requests from this IP'
@@ -242,8 +260,15 @@ class AppManager
      */
     public function get(string $id)
     {
-        $repo = $this->em->getRepository(App::class);
-        return $repo->findOneBy([ 'id' => $id ]);
+        return $this->em->getRepository(App::class)->findOneBy([ 'id' => $id ]);
+    }
+    
+    /**
+     * Fetch an app via its key
+     */
+    public function getByKey(string $id)
+    {
+        return $this->em->getRepository(App::class)->findOneBy([ 'apiKey' => $id ]);
     }
 
     /**
@@ -260,8 +285,8 @@ class AppManager
         $app = new App();
         $app->setUser($user)
             ->setName('App #'. (count($user->getApps()) + 1))
-            ->setLevel(App::LV2_LEVEL)
-            ->setApiRateLimit(App::LV2_RATE_LIMIT);
+            ->setLevel(2)
+            ->setApiRateLimit(App::RATE_LIMITS[2]);
 
         $this->em->persist($app);
         $this->em->flush();
