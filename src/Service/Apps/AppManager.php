@@ -61,8 +61,10 @@ class AppManager
             if ($app->getUser()) {
                 $app->getUser()->checkBannedStatus();
             }
-        } else {
+        } else if (!$keyRequired) {
             $app = $this->getDefaultKey();
+        } else if ($keyRequired) {
+            throw new UnauthorizedAccessException();
         }
 
         //
