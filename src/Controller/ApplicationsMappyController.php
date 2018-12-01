@@ -34,7 +34,7 @@ class ApplicationsMappyController extends Controller
      */
     public function verify(Request $request)
     {
-        $app = $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request, true, true);
 
         return $this->json([
             'allowed' => $app->getUser()->getLevel() >= 5
@@ -46,7 +46,7 @@ class ApplicationsMappyController extends Controller
      */
     public function markComplete(Request $request)
     {
-        $app = $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request, true, true);
 
         if (!$app->getUser()->getLevel() >= 5) {
             throw new UnauthorizedHttpException("You are not allowed!");
@@ -73,7 +73,7 @@ class ApplicationsMappyController extends Controller
      */
     public function openMap(request $request)
     {
-        $app = $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request, true, true);
 
         if (!$app->getUser()->getLevel() >= 5) {
             throw new UnauthorizedAccessException();
@@ -91,7 +91,7 @@ class ApplicationsMappyController extends Controller
     public function submit(Request $request)
     {
         /** @var App $app */
-        $app = $this->appManager->fetch($request);
+        $app = $this->appManager->fetch($request, true, true);
         
         $json = json_decode($request->getContent());
 

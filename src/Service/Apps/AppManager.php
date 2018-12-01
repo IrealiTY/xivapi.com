@@ -42,12 +42,12 @@ class AppManager
      * an exception is thrown if no key is provided (eg the endpoint
      * requires a key to be accessed)
      */
-    public function fetch(Request $request, $keyRequired = false)
+    public function fetch(Request $request, $keyRequired = false, $skipCache = false)
     {
         // attempt to fetch users app
         if ($key = $request->get('key')) {
             // check cache for dev app key
-            if (!$app = $this->cache->get('app_' . $key, true)) {
+            if (!$skipCache && !$app = $this->cache->get('app_' . $key, true)) {
                 /** @var App $app */
                 $app = $this->em->getRepository(App::class)->findOneBy(['apiKey' => $key]) ?: $this->getDefaultKey();
                 if ($keyRequired && $app->isDefault() && getenv('APP_ENV') === 'prod') {
