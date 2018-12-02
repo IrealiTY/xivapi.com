@@ -18,6 +18,7 @@
 /src/EventListener/Exceptions.txt
 /src/Service/Companion/accounts.json
 git_version.txt
+/sites
 
 #
 # Symfony
