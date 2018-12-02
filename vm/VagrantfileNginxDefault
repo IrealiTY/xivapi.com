@@ -11,6 +11,12 @@ server {
     include /etc/nginx/sites-available/common;
 }
 
+server {
+    server_name mogboard.local;
+    root /vagrant/sites/mogboard/public;
+    include /etc/nginx/sites-available/common;
+}
+
 #
 # adminer
 # todo - move this to use common nginx config

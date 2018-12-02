@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CompanionMarketController extends Controller
 {
-    const ENDPOINT_CACHE_DURATION = 300;
+    const ENDPOINT_CACHE_DURATION = 60;
 
     /** @var AppManager */
     private $appManager;
