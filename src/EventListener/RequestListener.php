@@ -20,9 +20,19 @@ class RequestListener
         if ($sentry = getenv('SENTRY')) {
             (new \Raven_Client($sentry))->install();
         }
+        
 
         /** @var Request $request */
         $request = $event->getRequest();
+    
+        if ($json = $request->getContent()) {
+            $json = \GuzzleHttp\json_decode($json);
+            
+            foreach($json as $key => $value) {
+                $request->request->set($key, $value);
+            }
+        }
+        
         Environment::set($request);
         Environment::ensureValidHost($request);
         Maintenance::check($request);
