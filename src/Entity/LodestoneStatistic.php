@@ -36,11 +36,6 @@ class LodestoneStatistic
      * @var string
      * @ORM\Column(type="string", length=64)
      */
-    private $type;
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64)
-     */
     private $queue;
     /**
      * @var string
@@ -94,18 +89,6 @@ class LodestoneStatistic
     public function setAdded(int $added)
     {
         $this->added = $added;
-        
-        return $this;
-    }
-    
-    public function getType(): string
-    {
-        return $this->type;
-    }
-    
-    public function setType(string $type)
-    {
-        $this->type = $type;
         
         return $this;
     }

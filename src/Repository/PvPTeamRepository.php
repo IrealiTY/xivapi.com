@@ -14,17 +14,27 @@ class PvPTeamRepository extends ServiceEntityRepository
         parent::__construct($registry, PvPTeam::class);
     }
 
-    public function findNewPvPTeams()
+    /**
+     * Returns a list of new pvp teams
+     */
+    public function toAdd($offset = 0)
     {
         $filter = [ 'state' => PvPTeam::STATE_ADDING ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_PVP_TEAM_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_LINKSHELL_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_PVP_TEAM_UPDATES, $offset);
     }
 
-    public function findPvPTeamsToUpdate()
+    /**
+     * Returns a list of pvp teams to update
+     */
+    public function toUpdate($offset = 0, $priority = 0)
     {
-        $filter = [ 'state' => PvPTeam::STATE_CACHED ];
+        $filter = [ 'state' => PvPTeam::STATE_CACHED, 'priority' => $priority ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_PVP_TEAM_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_LINKSHELL_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_PVP_TEAM_UPDATES, $offset);
     }
 }

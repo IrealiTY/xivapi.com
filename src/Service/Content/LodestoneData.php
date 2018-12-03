@@ -85,8 +85,9 @@ class LodestoneData
     
     #-------------------------------------------------------------------------------------------------------------------
     
-    public static function initContentCache(Cache $cache)
+    public static function initContentCache()
     {
+        $cache = new Cache();
         self::$content = $cache->get(self::CACHE_KEY);
         self::$cache = $cache;
     }

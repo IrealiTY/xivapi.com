@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Entity;
 use App\Entity\Linkshell;
 use App\Service\Lodestone\ServiceQueues;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -14,17 +15,27 @@ class LinkshellRepository extends ServiceEntityRepository
         parent::__construct($registry, Linkshell::class);
     }
 
-    public function findNewLinkshells()
+    /**
+     * Returns a list of new linkshells
+     */
+    public function toAdd($offset = 0)
     {
-        $filter = [ 'state' => Linkshell::STATE_ADDING ];
+        $filter = [ 'state' => Entity::STATE_ADDING ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_LINKSHELL_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_LINKSHELL_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_LINKSHELL_UPDATES, $offset);
     }
 
-    public function findLinkshellsToUpdate()
+    /**
+     * Returns a list of linkshells to update
+     */
+    public function toUpdate($offset = 0, $priority = 0)
     {
-        $filter = [ 'state' => Linkshell::STATE_CACHED ];
+        $filter = [ 'state' => Entity::STATE_CACHED, 'priority' => $priority ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_LINKSHELL_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_LINKSHELL_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_LINKSHELL_UPDATES, $offset);
     }
 }

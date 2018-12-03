@@ -12,6 +12,11 @@ class Entity
     const STATE_NOT_FOUND   = 3;
     const STATE_BLACKLISTED = 4;
     const STATE_PRIVATE     = 5;
+
+    const PRIORITY_NORMAL   = 0;  // everyone gets this
+    const PRIORITY_DEAD     = 1;  // Characters considered dead
+    const PRIORITY_LOW      = 2;  // characters that hardly change,
+    const PRIORITY_HIGH     = 10; // patreon characters
     
     /**
      * @ORM\Id
@@ -26,6 +31,10 @@ class Entity
      * @ORM\Column(type="integer", length=16)
      */
     public $updated = 0;
+    /**
+     * @ORM\Column(type="integer", length=16)
+     */
+    public $priority = 0;
     
     public function __construct(string $id)
     {
@@ -40,7 +49,6 @@ class Entity
     public function setId($id)
     {
         $this->id = $id;
-        
         return $this;
     }
     
@@ -52,7 +60,6 @@ class Entity
     public function setState($state)
     {
         $this->state = $state;
-        
         return $this;
     }
     
@@ -67,4 +74,16 @@ class Entity
         $this->updated = $this->updated < 0 ? 0 : $this->updated;
         return $this;
     }
+
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+        return $this;
+    }
+
 }

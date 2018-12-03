@@ -32,7 +32,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *  DEV:
  *      php bin/console AutoLodestone ALL
  */
-class AutoLodestone extends Command
+class AutoLodestoneCommand extends Command
 {
     /** @var Cache */
     private $cache;
@@ -50,7 +50,7 @@ class AutoLodestone extends Command
 
     protected function configure()
     {
-        $this->setName('AutoLodestone')
+        $this->setName('AutoLodestoneCommand')
             ->setDescription("Auto parse The Lodestone")
             ->addArgument('action', InputArgument::REQUIRED, "An auto-queue action to perform");
     }

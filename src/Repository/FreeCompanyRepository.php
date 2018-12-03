@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Character;
+use App\Entity\Entity;
 use App\Entity\FreeCompany;
 use App\Service\Lodestone\ServiceQueues;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -15,17 +16,27 @@ class FreeCompanyRepository extends ServiceEntityRepository
         parent::__construct($registry, FreeCompany::class);
     }
 
-    public function findNewFreeCompanies()
+    /**
+     * Returns a list of new free companies
+     */
+    public function toAdd($offset = 0)
     {
-        $filter = [ 'state' => FreeCompany::STATE_ADDING ];
+        $filter = [ 'state' => Entity::STATE_ADDING ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_FREE_COMPANY_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_FREE_COMPANY_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_FREE_COMPANY_UPDATES, $offset);
     }
 
-    public function findFreeCompaniesToUpdate()
+    /**
+     * Returns a list of free companies to update
+     */
+    public function toUpdate($offset = 0, $priority = 0)
     {
-        $filter = [ 'state' => FreeCompany::STATE_CACHED ];
+        $filter = [ 'state' => Entity::STATE_CACHED, 'priority' => $priority ];
         $order  = [ 'updated' => 'asc' ];
-        return $this->findBy($filter, $order, ServiceQueues::TOTAL_FREE_COMPANY_UPDATES);
+        $offset = $offset * ServiceQueues::TOTAL_FREE_COMPANY_UPDATES;
+
+        return $this->findBy($filter, $order, ServiceQueues::TOTAL_FREE_COMPANY_UPDATES, $offset);
     }
 }

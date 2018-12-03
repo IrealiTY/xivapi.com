@@ -25,8 +25,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class AutoManager extends Command
 {
-    /** @var Cache */
-    private $cache;
     /** @var AutoCharacterManager */
     private $autoCharacterManager;
     /** @var AutoFreeCompanyManager */
@@ -38,16 +36,12 @@ class AutoManager extends Command
     
     public function __construct(
         ?string $name = null,
-        Cache $cache,
-        
         AutoCharacterManager $autoCharacterManager,
         AutoFreeCompanyManager $autoFreeCompanyManager,
         AutoLinkshellManager $autoLinkshellManager,
         AutoPvpTeamManager $autoPvpTeamManager
     ) {
         parent::__construct($name);
-        $this->cache = $cache;
-        
         $this->autoCharacterManager   = $autoCharacterManager;
         $this->autoFreeCompanyManager = $autoFreeCompanyManager;
         $this->autoLinkshellManager   = $autoLinkshellManager;
@@ -65,8 +59,8 @@ class AutoManager extends Command
         $io = new SymfonyStyle($input, $output);
         $io->title(__CLASS__ .' - '. __METHOD__);
         
-        LodestoneData::initContentCache($this->cache);
-    
+        LodestoneData::initContentCache();
+
         $io->section('Auto Character Manager');
         $this->autoCharacterManager
              ->setSymfonyStyle($io)
