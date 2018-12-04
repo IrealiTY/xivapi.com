@@ -32,7 +32,7 @@ class AutoManagerQueue extends Command
     /** @var EntityManagerInterface */
     private $em;
     
-    public function __construct(EntityManagerInterface $em, ?string $name = null)
+    public function __construct(EntityManagerInterface $em)
     {
         parent::__construct();
         $this->em = $em;
@@ -45,11 +45,22 @@ class AutoManagerQueue extends Command
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('Queue Characters');
         $this->queueCharacters();
+
+        $output->writeln('Queue Friends Lists');
         $this->queueFriendLists();
+
+        $output->writeln('Queue Achievements');
         $this->queueAchievements();
+
+        $output->writeln('Queue Free Companies');
         $this->queueFreeCompanies();
+
+        $output->writeln('Queue Linkshells');
         $this->queueLinkshells();
+
+        $output->writeln('Queue PVP Teams');
         $this->queuePvpTeams();
     }
 

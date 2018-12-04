@@ -18,9 +18,9 @@ class AutoManagerResponse extends Command
     /** @var EntityManagerInterface */
     private $em;
     
-    public function __construct(EntityManagerInterface $em, ?string $name = null)
+    public function __construct(EntityManagerInterface $em)
     {
-        parent::__construct($name);
+        parent::__construct();
         $this->em = $em;
     }
     

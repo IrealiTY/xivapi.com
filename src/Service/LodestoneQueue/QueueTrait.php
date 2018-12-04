@@ -21,6 +21,10 @@ trait QueueTrait
      */
     public static function queue(array $entries, string $queue)
     {
+        if (empty($entries)) {
+            return;
+        }
+        
         $ids = [];
         foreach ($entries as $obj) {
             $ids[] = $obj->getId();
