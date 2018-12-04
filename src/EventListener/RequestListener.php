@@ -26,10 +26,12 @@ class RequestListener
         $request = $event->getRequest();
     
         if ($json = $request->getContent()) {
-            $json = \GuzzleHttp\json_decode($json);
-            
-            foreach($json as $key => $value) {
-                $request->request->set($key, $value);
+            if (trim($json[0]) === '{') {
+                $json = \GuzzleHttp\json_decode($json);
+    
+                foreach($json as $key => $value) {
+                    $request->request->set($key, $value);
+                }
             }
         }
         
@@ -37,6 +39,5 @@ class RequestListener
         Environment::ensureValidHost($request);
         Maintenance::check($request);
         Language::set($request);
-        Statistics::request($request);
     }
 }

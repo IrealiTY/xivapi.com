@@ -131,7 +131,5 @@ class ResponseListener
             $response->headers->set('Access-Control-Allow-Origin','*');
             $event->setResponse($response);
         }
-    
-        Statistics::response($event);
     }
 }
