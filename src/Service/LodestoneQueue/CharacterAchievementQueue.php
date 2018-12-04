@@ -2,7 +2,6 @@
 
 namespace App\Service\LodestoneQueue;
 
-use App\Entity\Character;
 use App\Entity\CharacterAchievements;
 use App\Entity\Entity;
 use App\Service\Content\LodestoneData;
@@ -22,7 +21,7 @@ class CharacterAchievementQueue
      */
     protected static function getEntity(EntityManagerInterface $em, $lodestoneId)
     {
-        return $em->getRepository(Character::class)->find($lodestoneId) ?: new Character($lodestoneId);
+        return $em->getRepository(CharacterAchievements::class)->find($lodestoneId) ?: new CharacterAchievements($lodestoneId);
     }
 
     /**
@@ -31,8 +30,6 @@ class CharacterAchievementQueue
     protected static function handle(EntityManagerInterface $em, CharacterAchievements $ca, $data): void
     {
         LodestoneData::save('character', 'achievements', $ca->getId(), $data);
-        $em->persist(
-            $ca->setState(Entity::STATE_CACHED)->setUpdated(time())
-        );
+        $em->persist($ca->setState(Entity::STATE_CACHED)->setUpdated(time()));
     }
 }

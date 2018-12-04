@@ -25,29 +25,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * | This would run on the XIVAPI side. XIVAPI decides who to queue
- * |
- * |    * * * * * /usr/bin/php /home/dalamud/dalamud/bin/console AutoManagerQueue
- * |
- * |    php bin/console AutoManagerQueue
- * |
+ * This would run on a cronjob on XIVAPI
  */
 class AutoManagerQueue extends Command
 {
-    const NAME = 'auto:manager:queue';
-
     /** @var EntityManagerInterface */
     private $em;
     
     public function __construct(EntityManagerInterface $em, ?string $name = null)
     {
-        parent::__construct($name);
+        parent::__construct();
         $this->em = $em;
     }
     
     protected function configure()
     {
-        $this->setName(self::NAME);
+        $this->setName('AutoManagerQueue');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -68,10 +61,6 @@ class AutoManagerQueue extends Command
     {
         /** @var CharacterRepository $repo */
         $repo = $this->em->getRepository(Character::class);
-
-        // 2 queues to add characters
-        CharacterQueue::queue($repo->toAdd(0), 'character_add_0_normal');
-        CharacterQueue::queue($repo->toAdd(1), 'character_add_1_normal');
 
         // 6 queues for basic auto-updating
         CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_update_0_normal');
@@ -123,9 +112,6 @@ class AutoManagerQueue extends Command
         /** @var FreeCompanyRepository $repo */
         $repo = $this->em->getRepository(Character::class);
 
-        // 1 queue for adding free companies
-        FreeCompanyQueue::queue($repo->toAdd(0), 'free_company_add_0_normal');
-
         // 2 queues for updating free companies
         FreeCompanyQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'free_company_update_0_normal');
         FreeCompanyQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'free_company_update_1_normal');
@@ -139,9 +125,6 @@ class AutoManagerQueue extends Command
         /** @var LinkshellRepository $repo */
         $repo = $this->em->getRepository(Character::class);
 
-        // 1 queue for adding linkshells
-        LinkshellQueue::queue($repo->toAdd(0), 'linkshell_add_0_normal');
-
         // 2 queues for updating linkshells
         LinkshellQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'linkshell_update_0_normal');
         LinkshellQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'linkshell_update_1_normal');
@@ -154,9 +137,6 @@ class AutoManagerQueue extends Command
     {
         /** @var PvPTeamRepository $repo */
         $repo = $this->em->getRepository(Character::class);
-
-        // 1 queue for adding linkshells
-        PvPTeamQueue::queue($repo->toAdd(0), 'pvp_team_add_0_normal');
 
         // 2 queues for updating linkshells
         PvPTeamQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'pvp_team_update_0_normal');

@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  *     name="lodestone_statistic",
  *     indexes={
  *          @ORM\Index(name="added", columns={"added"}),
- *          @ORM\Index(name="type", columns={"type"}),
  *          @ORM\Index(name="queue", columns={"queue"}),
  *          @ORM\Index(name="status", columns={"status"}),
  *          @ORM\Index(name="duration", columns={"duration"})

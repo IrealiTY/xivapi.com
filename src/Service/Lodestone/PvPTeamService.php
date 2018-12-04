@@ -5,6 +5,7 @@ namespace App\Service\Lodestone;
 use App\Entity\Entity;
 use App\Entity\PvPTeam;
 use App\Service\Content\LodestoneData;
+use App\Service\LodestoneQueue\PvPTeamQueue;
 use App\Service\Service;
 
 class PvPTeamService extends Service
@@ -27,9 +28,13 @@ class PvPTeamService extends Service
     
     public function register($id): array
     {
+        // send a request to rabbit mq to add this character
+        PvPTeamQueue::request($id, 'pvp_team_add');
+        
         $ent = new PvPTeam($id);
         $this->persist($ent);
-        return [ $ent, null ];
+    
+        return [ $ent, null, null ];
     }
     
     public function delete(PvPTeam $ent)

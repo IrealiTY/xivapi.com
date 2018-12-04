@@ -34,10 +34,9 @@ trait QueueTrait
      */
     public static function request($ids, string $queue)
     {
-        $rabbit = new RabbitMQ();
-
         $ids = is_string($ids) ? [ $ids ] : $ids;
 
+        $rabbit = new RabbitMQ();
         $rabbit->connect($queue .'_request');
 
         foreach ($ids as $id) {

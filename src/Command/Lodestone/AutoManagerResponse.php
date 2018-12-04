@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Lodestone;
 
 use App\Service\LodestoneQueue\Manager;
 use Doctrine\ORM\EntityManagerInterface;

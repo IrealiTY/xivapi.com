@@ -2,7 +2,6 @@
 
 namespace App\Service\LodestoneQueue;
 
-use App\Entity\Character;
 use App\Entity\CharacterFriends;
 use App\Entity\Entity;
 use App\Service\Content\LodestoneData;
@@ -22,7 +21,7 @@ class CharacterFriendQueue
      */
     protected static function getEntity(EntityManagerInterface $em, $lodestoneId)
     {
-        return $em->getRepository(Character::class)->find($lodestoneId) ?: new Character($lodestoneId);
+        return $em->getRepository(CharacterFriends::class)->find($lodestoneId) ?: new CharacterFriends($lodestoneId);
     }
 
     /**
@@ -31,8 +30,6 @@ class CharacterFriendQueue
     protected static function handle(EntityManagerInterface $em, CharacterFriends $ca, $data): void
     {
         LodestoneData::save('character', 'friends', $ca->getId(), $data);
-        $em->persist(
-            $ca->setState(Entity::STATE_CACHED)->setUpdated(time())
-        );
+        $em->persist($ca->setState(Entity::STATE_CACHED)->setUpdated(time()));
     }
 }

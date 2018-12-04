@@ -45,7 +45,7 @@ class Manager
                 // update times
                 $request->updated = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("{$this->now} {$request->requestId} | {$request->type} | {$request->queue} | {$request->method} ". implode(',', $request->arguments));
+                $this->io->text("{$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - PROCESSING ...");
 
                 // call the API class dynamically and record any exceptions
                 try {
@@ -59,6 +59,7 @@ class Manager
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
+                $this->io->text("{$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - COMPLETE");
             });
 
             // close connections
@@ -91,21 +92,71 @@ class Manager
                         $this->io->text("{$this->now} Reconnected to MySQL.");
                     }
 
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->type} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad'));
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - PROCESSING ...");
     
                     // add finished timestamp
                     $response->finished = microtime(true);
 
-                    // handle response based on type
-                    switch($response->type) {
+                    // handle response based on queue
+                    switch($response->queue) {
                         default:
-                            $this->io->text("Unknown response type: {$response->type}");
+                            $this->io->text("Unknown response queue: {$response->queue}");
                             return;
         
-                        case 'character':
+                        case 'character_add':
+                        case 'character_update_0_normal':
+                        case 'character_update_1_normal':
+                        case 'character_update_2_normal':
+                        case 'character_update_3_normal':
+                        case 'character_update_4_normal':
+                        case 'character_update_5_normal':
+                        case 'character_update_0_patreon':
+                        case 'character_update_1_patreon':
+                        case 'character_update_0_low':
+                        case 'character_update_1_low':
                             CharacterQueue::response($this->em, $response);
                             break;
+    
+                        case 'character_friends_add':
+                        case 'character_friends_update_0_normal':
+                        case 'character_friends_update_1_normal':
+                        case 'character_friends_update_0_patreon':
+                        case 'character_friends_update_1_patreon':
+                            CharacterFriendQueue::response($this->em, $response);
+                            break;
+    
+                        case 'character_achievements_add':
+                        case 'character_achievements_update_0_normal':
+                        case 'character_achievements_update_1_normal':
+                        case 'character_achievements_update_0_patreon':
+                        case 'character_achievements_update_1_patreon':
+                            CharacterAchievementQueue::response($this->em, $response);
+                            break;
+    
+                        case 'free_company_add':
+                        case 'free_company_update_0_normal':
+                        case 'free_company_update_1_normal':
+                        case 'free_company_update_0_patron':
+                            FreeCompanyQueue::response($this->em, $response);
+                            break;
+    
+                        case 'linkshell_add':
+                        case 'linkshell_update_0_normal':
+                        case 'linkshell_update_1_normal':
+                        case 'linkshell_update_0_patron':
+                            LinkshellQueue::response($this->em, $response);
+                            break;
+    
+                        case 'pvp_team_add':
+                        case 'pvp_team_update_0_normal':
+                        case 'pvp_team_update_1_normal':
+                        case 'pvp_team_update_0_patron':
+                            PvPTeamQueue::response($this->em, $response);
+                            break;
                     }
+                    
+                    // confirm
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
                 }

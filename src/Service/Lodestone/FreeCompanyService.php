@@ -5,6 +5,7 @@ namespace App\Service\Lodestone;
 use App\Entity\Entity;
 use App\Entity\FreeCompany;
 use App\Service\Content\LodestoneData;
+use App\Service\LodestoneQueue\FreeCompanyQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
@@ -40,16 +41,16 @@ class FreeCompanyService extends Service
     
     public function register($id): array
     {
-        if (!is_numeric($id)) {
-            throw new NotAcceptableHttpException("ID is not numeric: {$id}");
+        if (!is_numeric($id) || strlen($id) > 45) {
+            throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
     
-        if (strlen($id) > 42) {
-            throw new NotAcceptableHttpException("ID length is too long");
-        }
+        // send a request to rabbit mq to add this character
+        FreeCompanyQueue::request($id, 'free_company_add');
         
         $ent = new FreeCompany($id);
         $this->persist($ent);
+    
         return [ $ent, null, null ];
     }
     

@@ -27,11 +27,9 @@ class FreeCompanyQueue
     /**
      * Handle response specific to this queue
      */
-    public static function response(EntityManagerInterface $em, FreeCompany $fc, $data): void
+    public static function handle(EntityManagerInterface $em, FreeCompany $fc, $data): void
     {
         LodestoneData::save('freecompany', 'data', $fc->getId(), $data);
-        $em->persist(
-            $fc->setState(Entity::STATE_CACHED)->setUpdated(time())
-        );
+        $em->persist($fc->setState(Entity::STATE_CACHED)->setUpdated(time()));
     }
 }

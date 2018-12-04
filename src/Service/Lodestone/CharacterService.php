@@ -44,12 +44,12 @@ class CharacterService extends Service
         if (!is_numeric($id) || strlen($id) > 32) {
             throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
-
+    
+        // send a request to rabbit mq to add this character
+        CharacterQueue::request($id, 'character_add');
+        
         $ent = new Character($id);
         $this->persist($ent);
-
-        // send a request to rabbit mq to add this character
-        CharacterQueue::request($id, CharacterQueue::FAST);
 
         return [ $ent, null, null ];
     }

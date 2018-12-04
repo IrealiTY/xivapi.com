@@ -4,6 +4,7 @@ namespace App\Service\Lodestone;
 
 use App\Entity\Linkshell;
 use App\Service\Content\LodestoneData;
+use App\Service\LodestoneQueue\LinkshellQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
@@ -27,16 +28,16 @@ class LinkshellService extends Service
     
     public function register($id): array
     {
-        if (!is_numeric($id)) {
-            throw new NotAcceptableHttpException("ID is not numeric: {$id}");
+        if (!is_numeric($id) || strlen($id) > 45) {
+            throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
     
-        if (strlen($id) > 42) {
-            throw new NotAcceptableHttpException("ID length is too long");
-        }
+        // send a request to rabbit mq to add this character
+        LinkshellQueue::request($id, 'linkshell_add');
         
         $ent = new Linkshell($id);
         $this->persist($ent);
+    
         return [ $ent, null, null ];
     }
     
