@@ -101,7 +101,7 @@ class ApplicationsController extends Controller
         /** @var User $user */
         $user = $this->userService->getUser();
 
-        if (!$user || count($user->getApps()) >= $user->getAppsMax()) {
+        if (!$user || ($id === 'new' && count($user->getApps()) >= $user->getAppsMax())) {
             return $this->redirectToRoute('app');
         }
         
