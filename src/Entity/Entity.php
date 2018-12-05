@@ -35,6 +35,14 @@ class Entity
      * @ORM\Column(type="integer", length=16)
      */
     public $priority = 0;
+    /**
+     * @ORM\Column(type="integer", length=16)
+     */
+    public $notFoundChecks = 0;
+    /**
+     * @ORM\Column(type="integer", length=16)
+     */
+    public $achievementsPrivateChecks = 0;
     
     public function __construct(string $id)
     {
@@ -85,5 +93,38 @@ class Entity
         $this->priority = $priority;
         return $this;
     }
-
+    
+    public function getNotFoundChecks()
+    {
+        return $this->notFoundChecks;
+    }
+    
+    public function setNotFoundChecks($notFoundChecks)
+    {
+        $this->notFoundChecks = $notFoundChecks;
+        return $this;
+    }
+    
+    public function incrementNotFoundChecks()
+    {
+        $this->setNotFoundChecks($this->notFoundChecks+1);
+        return $this;
+    }
+    
+    public function getAchievementsPrivateChecks()
+    {
+        return $this->achievementsPrivateChecks;
+    }
+    
+    public function setAchievementsPrivateChecks($achievementsPrivateChecks)
+    {
+        $this->achievementsPrivateChecks = $achievementsPrivateChecks;
+        return $this;
+    }
+    
+    public function incrementAchievementsPrivateChecks()
+    {
+        $this->setAchievementsPrivateChecks($this->achievementsPrivateChecks+1);
+        return $this;
+    }
 }

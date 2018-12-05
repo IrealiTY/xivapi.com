@@ -98,13 +98,13 @@ trait QueueTrait
 
                 // register as not found
                 case NotFoundException::class:
-                    $entity->setState(Entity::STATE_NOT_FOUND)->setUpdated(time());
+                    $entity->setState(Entity::STATE_NOT_FOUND)->setUpdated(time())->incrementNotFoundChecks();
                     $em->persist($entity);
                     break;
 
                 // register as private
                 case AchievementsPrivateException::class:
-                    $entity->setState(Entity::STATE_PRIVATE)->setUpdated(time());
+                    $entity->setState(Entity::STATE_PRIVATE)->setUpdated(time())->incrementAchievementsPrivateChecks();
                     $em->persist($entity);
                     break;
             }
