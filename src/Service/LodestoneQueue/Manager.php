@@ -141,6 +141,7 @@ class Manager
                         case 'free_company_update_0_normal':
                         case 'free_company_update_1_normal':
                         case 'free_company_update_0_patron':
+                        case 'free_company_update_1_patron':
                             FreeCompanyQueue::response($this->em, $response);
                             break;
     
@@ -149,6 +150,7 @@ class Manager
                         case 'linkshell_update_0_normal':
                         case 'linkshell_update_1_normal':
                         case 'linkshell_update_0_patron':
+                        case 'linkshell_update_1_patron':
                             LinkshellQueue::response($this->em, $response);
                             break;
     
@@ -157,6 +159,7 @@ class Manager
                         case 'pvp_team_update_0_normal':
                         case 'pvp_team_update_1_normal':
                         case 'pvp_team_update_0_patron':
+                        case 'pvp_team_update_1_patron':
                             PvPTeamQueue::response($this->em, $response);
                             break;
                     }

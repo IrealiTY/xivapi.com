@@ -1,67 +1,278 @@
-sudo nano /etc/supervisor/conf.d/lodestone_tracking.conf
+sudo nano /etc/supervisor/conf.d/lodestone.conf
 
-[program:characters_fast]
-command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_fast
-directory=/home/dalamud/xivapi.com/
-autostart=true
-autorestart=true
-startretries=5
+
+
+
+Server 1 - Adding
+
+[program:character_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_add
 user=dalamud
-numprocs=1
-startsecs=0
-process_name=%(program_name)s_%(process_num)02d
-stderr_logfile=/home/dalamud/xivapi.com/%(program_name)s_stderr.log
-stderr_logfile_maxbytes=10MB
-stdout_logfile=/home/dalamud/xivapi.com/%(program_name)s_stdout.log
-stdout_logfile_maxbytes=10MB
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
 
-[program:characters_auto]
-command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest characters_auto
-directory=/home/dalamud/xivapi.com/
-autostart=true
-autorestart=true
-startretries=5
+[program:character_friends_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_add
 user=dalamud
-numprocs=1
-startsecs=0
-process_name=%(program_name)s_%(process_num)02d
-stderr_logfile=/home/dalamud/xivapi.com/%(program_name)s_stderr.log
-stderr_logfile_maxbytes=10MB
-stdout_logfile=/home/dalamud/xivapi.com/%(program_name)s_stdout.log
-stdout_logfile_maxbytes=10MB
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
 
-
---------------------------------------------------------------------------
-
-
-sudo nano /etc/supervisor/conf.d/lodestone_tracking.conf
-
-[program:characters_fast]
-command=/usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_fast
-directory=/home/dalamud/dalamud_staging/
-autostart=true
-autorestart=true
-startretries=5
+[program:character_achievements_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_add
 user=dalamud
-numprocs=1
-startsecs=0
-process_name=%(program_name)s_%(process_num)02d
-stderr_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stderr.log
-stderr_logfile_maxbytes=10MB
-stdout_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stdout.log
-stdout_logfile_maxbytes=10MB
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
 
-[program:characters_auto]
-command=/usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse characters_auto
-directory=/home/dalamud/dalamud_staging/
-autostart=true
-autorestart=true
-startretries=5
+[program:free_company_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_add
 user=dalamud
-numprocs=1
-startsecs=0
-process_name=%(program_name)s_%(process_num)02d
-stderr_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stderr.log
-stderr_logfile_maxbytes=10MB
-stdout_logfile=/home/dalamud/dalamud_staging/%(program_name)s_stdout.log
-stdout_logfile_maxbytes=10MB
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:linkshell_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_add
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:pvp_team_add]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_add
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 2 - Manual Updating
+
+[program:character_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_friends_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_achievements_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:free_company_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:linkshell_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:pvp_team_update]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 3 - Auto Updating 0,1,2,3
+
+[program:character_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_2_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_2_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_3_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_3_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 4 - Auto Updating 4,5
+
+[program:character_update_4_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_4_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_5_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_5_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 5 - Auto Updating - Low Priority
+
+[program:character_update_0_low]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_0_low
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_1_low]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_1_low
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 6 - Auto Updating - Patreons
+
+[program:character_update_0_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_0_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_update_1_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_update_1_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 7 - Auto Updating - Friends
+
+[program:character_friends_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_friends_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_friends_update_0_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_update_0_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_friends_update_1_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_friends_update_1_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 8 - Auto Updating - Achievements
+
+[program:character_achievements_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_achievements_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_achievements_update_0_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_0_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:character_achievements_update_1_patreon]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_1_patreon
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 9 - Auto Updating - Free Companies
+
+[program:free_company_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:free_company_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:free_company_update_0_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_update_0_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:free_company_update_1_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest free_company_update_1_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 10 - Auto Updating - Linkshells
+
+[program:linkshell_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:linkshell_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:linkshell_update_0_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_update_0_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:linkshell_update_1_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest linkshell_update_1_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+Server 11 - Auto Updating - PVP Team
+
+[program:pvp_team_update_0_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update_0_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:pvp_team_update_1_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update_1_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:pvp_team_update_0_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update_0_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
+
+[program:pvp_team_update_1_patron]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update_1_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/%(program_name)_error.log
+stdout_logfile=/home/dalamud/xivapi.com/%(program_name)_output.log
