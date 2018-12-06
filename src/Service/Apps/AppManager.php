@@ -38,12 +38,22 @@ class AppManager
     }
 
     /**
+     * An Alias to fetch but doesn't return anything
+     */
+    public function track(Request $request): void
+    {
+        $this->fetch($request);
+    }
+
+    /**
      * Fetch an API app from the request, if $keyRequired is set then
      * an exception is thrown if no key is provided (eg the endpoint
      * requires a key to be accessed)
      */
-    public function fetch(Request $request, $keyRequired = false, $skipCache = false)
+    public function fetch(Request $request, $keyRequired = false, $skipCache = false): App
     {
+        $app = null;
+
         // attempt to fetch users app
         if ($key = $request->get('key')) {
             // check cache for dev app key
@@ -64,6 +74,10 @@ class AppManager
         } else if (!$keyRequired) {
             $app = $this->getDefaultKey();
         } else if ($keyRequired) {
+            throw new UnauthorizedAccessException();
+        }
+
+        if ($app === null) {
             throw new UnauthorizedAccessException();
         }
 

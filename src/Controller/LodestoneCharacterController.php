@@ -11,14 +11,12 @@ use App\Entity\PvPTeam;
 use App\Exception\ContentGoneException;
 use App\Service\Apps\AppManager;
 use App\Service\Content\LodestoneData;
-use App\Service\Common\GoogleAnalytics;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\CharacterService;
 use App\Service\Lodestone\FreeCompanyService;
 use App\Service\Lodestone\PvPTeamService;
 use App\Service\Lodestone\ServiceQueues;
 use App\Service\LodestoneQueue\CharacterQueue;
-use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Lodestone\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LodestoneCharacterController extends Controller
 {
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var CharacterService */
     private $service;
     /** @var FreeCompanyService */
@@ -36,9 +34,9 @@ class LodestoneCharacterController extends Controller
     /** @var PvPTeamService */
     private $pvpService;
 
-    public function __construct(AppManager $appManager, CharacterService $service, FreeCompanyService $fcService, PvPTeamService $pvpService)
+    public function __construct(AppManager $apps, CharacterService $service, FreeCompanyService $fcService, PvPTeamService $pvpService)
     {
-        $this->appManager = $appManager;
+        $this->apps = $apps;
         $this->service    = $service;
         $this->fcService  = $fcService;
         $this->pvpService = $pvpService;
@@ -50,9 +48,8 @@ class LodestoneCharacterController extends Controller
      */
     public function search(Request $request)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['Character','Search']);
-        
+        $this->apps->fetch($request, true);
+
         return $this->json(
             Japan::query('/japan/search/character', [
                 'name'   => $request->get('name'),
@@ -63,18 +60,15 @@ class LodestoneCharacterController extends Controller
     }
 
     /**
-     * @Route("/Character/{id}")
-     * @Route("/character/{id}")
+     * @Route("/Character/{lodestoneId}")
+     * @Route("/character/{lodestoneId}")
      */
-    public function index(Request $request, $id)
+    public function index(Request $request, $lodestoneId)
     {
-        if ($id < 0) {
+        if ($lodestoneId < 0) {
             throw new NotFoundHttpException('No, stop it.');
         }
 
-        $start = microtime(true);
-        $this->appManager->fetch($request);
-        
         // choose which content you want
         $data = $request->get('data') ? explode(',', strtoupper($request->get('data'))) : [];
         $content = (object)[
@@ -104,7 +98,7 @@ class LodestoneCharacterController extends Controller
         ];
 
         /** @var Character $ent */
-        [$ent, $character, $times] = $this->service->get($id);
+        [$ent, $character, $times] = $this->service->get($lodestoneId);
         $response->Info->Character = [
             'State'     => $ent->getState(),
             //'Modified'  => $times[0],
@@ -121,7 +115,7 @@ class LodestoneCharacterController extends Controller
             
             /** @var CharacterAchievements $ent */
             if ($content->AC) {
-                [$ent, $achievements, $times] = $this->service->getAchievements($id);
+                [$ent, $achievements, $times] = $this->service->getAchievements($lodestoneId);
                 $response->Achievements = $achievements;
                 $response->Info->Achievements = [
                     'State'     => (!$achievements && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
@@ -132,7 +126,7 @@ class LodestoneCharacterController extends Controller
             
             /** @var CharacterFriends $ent */
             if ($content->FR) {
-                [$ent, $friends, $times] = $this->service->getFriends($id);
+                [$ent, $friends, $times] = $this->service->getFriends($lodestoneId);
                 $response->Friends = $friends;
                 $response->Info->Friends = [
                     'State'     => (!$friends && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
@@ -181,26 +175,23 @@ class LodestoneCharacterController extends Controller
             }
         }
     
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::hit(['Character',$id]);
-        GoogleAnalytics::event('Character', 'get', 'duration', $duration);
         return $this->json($response);
     }
 
     /**
-     * @Route("/Character/{id}/Verification")
-     * @Route("/character/{id}/verification")
+     * @Route("/Character/{lodestoneId}/Verification")
+     * @Route("/character/{lodestoneId}/verification")
      */
-    public function verification(Request $request, $id)
+    public function verification(Request $request, $lodestoneId)
     {
-        $this->appManager->fetch($request, true);
+        $this->apps->fetch($request, true);
 
-        $key = __METHOD__ . $id;
+        $key = __METHOD__ . $lodestoneId;
         if ($data = $this->service->cache->get($key)) {
             return $this->json($data);
         }
 
-        $character = (new Api())->getCharacter($id);
+        $character = (new Api())->getCharacter($lodestoneId);
         LodestoneData::verification($character);
 
         $data = [
@@ -212,25 +203,22 @@ class LodestoneCharacterController extends Controller
 
         // small cache time as it's just to prevent "spam"
         $this->service->cache->set($key, $data, 15);
-        GoogleAnalytics::hit(['Character',$id,'Verification']);
-        
         return $this->json($data);
     }
 
     /**
-     * @Route("/Character/{id}/Delete")
-     * @Route("/character/{id}/delete")
+     * @Route("/Character/{lodestoneId}/Delete")
+     * @Route("/character/{lodestoneId}/delete")
      */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, $lodestoneId)
     {
-        $this->appManager->fetch($request, true);
+        $this->apps->fetch($request, true);
 
         /** @var Character $ent */
-        [$ent, $data] = $this->service->get($id);
+        [$ent, $data] = $this->service->get($lodestoneId);
 
         // delete it if the character was not found
         if ($ent->getState() === Character::STATE_NOT_FOUND) {
-            // todo returning void
             return $this->json($this->service->delete($ent));
         }
 
@@ -247,22 +235,19 @@ class LodestoneCharacterController extends Controller
             return $this->json(1);
         }
     
-        GoogleAnalytics::hit(['Character',$id,'Delete']);
         return $this->json(false);
     }
 
     /**
-     * @Route("/Character/{id}/Update")
-     * @Route("/character/{id}/update")
+     * @Route("/Character/{lodestoneId}/Update")
+     * @Route("/character/{lodestoneId}/update")
      */
-    public function update(Request $request, $id)
+    public function update($lodestoneId)
     {
-        $this->appManager->fetch($request);
-
         /** @var Character $ent */
         /** @var CharacterAchievements $entFriends */
         /** @var CharacterFriends $entAchievements */
-        [$ent, $data] = $this->service->get($id);
+        [$ent] = $this->service->get($lodestoneId);
 
         if ($ent->getState() == Entity::STATE_BLACKLISTED) {
             throw new ContentGoneException(
@@ -278,28 +263,16 @@ class LodestoneCharacterController extends Controller
             );
         }
 
-        [$entFriends, $data] = $this->service->getFriends($id);
-        [$entAchievements, $data] = $this->service->getAchievements($id);
-
-        if (!$request->get('mq') && $this->service->cache->get(__METHOD__.$id)) {
+        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
     
         // send a request to rabbit mq to add this character
-        CharacterQueue::request($id, CharacterQueue::FAST);
+        CharacterQueue::request($lodestoneId, 'character_update');
+        CharacterQueue::request($lodestoneId, 'character_friends_update');
+        CharacterQueue::request($lodestoneId, 'character_achievements_update');
 
-        // Bump to front
-        $ent->setUpdated(0);
-        $entFriends->setUpdated(0)->setState(Entity::STATE_CACHED);
-        $entAchievements->setUpdated(0)->setState(Entity::STATE_CACHED);
-        
-        $this->service->persist($ent);
-        $this->service->persist($entFriends);
-        $this->service->persist($entAchievements);
-
-        $this->service->cache->set(__METHOD__.$id, ServiceQueues::CHARACTER_UPDATE_TIMEOUT);
-        GoogleAnalytics::hit(['Character',$id,'Update']);
-        
+        $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);
     }
 }

@@ -2,15 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\App;
-use App\Entity\MapCompletion;
-use App\Entity\MapPosition;
-use App\Entity\User;
-use App\Form\AppForm;
-use App\Repository\MapPositionRepository;
-use App\Service\Apps\AppManager;
-use App\Service\Redis\Cache;
-use App\Service\User\Time;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -20,6 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use App\Service\User\UserService;
 use App\Service\User\SSO\DiscordSignIn;
+use App\Entity\App;
+use App\Entity\MapCompletion;
+use App\Entity\MapPosition;
+use App\Entity\User;
+use App\Form\AppForm;
+use App\Repository\MapPositionRepository;
+use App\Service\Apps\AppManager;
+use App\Service\Redis\Cache;
+use App\Service\User\Time;
 
 class ApplicationsController extends Controller
 {
@@ -30,7 +30,7 @@ class ApplicationsController extends Controller
     /** @var Session */
     private $session;
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var Cache */
     private $cache;
     
@@ -38,13 +38,13 @@ class ApplicationsController extends Controller
         EntityManagerInterface $em,
         UserService $userService,
         SessionInterface $session,
-        AppManager $appManager,
+        AppManager $apps,
         Cache $cache
     ) {
         $this->em          = $em;
         $this->userService = $userService;
         $this->session     = $session;
-        $this->appManager  = $appManager;
+        $this->apps        = $apps;
         $this->cache       = $cache;
     }
     
@@ -108,12 +108,12 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
 
         if ($id === 'new') {
-            $app = $this->appManager->create();
+            $app = $this->apps->create();
             return $this->redirectToRoute('app_manage', [ 'id' => $app->getId() ]);
         }
 
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         if (!$app || $app->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Application not found');
         }
@@ -129,7 +129,7 @@ class ApplicationsController extends Controller
 
         return $this->render('app/app.html.twig', [
             'app'     => $app,
-            'stats'   => $this->appManager->getStats($app),
+            'stats'   => $this->apps->getStats($app),
             'form'    => $form->createView(),
             'message' => $message ?? false,
         ]);
@@ -138,7 +138,7 @@ class ApplicationsController extends Controller
     /**
      * @Route("/app/{id}/regenerate", name="app_regenerate")
      */
-    public function appRegenerate(Request $request, string $id)
+    public function appRegenerate(string $id)
     {
         /** @var User $user */
         $user = $this->userService->getUser();
@@ -150,7 +150,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
         
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         
         if (!$app) {
             throw new NotFoundHttpException('Application not found');
@@ -174,7 +174,7 @@ class ApplicationsController extends Controller
     /**
      * @Route("/app/{id}/delete", name="app_delete")
      */
-    public function appDelete(Request $request, string $id)
+    public function appDelete(string $id)
     {
         /** @var User $user */
         $user = $this->userService->getUser();
@@ -186,7 +186,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
         
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         
         if (!$app) {
             throw new NotFoundHttpException('Application not found');
@@ -207,7 +207,7 @@ class ApplicationsController extends Controller
     /**
      * @Route("/app/{id}/delete/confirm", name="app_delete_confirm")
      */
-    public function appDeleteConfirm(Request $request, string $id)
+    public function appDeleteConfirm(string $id)
     {
         /** @var User $user */
         $user = $this->userService->getUser();
@@ -219,7 +219,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
         
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         
         if (!$app) {
             throw new NotFoundHttpException('Application not found');
@@ -250,7 +250,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
     
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         if (!$app || $app->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Application not found');
         }
@@ -326,7 +326,7 @@ class ApplicationsController extends Controller
     /**
      * @Route("/app/{id}/{map}", name="app_manage_map_view")
      */
-    public function appMappyView(Request $request, string $id, string $map)
+    public function appMappyView(string $id, string $map)
     {
         /** @var User $user */
         $user = $this->userService->getUser();
@@ -338,7 +338,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
     
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         if (!$app || $app->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Application not found');
         }
@@ -372,7 +372,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
     
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         if (!$app || $app->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Application not found');
         }
@@ -416,7 +416,7 @@ class ApplicationsController extends Controller
         $user->checkBannedStatus();
     
         /** @var App $app */
-        $app = $this->appManager->get($id);
+        $app = $this->apps->get($id);
         if (!$app || $app->getUser()->getId() !== $user->getId()) {
             throw new NotFoundHttpException('Application not found');
         }

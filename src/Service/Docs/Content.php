@@ -2,6 +2,8 @@
 
 namespace App\Service\Docs;
 
+use App\Service\Content\ContentList;
+
 class Content extends DocBuilder implements DocInterface
 {
     public function build()
@@ -86,8 +88,8 @@ class Content extends DocBuilder implements DocInterface
             ->usage('{endpoint}/Item?columns=ID,Icon,Name&pretty=1&limit=5')
             ->text('Limit the number of items returned by the API.')
             ->list([
-                'Default: 100',
-                'Maximum: 3000',
+                'Default: ' . ContentList::DEFAULT_ITEMS,
+                'Maximum: ' . ContentList::MAX_ITEMS,
             ])
             ->gap()
             

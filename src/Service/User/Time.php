@@ -31,9 +31,6 @@ class Time
             $json       = json_decode((string)$response->getBody());
             $duration   = microtime(true) - $start;
             
-            // record how long "ip-api.com" took
-            GoogleAnalytics::event('timezone', 'request', 'speed', $duration);
-            
             self::$timezone = $json->timezone ?: self::$timezone;
         } catch (\Exception $ex) {
             // ignore

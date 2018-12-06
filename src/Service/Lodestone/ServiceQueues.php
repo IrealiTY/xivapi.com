@@ -13,11 +13,7 @@ class ServiceQueues
     const CACHE_PVPTEAM_QUEUE               = 'lodestone_pvpteam';
     
     // 6 hours
-    const CHARACTER_UPDATE_TIMEOUT   = (60 * 60 * 6);
-    const FREECOMPANY_UPDATE_TIMEOUT = (60 * 60 * 6);
-    const LINKSHELL_UPDATE_TIMEOUT   = (60 * 60 * 6);
-    const PVPTEAM_UPDATE_TIMEOUT     = (60 * 60 * 6);
-    
+    const UPDATE_TIMEOUT = (60 * 60 * 6);
     const TIME_LIMIT = 57;
     
     // total

@@ -7,12 +7,15 @@ use App\Service\Redis\Cache;
 
 trait CompanionEnrich
 {
+    /** @var GameData */
+    protected $game;
     /** @var Cache */
     protected $cache;
     
-    public function __construct()
+    public function __construct(GameData $game, Cache $cache)
     {
-        $this->cache = new Cache();
+        $this->game = $game;
+        $this->cache = $cache;
     }
     
     /**
@@ -20,7 +23,7 @@ trait CompanionEnrich
      */
     protected function getEnrichedItem($itemId): array
     {
-        $item = GameData::one("Item", $itemId);
+        $item = $this->game->one('Item', $itemId);
     
         return [
             'ID'        => $item->ID,
@@ -41,7 +44,6 @@ trait CompanionEnrich
         $town = $this->cache->get("xiv_Town_{$townId}");
         unset($town->GameContentLinks);
         unset($town->IconID);
- 
         return $town;
     }
     
@@ -53,8 +55,9 @@ trait CompanionEnrich
         $arr = [];
         foreach ($materia as $mat) {
             $mat->grade = (int)$mat->grade;
-            $row  = $this->cache->get("xiv_Materia_{$mat->key}");
-            $item = $row->{"Item{$mat->grade}"};
+
+            $row   = $this->cache->get("xiv_Materia_{$mat->key}");
+            $item  = $row->{"Item{$mat->grade}"};
             $arr[] = $this->getEnrichedItem($item->ID);
         }
         

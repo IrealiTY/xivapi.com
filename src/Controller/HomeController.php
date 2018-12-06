@@ -2,10 +2,8 @@
 
 namespace App\Controller;
 
-use App\Service\Common\Maintenance;
 use App\Service\Common\SiteVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends Controller
@@ -16,18 +14,6 @@ class HomeController extends Controller
     public function home()
     {
         return $this->render('home.html.twig');
-    }
-    
-    /**
-     * @Route("/maintenance")
-     */
-    public function maintenance(Request $request)
-    {
-        Maintenance::handle($request);
-
-        return $this->json([
-            'status' => 'ok'
-        ]);
     }
 
     /**

@@ -7,7 +7,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use App\Command\SaintCoinachRedisCommand;
 use App\Service\Data\CsvReader;
 
-
 class ManualHelper
 {
     const REDIS_DURATION = SaintCoinachRedisCommand::REDIS_DURATION;

@@ -5,11 +5,10 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\PvPTeam;
 use App\Service\Apps\AppManager;
-use App\Service\Common\GoogleAnalytics;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\PvPTeamService;
 use App\Service\Lodestone\ServiceQueues;
-use Elasticsearch\Common\Exceptions\Forbidden403Exception;
+use App\Service\LodestoneQueue\PvPTeamQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,13 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class LodestonePvPTeamController extends Controller
 {
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var PvPTeamService */
     private $service;
     
-    public function __construct(AppManager $appManager, PvPTeamService $service)
+    public function __construct(AppManager $apps, PvPTeamService $service)
     {
-        $this->appManager = $appManager;
+        $this->apps = $apps;
         $this->service = $service;
     }
     
@@ -34,9 +33,8 @@ class LodestonePvPTeamController extends Controller
      */
     public function search(Request $request)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['PvPTeam','Search']);
-        
+        $this->apps->fetch($request, true);
+
         return $this->json(
             Japan::query('/japan/search/pvpteam', [
                 'name'   => $request->get('name'),
@@ -47,14 +45,12 @@ class LodestonePvPTeamController extends Controller
     }
     
     /**
-     * @Route("/PvPTeam/{id}")
-     * @Route("/PvpTeam/{id}")
-     * @Route("/pvpteam/{id}")
+     * @Route("/PvPTeam/{lodestoneId}")
+     * @Route("/PvpTeam/{lodestoneId}")
+     * @Route("/pvpteam/{lodestoneId}")
      */
-    public function index(Request $request, $id)
+    public function index(Request $request, $lodestoneId)
     {
-        $start = microtime(true);
-        $this->appManager->fetch($request);
         $response = (Object)[
             'PvPTeam' => null,
             'Info' => (Object)[
@@ -63,7 +59,7 @@ class LodestonePvPTeamController extends Controller
         ];
 
         /** @var PvPTeam $ent */
-        [$ent, $pvpteam, $times] = $this->service->get($id);
+        [$ent, $pvpteam, $times] = $this->service->get($lodestoneId);
         $response->Info->PvPTeam = [
             'State'     => $ent->getState(),
             //'Modified'  => $times[0],
@@ -74,54 +70,43 @@ class LodestonePvPTeamController extends Controller
             $response->PvPTeam = $pvpteam;
         }
     
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::hit(['PvPTeam',$id]);
-        GoogleAnalytics::event('PvPTeam', 'get', 'duration', $duration);
         return $this->json($response);
     }
     
     /**
-     * @Route("/PvPTeam/{id}/Delete")
-     * @Route("/PvpTeam/{id}/Delete")
-     * @Route("/pvpteam/{id}/delete")
+     * @Route("/PvPTeam/{lodestoneId}/Delete")
+     * @Route("/PvpTeam/{lodestoneId}/Delete")
+     * @Route("/pvpteam/{lodestoneId}/delete")
      */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, $lodestoneId)
     {
-        $this->appManager->fetch($request, true);
+        $this->apps->fetch($request, true);
 
         /** @var PvPTeam $ent */
-        [$ent, $data] = $this->service->get($id);
+        [$ent, $data] = $this->service->get($lodestoneId);
         
         // delete it if the character was not found
         if ($ent->getState() === PvPTeam::STATE_NOT_FOUND) {
             return $this->json($this->service->delete($ent));
         }
 
-        GoogleAnalytics::hit(['PvPTeam',$id,'Delete']);
         return $this->json(false);
     }
     
     /**
-     * @Route("/PvPTeam/{id}/Update")
-     * @Route("/PvpTeam/{id}/Update")
-     * @Route("/pvpteam/{id}/update")
+     * @Route("/PvPTeam/{lodestoneId}/Update")
+     * @Route("/PvpTeam/{lodestoneId}/Update")
+     * @Route("/pvpteam/{lodestoneId}/update")
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $lodestoneId)
     {
-        $this->appManager->fetch($request);
-
-        if ($this->service->cache->get(__METHOD__.$id)) {
+        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
-        
-        /** @var PvPTeam $ent */
-        /** @var array $data */
-        [$ent, $data] = $this->service->get($id);
-        $ent->setUpdated(0);
-        $this->service->persist($ent);
-    
-        $this->service->cache->set(__METHOD__.$id, ServiceQueues::PVPTEAM_UPDATE_TIMEOUT);
-        GoogleAnalytics::hit(['PvPTeam',$id,'Update']);
+
+        PvPTeamQueue::request($lodestoneId, 'character_update');
+
+        $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);
     }
 }

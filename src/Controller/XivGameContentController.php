@@ -2,62 +2,41 @@
 
 namespace App\Controller;
 
-use App\Service\Apps\AppManager;
-use App\Service\Content\ContentList;
+use App\Service\Content\GameData;
 use App\Service\Content\GameServers;
 use App\Service\GamePatch\Patch;
-use App\Service\Common\GoogleAnalytics;
-use App\Service\Redis\Cache;
-use App\Utils\ContentNameCaseConverter;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @package App\Controller
  */
-class XivGameContentController extends Controller
+class XivGameContentController extends AbstractController
 {
-    /** @var EntityManagerInterface */
-    private $em;
-    /** @var Cache */
-    private $cache;
-    /** @var ContentList */
-    private $contentList;
-    /** @var AppManager */
-    private $appManager;
+    /** @var GameData */
+    private $game;
 
-    public function __construct(EntityManagerInterface $em, Cache $cache, ContentList $contentList, AppManager $appManager)
+    public function __construct(GameData $game)
     {
-        $this->em = $em;
-        $this->cache = $cache;
-        $this->contentList = $contentList;
-        $this->appManager = $appManager;
+        $this->game = $game;
     }
 
     /**
      * @Route("/PatchList")
      * @Route("/patchlist")
      */
-    public function patches(Request $request)
+    public function patches()
     {
-        $this->appManager->fetch($request);
-        GoogleAnalytics::hit(['PatchList']);
-        return $this->json(
-            (new Patch())->get()
-        );
+        return $this->json((new Patch())->get());
     }
     
     /**
      * @Route("/Servers")
      * @Route("/servers")
      */
-    public function servers(Request $request)
+    public function servers()
     {
-        $this->appManager->fetch($request);
-        GoogleAnalytics::hit(['Servers']);
         return $this->json(GameServers::LIST);
     }
     
@@ -65,10 +44,8 @@ class XivGameContentController extends Controller
      * @Route("/Servers/DC")
      * @Route("/servers/dc")
      */
-    public function serversByDataCenter(Request $request)
+    public function serversByDataCenter()
     {
-        $this->appManager->fetch($request);
-        GoogleAnalytics::hit(['Servers']);
         return $this->json(GameServers::LIST_DC);
     }
 
@@ -76,86 +53,38 @@ class XivGameContentController extends Controller
      * @Route("/Content")
      * @Route("/content")
      */
-    public function content(Request $request)
+    public function content()
     {
-        $this->appManager->fetch($request);
-        GoogleAnalytics::hit(['Content']);
+        return $this->json($this->game->content());
+    }
+
+    /**
+     * @Route("/{contentName}")
+     */
+    public function contentList(Request $request, $contentName)
+    {
         return $this->json(
-            $this->cache->get('content')
+            $this->game->list($request, $contentName)
         );
     }
 
     /**
-     * @Route("/{name}")
+     * @Route("/{contentName}/schema")
      */
-    public function contentList(Request $request, $name)
+    public function schema($contentName)
     {
-        $name = ContentNameCaseConverter::toUpperCase($name);
-        if (!$name) {
-            throw new NotFoundHttpException("No content data found for: {$name}");
-        }
-        
-        $start = microtime(true);
-        $this->appManager->fetch($request);
-        
-        $content = $this->contentList->get($request, $name);
-        
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::hit([$name]);
-        GoogleAnalytics::event('content', 'list', 'duration', $duration);
-        return $this->json($content);
-    }
-
-    /**
-     * @Route("/{name}/schema")
-     */
-    public function schema(Request $request, $name)
-    {
-        $name = ContentNameCaseConverter::toUpperCase($name);
-        if (!$name) {
-            throw new NotFoundHttpException("No content data found for: {$name}");
-        }
-
-        $start = microtime(true);
-        $this->appManager->fetch($request);
-
-        $content = $this->cache->get("schema_{$name}");
-
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::hit([$name]);
-        GoogleAnalytics::event('content', 'list', 'duration', $duration);
-        return $this->json($content);
-    }
-
-    /**
-     * @Route("/{name}/{id}")
-     * @Route("/{name}/{id}/{seo}")
-     */
-    public function contentData(Request $request, $name, $id, $seo = null)
-    {
-        $name = ContentNameCaseConverter::toUpperCase($name);
-        if (!$name) {
-            throw new NotFoundHttpException("No content data found for: {$name}");
-        }
-        
-        $start = microtime(true);
-        $this->appManager->fetch($request);
-    
-        $content = $this->cache->get("xiv_{$name}_{$id}");
-        $content2 = $this->cache->get("xiv2_{$name}_{$id}") ?: (object)[];
-
-        if (!$content) {
-            throw new NotFoundHttpException("No content data found for: {$name} {$id}");
-        }
-
-        $content = array_merge(
-            (array)$content,
-            (array)$content2
+        return $this->json(
+            $this->game->schema($contentName)
         );
-    
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::hit([$name, $id]);
-        GoogleAnalytics::event('content', 'get', 'duration', $duration);
-        return $this->json($content);
+    }
+
+    /**
+     * @Route("/{contentName}/{contentId}")
+     */
+    public function contentData($contentName, $contentId)
+    {
+        return $this->json(
+            $this->game->one($contentName, $contentId)
+        );
     }
 }

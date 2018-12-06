@@ -2,6 +2,7 @@
 
 namespace App\Service\Common;
 
+use App\Exception\UnauthorizedAccessException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -40,7 +41,7 @@ class Environment
     {
         $path = explode('/', $request->getPathInfo());
         if ($request->getHost() == 'lodestone.xivapi.com' && $path[1] !== 'japan') {
-            die('not allowed');
+            throw new UnauthorizedAccessException();
         }
     }
 }

@@ -5,12 +5,10 @@ namespace App\Controller;
 use App\Entity\Entity;
 use App\Entity\Linkshell;
 use App\Service\Apps\AppManager;
-use App\Service\Common\GoogleAnalytics;
-use App\Service\Helpers\ArrayHelper;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\LinkshellService;
 use App\Service\Lodestone\ServiceQueues;
-use Elasticsearch\Common\Exceptions\Forbidden403Exception;
+use App\Service\LodestoneQueue\LinkshellQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,13 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class LodestoneLinkshellController extends Controller
 {
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var LinkshellService */
     private $service;
     
-    public function __construct(AppManager $appManager, LinkshellService $service)
+    public function __construct(AppManager $apps, LinkshellService $service)
     {
-        $this->appManager = $appManager;
+        $this->apps = $apps;
         $this->service = $service;
     }
     
@@ -38,9 +36,8 @@ class LodestoneLinkshellController extends Controller
      */
     public function search(Request $request)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['Linkshell','Search']);
-        
+        $this->apps->fetch($request, true);
+
         return $this->json(
             Japan::query('/japan/search/linkshell', [
                 'name'   => $request->get('name'),
@@ -51,17 +48,17 @@ class LodestoneLinkshellController extends Controller
     }
     
     /**
-     * @Route("/Linkshell/{id}")
-     * @Route("/linkshell/{id}")
+     * @Route("/Linkshell/{lodestoneId}")
+     * @Route("/linkshell/{lodestoneId}")
      */
-    public function index(Request $request, $id)
+    public function index(Request $request, $lodestoneId)
     {
-        if ($id < 0) {
+        if ($lodestoneId < 0) {
             throw new NotFoundHttpException('No, stop it.');
         }
 
         $start = microtime(true);
-        $this->appManager->fetch($request);
+        $this->apps->fetch($request);
     
         $response = (Object)[
             'Linkshell' => null,
@@ -71,7 +68,7 @@ class LodestoneLinkshellController extends Controller
         ];
 
         /** @var Linkshell $ent */
-        [$ent, $linkshell, $times] = $this->service->get($id);
+        [$ent, $linkshell, $times] = $this->service->get($lodestoneId);
         $response->Info->Linkshell = [
             'State'     => $ent->getState(),
             //'Modified'  => $times[0],
@@ -83,51 +80,41 @@ class LodestoneLinkshellController extends Controller
         }
     
         $duration = microtime(true) - $start;
-        GoogleAnalytics::hit(['Linkshell',$id]);
-        GoogleAnalytics::event('Linkshell', 'get', 'duration', $duration);
         return $this->json($response);
     }
     
     /**
-     * @Route("/Linkshell/{id}/Delete")
-     * @Route("/linkshell/{id}/delete")
+     * @Route("/Linkshell/{lodestoneId}/Delete")
+     * @Route("/linkshell/{lodestoneId}/delete")
      */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, $lodestoneId)
     {
-        $app = $this->appManager->fetch($request, true);
+        $this->apps->fetch($request, true);
 
         /** @var Linkshell $ent */
-        [$ent, $data] = $this->service->get($id);
+        [$ent] = $this->service->get($lodestoneId);
         
         // delete it if the character was not found
         if ($ent->getState() === Linkshell::STATE_NOT_FOUND) {
             return $this->json($this->service->delete($ent));
         }
 
-        GoogleAnalytics::hit(['Linkshell',$id,'Delete']);
         return $this->json(false);
     }
     
     /**
-     * @Route("/Linkshell/{id}/Update")
-     * @Route("/linkshell/{id}/update")
+     * @Route("/Linkshell/{lodestoneId}/Update")
+     * @Route("/linkshell/{lodestoneId}/update")
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $lodestoneId)
     {
-        $this->appManager->fetch($request);
-
-        if ($this->service->cache->get(__METHOD__.$id)) {
+        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
-    
-        /** @var Linkshell $ent */
-        /** @var array $data */
-        [$ent, $data] = $this->service->get($id);
-        $ent->setUpdated(0);
-        $this->service->persist($ent);
-    
-        $this->service->cache->set(__METHOD__.$id, ServiceQueues::LINKSHELL_UPDATE_TIMEOUT);
-        GoogleAnalytics::hit(['Linkshell',$id,'Update']);
+
+        LinkshellQueue::request($lodestoneId, 'linkshell_update');
+
+        $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);
     }
 }

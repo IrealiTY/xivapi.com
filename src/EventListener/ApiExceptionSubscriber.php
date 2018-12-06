@@ -57,7 +57,5 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $response->headers->set('Content-Type','application/json');
         $response->headers->set('Access-Control-Allow-Origin','*');
         $event->setResponse($response);
-    
-        Statistics::exception($event);
     }
 }

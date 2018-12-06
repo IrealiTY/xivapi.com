@@ -33,44 +33,15 @@ class GoogleAnalytics
     /**
      * Post a hit to Google Analytics
      */
-    public static function hit(array $routes): void
+    public static function hit(string $route): void
     {
         $options = self::OPTIONS;
         $options['t'] = 'pageview';
-        $options['dp'] = "/". implode('/', $routes);
-        
-        self::post($options);
-    }
-    
-    /**
-     * Post an event to Google Analytics
-     */
-    public static function event(string $category, string $action, string $label = null, $value = null): void
-    {
-        $options = self::OPTIONS;
-        $options['t'] = 'event';
-        $options['ec'] = $category; // eg: video
-        $options['ea'] = $action;   // eg: play
-        
-        if ($label) {
-            $options['el'] = $label; // eg: dungeon guide
-        }
-        
-        if ($value) {
-            $options['ev'] = $value; // eg: 500 (seconds)
-        }
+        $options['dp'] = $route;
 
-        self::post($options);
-    }
-    
-    /**
-     * Process a post request
-     */
-    private static function post($options): void
-    {
         $options['cid'] = Uuid::uuid4()->toString();
         $options['z'] = mt_rand(0,999999);
-        
+
         try {
             self::getClient()->post('/collect', [
                 RequestOptions::QUERY => $options

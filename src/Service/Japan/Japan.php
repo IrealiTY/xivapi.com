@@ -17,9 +17,7 @@ class Japan
      */
     public static function query($uri, $query)
     {
-        $start = microtime(true);
         $cache = new Cache();
-
         $key = __METHOD__ . sha1($uri . implode(',', $query));
         if ($data = $cache->get($key)) {
             return $data;
@@ -36,10 +34,6 @@ class Japan
 
         $data = json_decode((string)$res->getBody());
         $cache->set($key, $data, (60*60*3));
-    
-        $duration = microtime(true) - $start;
-        GoogleAnalytics::event('lodestone', 'get', 'duration', $duration);
-        
         return $data;
     }
 }

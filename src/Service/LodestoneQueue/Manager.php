@@ -17,8 +17,8 @@ class Manager
 
     public function __construct(SymfonyStyle $io, EntityManagerInterface $em)
     {
-        $this->io = $io;
-        $this->em = $em;
+        $this->io  = $io;
+        $this->em  = $em;
         $this->now = date('Y-m-d H:i:s');
     }
 
@@ -104,6 +104,7 @@ class Manager
                             return;
         
                         case 'character_add':
+                        case 'character_update':
                         case 'character_update_0_normal':
                         case 'character_update_1_normal':
                         case 'character_update_2_normal':
@@ -118,6 +119,7 @@ class Manager
                             break;
     
                         case 'character_friends_add':
+                        case 'character_friends_update':
                         case 'character_friends_update_0_normal':
                         case 'character_friends_update_1_normal':
                         case 'character_friends_update_0_patreon':
@@ -126,6 +128,7 @@ class Manager
                             break;
     
                         case 'character_achievements_add':
+                        case 'character_achievements_update':
                         case 'character_achievements_update_0_normal':
                         case 'character_achievements_update_1_normal':
                         case 'character_achievements_update_0_patreon':
@@ -134,6 +137,7 @@ class Manager
                             break;
     
                         case 'free_company_add':
+                        case 'free_company_update':
                         case 'free_company_update_0_normal':
                         case 'free_company_update_1_normal':
                         case 'free_company_update_0_patron':
@@ -141,6 +145,7 @@ class Manager
                             break;
     
                         case 'linkshell_add':
+                        case 'linkshell_update':
                         case 'linkshell_update_0_normal':
                         case 'linkshell_update_1_normal':
                         case 'linkshell_update_0_patron':
@@ -148,6 +153,7 @@ class Manager
                             break;
     
                         case 'pvp_team_add':
+                        case 'pvp_team_update':
                         case 'pvp_team_update_0_normal':
                         case 'pvp_team_update_1_normal':
                         case 'pvp_team_update_0_patron':

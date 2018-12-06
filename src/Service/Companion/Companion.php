@@ -2,7 +2,6 @@
 
 namespace App\Service\Companion;
 
-use App\Service\Redis\Cache;
 use Companion\CompanionApi;
 
 class Companion

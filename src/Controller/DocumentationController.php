@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Service\Common\GitHub;
 use App\Service\Docs\Docs;
-use App\Service\Docs\ChangeLogs;
 use App\Service\Docs\Icons;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

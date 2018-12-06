@@ -20,15 +20,15 @@ class CompanionMarketController extends Controller
     const ENDPOINT_CACHE_DURATION = 60;
 
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var Companion */
     private $companion;
     /** @var Cache */
     private $cache;
     
-    public function __construct(AppManager $appManager, Companion $companion)
+    public function __construct(AppManager $apps, Companion $companion)
     {
-        $this->appManager = $appManager;
+        $this->apps = $apps;
         $this->companion  = $companion;
         $this->cache      = new Cache();
     }
@@ -52,9 +52,8 @@ class CompanionMarketController extends Controller
      */
     public function itemPrices(Request $request, string $server, int $itemId)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['market',$server,'items',$itemId]);
-        
+        $this->apps->fetch($request, true);
+
         $key = 'companion_market_items_'. md5($server . $itemId);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemPrices($itemId);
@@ -69,9 +68,8 @@ class CompanionMarketController extends Controller
      */
     public function itemHistory(Request $request, string $server, int $itemId)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['market',$server,'items',$itemId,'history']);
-    
+        $this->apps->fetch($request, true);
+
         $key = 'companion_market_items_history_'. md5($server . $itemId);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemHistory($itemId);
@@ -86,9 +84,8 @@ class CompanionMarketController extends Controller
      */
     public function categoryList(Request $request, string $server, int $category)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['market',$server,'category',$category]);
-    
+        $this->apps->fetch($request, true);
+
         $key = 'companion_market_category_'. md5($server . $category);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getCategoryList($category);
@@ -103,9 +100,8 @@ class CompanionMarketController extends Controller
      */
     public function categories(Request $request)
     {
-        $this->appManager->fetch($request, true);
-        GoogleAnalytics::hit(['market','categories']);
-        
+        $this->apps->fetch($request, true);
+
         return $this->json(
             $this->companion->getCategories()
         );

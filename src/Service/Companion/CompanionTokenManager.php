@@ -3,7 +3,6 @@
 namespace App\Service\Companion;
 
 use Companion\CompanionApi;
-use Companion\Http\Cookies;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**

@@ -2,31 +2,29 @@
 
 namespace App\Service\Content;
 
-use App\Entity\App;
 use App\Service\Common\Arrays;
 use App\Service\Common\Language;
 use App\Service\Redis\Cache;
-use App\Service\Apps\AppManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ContentList
 {
+    const MAX_ITEMS = 3000;
+    const DEFAULT_ITEMS = 100;
+
     /** @var Request */
     private $request;
     /** @var Cache */
     private $cache;
-    /** @var AppManager */
-    private $appManager;
     /** @var string */
     private $name;
     /** @var array */
     private $ids;
     
-    public function __construct(Cache $cache, AppManager $appManager)
+    public function __construct(Cache $cache)
     {
         $this->cache = $cache;
-        $this->appManager = $appManager;
     }
     
     public function get(Request $request, string $name)
@@ -57,18 +55,18 @@ class ContentList
         
         // max_items (alias limit, deprecate max_items)
         $maxItems = $this->request->get('max_items') ?: $this->request->get('limit');
-        $maxItems = intval($maxItems ?: 100) ?: 100;
-        $maxItems = $maxItems < 3000 ? $maxItems : 3000;
+        $maxItems = intval($maxItems ?: self::DEFAULT_ITEMS) ?: self::DEFAULT_ITEMS;
+        $maxItems = $maxItems < self::MAX_ITEMS ? $maxItems : self::MAX_ITEMS;
         
         // ----------------------------------------------------------------------
         
         // trim ids
-        $totalResults = count($this->ids);
-        $pageTotal = $totalResults > 0 ? ceil($totalResults / $maxItems) : 0;
-        $page = $this->request->get('page') ?: 1;
-        $page = $page >= 1 ? $page : 1;
-        $pageNext = ($page + 1) <= $pageTotal ? ($page + 1) : 1;
-        $pagePrev = $page-1 > 0 ? $page-1 : 1;
+        $totalResults   = count($this->ids);
+        $pageTotal      = $totalResults > 0 ? ceil($totalResults / $maxItems) : 0;
+        $page           = $this->request->get('page') ?: 1;
+        $page           = $page >= 1 ? $page : 1;
+        $pageNext       = ($page + 1) <= $pageTotal ? ($page + 1) : 1;
+        $pagePrev       = $page-1 > 0 ? $page-1 : 1;
 
         // sort ids
         asort($this->ids);
@@ -103,11 +101,9 @@ class ContentList
             
             if ($content) {
                 $content = Language::handle($content, $this->request->get('language'));
-
                 $columns = Arrays::extractColumnsCount($content, $columns);
                 $columns = Arrays::extractMultiLanguageColumns($columns);
-
-                $data[] = Arrays::extractColumns($content, $columns);
+                $data[]  = Arrays::extractColumns($content, $columns);
             }
 
             unset($content);

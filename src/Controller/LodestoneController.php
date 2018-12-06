@@ -11,14 +11,16 @@ use Lodestone\Api;
 
 class LodestoneController extends Controller
 {
+    const CACHE_DURATION = (60 * 60);
+
     /** @var AppManager */
-    private $appManager;
+    private $apps;
     /** @var Cache */
     private $cache;
 
-    public function __construct(AppManager $appManager, Cache $cache)
+    public function __construct(AppManager $apps, Cache $cache)
     {
-        $this->appManager = $appManager;
+        $this->apps = $apps;
         $this->cache = $cache;
     }
 
@@ -26,54 +28,22 @@ class LodestoneController extends Controller
      * @Route("/lodestone")
      * @Route("/Lodestone")
      */
-    public function lodestone(Request $request)
+    public function lodestone()
     {
-        $this->appManager->fetch($request);
-
         return $this->json(
             $this->cache->get('lodestone')
         );
-    }
-    
-    /**
-     * @Route("/lodestone/ids")
-     * @Route("/Lodestone/IDs")
-     */
-    public function lodestoneIDs(Request $request)
-    {
-        $this->appManager->fetch($request);
-        
-        $data = file_get_contents(__DIR__.'/../Command/resources/market_items.txt');
-        $data = array_filter(explode(PHP_EOL, $data));
-        
-        $response = [];
-        foreach ($data as $line) {
-            [$id, $lsid, $icon, $iconhq, $time, $name] = explode("|", $line);
-            
-            $response[$id] = [
-                'ID' => $id,
-                'LodestoneID' => $lsid,
-                'Icon' => $icon,
-                'IconHQ' => $iconhq
-            ];
-        }
-        
-        ksort($response);
-        
-        return $this->json($response);
     }
 
     /**
      * @Route("/lodestone/banners")
      * @Route("/Lodestone/Banners")
      */
-    public function lodestoneBanners(Request $request)
+    public function lodestoneBanners()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneBanners();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -83,13 +53,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/news")
      * @Route("/Lodestone/News")
      */
-    public function lodestoneNews(Request $request)
+    public function lodestoneNews()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneNews();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -99,13 +67,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/topics")
      * @Route("/Lodestone/Topics")
      */
-    public function lodestoneTopics(Request $request)
+    public function lodestoneTopics()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneTopics();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -115,13 +81,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/notices")
      * @Route("/Lodestone/Notices")
      */
-    public function lodestoneNotices(Request $request)
+    public function lodestoneNotices()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneNotices();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -131,13 +95,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/maintenance")
      * @Route("/Lodestone/Maintenance")
      */
-    public function lodestoneMaintenance(Request $request)
+    public function lodestoneMaintenance()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneMaintenance();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -147,13 +109,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/updates")
      * @Route("/Lodestone/Updates")
      */
-    public function lodestoneUpdates(Request $request)
+    public function lodestoneUpdates()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneUpdates();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -163,13 +123,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/status")
      * @Route("/Lodestone/Status")
      */
-    public function lodestoneStatus(Request $request)
+    public function lodestoneStatus()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getLodestoneStatus();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -179,13 +137,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/worldstatus")
      * @Route("/Lodestone/WorldStatus")
      */
-    public function lodestoneWorldStatus(Request $request)
+    public function lodestoneWorldStatus()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getWorldStatus();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -195,13 +151,11 @@ class LodestoneController extends Controller
      * @Route("/lodestone/devblog")
      * @Route("/Lodestone/DevBlog")
      */
-    public function lodestoneDevBlog(Request $request)
+    public function lodestoneDevBlog()
     {
-        $this->appManager->fetch($request);
-
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getDevBlog();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -213,11 +167,11 @@ class LodestoneController extends Controller
      */
     public function lodestoneDevPosts(Request $request)
     {
-        $this->appManager->fetch($request, true);
+        $this->apps->fetch($request, true);
 
         if (!$data = $this->cache->get(__METHOD__)) {
             $data = (new Api())->getDevPosts();
-            $this->cache->set(__METHOD__, $data, (60*60));
+            $this->cache->set(__METHOD__, $data, self::CACHE_DURATION);
         }
 
         return $this->json($data);
@@ -229,8 +183,6 @@ class LodestoneController extends Controller
      */
     public function lodestoneFeats(Request $request)
     {
-        $this->appManager->fetch($request);
-
         return $this->json((new Api())->getFeast(
             $request->get('season'),
             $request->request->all()
@@ -243,8 +195,6 @@ class LodestoneController extends Controller
      */
     public function lodestoneDeepDungeon(Request $request)
     {
-        $this->appManager->fetch($request);
-
         return $this->json((new Api())->getDeepDungeon(
             $request->request->all()
         ));
