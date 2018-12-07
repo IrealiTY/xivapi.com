@@ -9,7 +9,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 /**
  * Some rules:
  * - All messages MUST be JSON
- * - Messages will only be acknowledge in production
  */
 class RabbitMQ
 {
