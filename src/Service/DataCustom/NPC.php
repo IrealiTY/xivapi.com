@@ -172,6 +172,15 @@ class NPC extends ManualHelper
                         $this->redis->get("xiv_Quest_{$dataValue}")
                     );
                 }
+                
+                //
+                // Triple Triad
+                //
+                if ($dataValue >= 2293762 && $dataValue <= ‭2359297‬) {
+                    $npc->TripleTriadID = $dataValue;
+                    break;
+                }
+                
             }
             
             #file_put_contents(__DIR__.'/lol.json', json_encode($npc, JSON_PRETTY_PRINT));die;
