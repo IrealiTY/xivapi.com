@@ -43,7 +43,7 @@ class ElasticMapping
     ];
 
     const INTEGER = [
-        'type' => 'integer',
+        'type' => 'long',
         'index' => true,
     ];
 
