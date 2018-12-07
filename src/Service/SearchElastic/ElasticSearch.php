@@ -11,7 +11,7 @@ class ElasticSearch
     const NUMBER_OF_REPLICAS  = 0;
     const MAX_RESULT_WINDOW   = 100000;
     const MAX_BULK_DOCUMENTS  = 250;
-    const MAX_FIELDS          = 10000;
+    const MAX_FIELDS          = 20000;
 
     /** @var \Elasticsearch\Client */
     private $client;
