@@ -99,7 +99,6 @@ class PatchContent extends ManualHelper
         // latest patch
         $patch = (new Patch())->getLatest();
         
-        // loop through all tracked content
         $content = (array)$this->redis->get('content');
         $total   = count($content);
         $current = 0;
@@ -110,10 +109,21 @@ class PatchContent extends ManualHelper
         
             // grab all content ids
             $ids = $this->redis->get("ids_{$contentName}");
-        
+            $schema = $this->redis->get("schema_{$contentName}");
+            
             // no ids? skip
             if (!$ids) {
                 continue;
+            }
+            
+            // find a string column
+            $stringColumn = null;
+            
+            foreach ($schema->ContentSchema as $column => $value) {
+                if ($value === 'string' && strpos($column, '_en') !== false) {
+                    $stringColumn = $column;
+                    break;
+                }
             }
             
             // grab previous patch values if they exist, otherwise start a new list
@@ -124,13 +134,8 @@ class PatchContent extends ManualHelper
                 // grab content
                 $content = $this->redis->get("xiv_{$contentName}_{$id}");
             
-                // we only care about stuff with "name_en", skip entire file if no Name_en field
-                if (!isset($content->Name_en)) {
-                    break;
-                }
-            
                 // we only care about stuff without a blank name_en
-                if (strlen(trim($content->Name_en)) < 2) {
+                if (strlen(trim($content->{$stringColumn})) < 2) {
                     continue;
                 }
             
