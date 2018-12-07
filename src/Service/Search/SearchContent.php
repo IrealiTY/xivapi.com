@@ -53,17 +53,4 @@ class SearchContent
         
         return $list;
     }
-    
-    public static function prefix($index)
-    {
-        if (is_array($index)) {
-            foreach ($index as $i => $x) {
-                $index[$i] = self::prefix($x);
-            }
-            
-            return $index;
-        }
-        
-        return $index;
-    }
 }

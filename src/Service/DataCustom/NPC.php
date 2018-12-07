@@ -176,7 +176,7 @@ class NPC extends ManualHelper
                 //
                 // Triple Triad
                 //
-                if ($dataValue >= 2293762 && $dataValue <= ‭2359297‬) {
+                if ($dataValue >= 2293760 && $dataValue <= 2359300) {
                     $npc->TripleTriadID = $dataValue;
                     break;
                 }

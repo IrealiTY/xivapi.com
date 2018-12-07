@@ -18,7 +18,7 @@ class DataType
                 if (count(explode('.', $value)) > 1) {
                     $array[$i] = (string)trim($value);
                 } else if (is_numeric($value)) {
-                    $array[$i] = strlen($value) >= 10 ? (string)trim($value) : (int)intval(trim($value));
+                    $array[$i] = strlen($value) >= 12 ? (string)trim($value) : (int)intval(trim($value));
                 } else if ($value === true || $value === false) {
                     $array[$i] = (bool)$value;
                 }

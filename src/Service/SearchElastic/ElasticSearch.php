@@ -10,7 +10,7 @@ class ElasticSearch
     const NUMBER_OF_SHARDS    = 1;
     const NUMBER_OF_REPLICAS  = 0;
     const MAX_RESULT_WINDOW   = 100000;
-    const MAX_BULK_DOCUMENTS  = 1000;
+    const MAX_BULK_DOCUMENTS  = 200;
     const MAX_FIELDS          = 10000;
 
     /** @var \Elasticsearch\Client */
