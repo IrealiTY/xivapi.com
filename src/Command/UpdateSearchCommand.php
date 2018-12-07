@@ -56,7 +56,7 @@ class UpdateSearchCommand extends Command
                     continue;
                 }
         
-                $index  = SearchContent::prefix(strtolower($contentName));
+                $index  = strtolower($contentName);
                 $ids    = $cache->get("ids_{$contentName}");
                 $total  = count($ids);
                 $docs   = [];
@@ -111,6 +111,11 @@ class UpdateSearchCommand extends Command
     
                     // grab content
                     $content = $cache->get("xiv_{$contentName}_{$id}");
+                    
+                    // if no name_en, skip it!
+                    if (empty($content->Name_en)) {
+                        continue;
+                    }
     
                     // remove arrays from content
                     foreach ($content as $field => $value) {
@@ -133,25 +138,26 @@ class UpdateSearchCommand extends Command
 
                     // append to docs
                     $docs[$id] = $content;
-
-                    # $elastic->addDocument($index, 'search', $id, $content);
+    
+                    $elastic->addDocument($index, 'search', $id, $content);
                     
                     // insert docs
-                    if ($count == (ElasticSearch::MAX_BULK_DOCUMENTS / 2)) {
+                    if ($count >= ElasticSearch::MAX_BULK_DOCUMENTS) {
                         $this->io->progressAdvance($count);
-                        $elastic->bulkDocuments($index, 'search', $docs);
+                        //$elastic->bulkDocuments($index, 'search', $docs);
                         $docs = [];
                         $count = 0;
                     }
                 }
         
                 // add any reminders
-                if ($count > 0) {
-                    $elastic->bulkDocuments($index, 'search', $docs);
+                if (count($docs) > 0) {
+                    //$elastic->bulkDocuments($index, 'search', $docs);
                 }
                 $this->io->progressFinish();
             }
         } catch (\Exception $ex) {
+            print_r($content);
             throw $ex;
         }
     

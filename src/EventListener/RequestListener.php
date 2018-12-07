@@ -29,14 +29,24 @@ class RequestListener
         if ($sentry = getenv('SENTRY')) {
             (new \Raven_Client($sentry))->install();
         }
+        
 
         /** @var Request $request */
         $request = $event->getRequest();
+    
+        if ($json = $request->getContent()) {
+            if (trim($json[0]) === '{') {
+                $json = \GuzzleHttp\json_decode($json);
+    
+                foreach($json as $key => $value) {
+                    $request->request->set($key, $value);
+                }
+            }
+        }
+        
         Environment::set($request);
         Environment::ensureValidHost($request);
         Language::set($request);
-        GoogleAnalytics::hit($request->getPathInfo());
-
         $this->apps->track($request);
     }
 }

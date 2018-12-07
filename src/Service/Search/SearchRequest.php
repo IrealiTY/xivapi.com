@@ -103,7 +103,6 @@ class SearchRequest
         $this->indexes = is_array($this->indexes) ? $this->indexes : explode(',', $this->indexes);
         $this->indexes = array_map('strtolower', $this->indexes);
         $this->indexes = SearchContent::validate($this->indexes);
-        $this->indexes = SearchContent::prefix($this->indexes);
         $this->indexes = implode(',', $this->indexes);
         
         // check limit
