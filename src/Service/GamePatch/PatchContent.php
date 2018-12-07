@@ -135,7 +135,7 @@ class PatchContent extends ManualHelper
                 $content = $this->redis->get("xiv_{$contentName}_{$id}");
             
                 // we only care about stuff without a blank name_en
-                if (strlen(trim($content->{$stringColumn})) < 2) {
+                if ($stringColumn && strlen(trim($content->{$stringColumn})) < 2) {
                     continue;
                 }
             
