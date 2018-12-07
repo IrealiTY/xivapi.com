@@ -36,7 +36,7 @@ class RabbitMQ
     /**
      * Connect to a queue and return this class
      */
-    public function connect(string $queue): RabbitMQ
+    public function connect(string $queue = null): RabbitMQ
     {
         $this->connection = new AMQPStreamConnection(
             getenv('API_RABBIT_IP'),
@@ -147,20 +147,34 @@ class RabbitMQ
     /**
      * Get the current active channel
      */
-    private function getChannel(): AMQPChannel
+    public function getChannel(string $channel = null): AMQPChannel
     {
+        if ($channel) {
+            $this->channel = $channel;
+        }
+        
         if ($this->channel === null) {
             $this->channel = $this->connection->channel(self::CHANNEL);
-            $this->channel->queue_declare(
-                $this->queue,
-                self::QUEUE_OPTIONS['passive'],
-                self::QUEUE_OPTIONS['durable'],
-                self::QUEUE_OPTIONS['exclusive'],
-                self::QUEUE_OPTIONS['auto_delete'],
-                self::QUEUE_OPTIONS['nowait']
-            );
+        }
+        
+        if ($this->queue) {
+            $this->setQueue();
         }
 
         return $this->channel;
+    }
+    
+    public function setQueue(string $queue = null): RabbitMQ
+    {
+        $this->channel->queue_declare(
+            $queue ? $queue : $this->queue,
+            self::QUEUE_OPTIONS['passive'],
+            self::QUEUE_OPTIONS['durable'],
+            self::QUEUE_OPTIONS['exclusive'],
+            self::QUEUE_OPTIONS['auto_delete'],
+            self::QUEUE_OPTIONS['nowait']
+        );
+        
+        return $this;
     }
 }
