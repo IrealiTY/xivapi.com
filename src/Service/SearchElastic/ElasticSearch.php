@@ -10,7 +10,7 @@ class ElasticSearch
     const NUMBER_OF_SHARDS    = 1;
     const NUMBER_OF_REPLICAS  = 0;
     const MAX_RESULT_WINDOW   = 100000;
-    const MAX_BULK_DOCUMENTS  = 200;
+    const MAX_BULK_DOCUMENTS  = 250;
     const MAX_FIELDS          = 10000;
 
     /** @var \Elasticsearch\Client */
@@ -77,28 +77,26 @@ class ElasticSearch
         ]);
     }
 
-    public function bulkDocuments(string $index, string $type, array $documents): void
+    public function bulkDocuments(string $index, string $type, array $documents)
     {
-        foreach (array_chunk($documents, self::MAX_BULK_DOCUMENTS, true) as $docs) {
-            $params = [
-                'body' => []
-            ];
-
-            foreach ($docs as $id => $doc) {
-                $base = [
-                    'index' => [
-                        '_index' => $index,
-                        '_type'  => $type,
-                        '_id'    => $id,
-                    ]
-                ];
-
-                $params['body'][] = $base;
-                $params['body'][] = $doc;
-            }
+        $params = [
+            'body' => []
+        ];
     
-            $this->client->bulk($params);
+        foreach ($documents as $id => $doc) {
+            $base = [
+                'index' => [
+                    '_index' => $index,
+                    '_type'  => $type,
+                    '_id'    => $id,
+                ]
+            ];
+        
+            $params['body'][] = $base;
+            $params['body'][] = $doc;
         }
+    
+        return $this->client->bulk($params);
     }
 
     public function getDocument(string $index, string $type, string $id)
