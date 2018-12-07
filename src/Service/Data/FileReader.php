@@ -100,8 +100,14 @@ class FileReader extends DataHelper
                     continue;
                 }
 
-                $value = (strtolower($value) === 'true') ? 1 : $value;
-                $value = (strtolower($value) === 'false') ? 0 : $value;
+                $value = (strtolower($value) === 'true') ? true : $value;
+                $value = (strtolower($value) === 'false') ? false : $value;
+                
+                // not dealing with this shit!
+                // this is likely a wrong mapper, eg uint instead of a int64
+                if ($value > 2147483647) {
+                    $value = null;
+                }
 
                 // if image
                 if ($types[$offset] == 'Image') {
