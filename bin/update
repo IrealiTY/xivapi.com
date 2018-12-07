@@ -29,7 +29,7 @@ sleep 5
 
 # Update search
 sleep 5
-#/usr/bin/php /vagrant/bin/console UpdateSearchCommand dev
+/usr/bin/php /vagrant/bin/console UpdateSearchCommand dev
 
 ## -------------------------------------------------------------------------------------
 
