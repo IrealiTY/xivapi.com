@@ -44,7 +44,7 @@ class CharacterQueue
             $em->persist((new CharacterFriends($character->getId()))->setState(Entity::STATE_ADDING));
             
             // add their FC too
-            if ($em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
+            if ($data->FreeCompanyId && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
                 $em->persist((new FreeCompany($data->FreeCompanyId))->setState(Entity::STATE_ADDING));
                 FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
             }
