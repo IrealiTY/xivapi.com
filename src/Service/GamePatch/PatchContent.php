@@ -108,7 +108,7 @@ class PatchContent extends ManualHelper
             $filename = sprintf(self::FILENAME, $contentName);
         
             // grab all content ids
-            $ids = $this->redis->get("ids_{$contentName}");
+            $ids    = $this->redis->get("ids_{$contentName}");
             $schema = $this->redis->get("schema_{$contentName}");
             
             // no ids? skip
@@ -119,10 +119,14 @@ class PatchContent extends ManualHelper
             // find a string column
             $stringColumn = null;
             
-            foreach ($schema->ContentSchema as $column => $value) {
-                if ($value === 'string' && strpos($column, '_en') !== false) {
-                    $stringColumn = $column;
-                    break;
+            if (isset($schema->ContentSchema->Name_en)) {
+                $stringColumn = 'Name_en';
+            } else {
+                foreach ($schema->ContentSchema as $column => $value) {
+                    if ($value === 'string' && strpos($column, '_en') !== false) {
+                        $stringColumn = $column;
+                        break;
+                    }
                 }
             }
             
@@ -133,6 +137,10 @@ class PatchContent extends ManualHelper
             foreach ($ids as $id) {
                 // grab content
                 $content = $this->redis->get("xiv_{$contentName}_{$id}");
+                
+                if (!isset($content->{$stringColumn})) {
+                    continue;
+                }
             
                 // we only care about stuff without a blank name_en
                 if ($stringColumn && strlen(trim($content->{$stringColumn})) < 2) {
@@ -140,7 +148,7 @@ class PatchContent extends ManualHelper
                 }
             
                 // save previous patch if it exists, otherwise use new patch id
-                $list[$id] = $list[$id] ?? $patch->ID;
+                $list[$id] = isset($list[$id]) ? $list[$id] : $patch->ID;
             }
         
             // save

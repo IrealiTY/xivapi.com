@@ -139,12 +139,12 @@ class UpdateSearchCommand extends Command
                     // append to docs
                     $docs[$id] = $content;
     
-                    $elastic->addDocument($index, 'search', $id, $content);
+                    //$elastic->addDocument($index, 'search', $id, $content);
                     
                     // insert docs
                     if ($count >= ElasticSearch::MAX_BULK_DOCUMENTS) {
                         $this->io->progressAdvance($count);
-                        //$elastic->bulkDocuments($index, 'search', $docs);
+                        $elastic->bulkDocuments($index, 'search', $docs);
                         $docs = [];
                         $count = 0;
                     }
@@ -152,12 +152,12 @@ class UpdateSearchCommand extends Command
         
                 // add any reminders
                 if (count($docs) > 0) {
-                    //$elastic->bulkDocuments($index, 'search', $docs);
+                    $elastic->bulkDocuments($index, 'search', $docs);
                 }
                 $this->io->progressFinish();
             }
         } catch (\Exception $ex) {
-            print_r($content);
+            print_r($ex->getMessage());
             throw $ex;
         }
     
