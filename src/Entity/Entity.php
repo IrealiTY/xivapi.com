@@ -32,15 +32,15 @@ class Entity
      */
     public $updated = 0;
     /**
-     * @ORM\Column(type="integer", length=16)
+     * @ORM\Column(type="integer", length=16, default="0")
      */
     public $priority = 0;
     /**
-     * @ORM\Column(type="integer", length=16)
+     * @ORM\Column(type="integer", length=16, default="0")
      */
     public $notFoundChecks = 0;
     /**
-     * @ORM\Column(type="integer", length=16)
+     * @ORM\Column(type="integer", length=16, default="0")
      */
     public $achievementsPrivateChecks = 0;
     
