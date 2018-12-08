@@ -143,7 +143,7 @@ class SaintCoinachRedisCommand extends Command
                     if (!$data || empty($data) || !isset($data->ID)) {
                         continue;
                     }
-
+                    
                     // Set content url and some placeholders
                     $data->Url = "/{$contentName}/{$data->ID}";
                     $data->GameContentLinks = null;

@@ -20,7 +20,8 @@ class SaintCoinachJsonCacheCommand extends Command
         $this
             ->setName('SaintCoinachJsonCacheCommand')
             ->setDescription('Converts all CSV files into JSON documents for easier access during the update stage.')
-            ->addArgument('fast', InputArgument::OPTIONAL, 'Skip all questions and use default values');
+            ->addArgument('fast', InputArgument::OPTIONAL, 'Skip all questions and use default values')
+            ->addArgument('contentName', InputArgument::OPTIONAL, 'Process only a specific piece of content');
         ;
     }
 
@@ -54,6 +55,10 @@ class SaintCoinachJsonCacheCommand extends Command
         foreach($files as $type => $list) {
             foreach($list as $i => $filename) {
                 $this->io->progressAdvance();
+                
+                if ($input->getArgument('contentName') && $input->getArgument('contentName') !== $filename) {
+                    continue;
+                }
 
                 $data[] = $filename;
 

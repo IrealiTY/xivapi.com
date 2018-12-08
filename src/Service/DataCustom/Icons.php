@@ -66,6 +66,10 @@ class Icons extends ManualHelper
     
     public function setMapFilename($content)
     {
+        if (!isset($content->Id_en)) {
+            return;
+        }
+        
         $content->MapFilename = null;
         $content->MapFilenameId = $content->Id_en;
         unset($content->Id_en);

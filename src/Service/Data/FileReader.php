@@ -98,19 +98,15 @@ class FileReader extends DataHelper
                     // unset and ignore
                     unset($record[$offset]);
                     continue;
-                }
-
-                $value = (strtolower($value) === 'true') ? true : $value;
-                $value = (strtolower($value) === 'false') ? false : $value;
-                
-                // not dealing with this shit!
-                // this is likely a wrong mapper, eg uint instead of a int64
-                if ($value > 2147483647) {
+                } else if ($value > 2147483647) {
+                    // not dealing with this shit!
+                    // this is likely a wrong mapper, eg uint instead of a int64
                     $value = null;
-                }
-
-                // if image
-                if ($types[$offset] == 'Image') {
+                } else if (strtoupper($value) === 'TRUE') {
+                    $value = 1;
+                } else if (strtoupper($value) === 'FALSE') {
+                    $value = 0;
+                } else if ($types[$offset] == 'Image') {
                     // maintain an ID record
                     $newRecords[] = [
                           'Image',
@@ -120,10 +116,7 @@ class FileReader extends DataHelper
                     
                     // convert icon
                     $value = DataHelper::getImagePath($value);
-                }
-                
-                // if str, enforce en
-                if ($types[$offset] == 'str') {
+                } else if ($types[$offset] == 'str') {
                     $columnName = "{$columnName}_en";
                     
                     // fix new lines (broke around 30th May 2018)
@@ -133,7 +126,7 @@ class FileReader extends DataHelper
                 $record[$columnName] = $value;
                 unset($record[$offset]);
             }
-            
+    
             // remove foreign stuff
             $record = str_ireplace(self::FOREIGN_REMOVALS, null, $record);
             
@@ -145,7 +138,7 @@ class FileReader extends DataHelper
                 $columns[] = $newColumnName;
                 $record[$newColumnName] = $newValue;
             }
-
+      
             ksort($record);
             $data[$id] = $record;
             unset($record);
