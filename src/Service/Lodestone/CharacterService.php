@@ -60,7 +60,7 @@ class CharacterService extends Service
         $ent = $this->getRepository(CharacterAchievements::class)->find($id);
 
         if (!$ent) {
-            throw new NotFoundHttpException();
+            [ null, null, null ];
         }
         
         if ($ent->getState() == Entity::STATE_CACHED) {
