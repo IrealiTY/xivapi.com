@@ -39,15 +39,11 @@ function deploy($config)
     cd($config->home);
     writeln('Checking authentication ...');
 
-    //
     // Checkout branches and switch branch
-    //
     run("git fetch");
     run("git checkout {$config->branch}");
 
-    //
     // Reset any existing changes
-    //
     $branchStatus = run('git status');
     if (stripos($branchStatus, 'Changes not staged for commit') !== false) {
         writeln('Changes on production detected, resetting git head.');
@@ -57,9 +53,7 @@ function deploy($config)
         result($result);
     }
 
-    //
     // Pull latest changes
-    //
     writeln('Pulling latest code from github ...');
     $result = run('git pull');
     result($result);
@@ -71,9 +65,7 @@ function deploy($config)
     $directory = run('ls -l');
     $doctrine  = run('test -e config/packages/doctrine.yaml && echo 1 || echo 0') === '1';
     
-    //
     // Composer update
-    //
     if (input()->getArgument('composer')) {
         if (stripos($directory, 'composer.json') !== false) {
             writeln('Updating composer libraries (it is normal for this to take a while)...');
@@ -83,15 +75,11 @@ function deploy($config)
     }
 
     
-    //
     // Write version
-    //
     writeln('Setting git version+hash');
     run('bash bin/version');
 
-    //
     // Clear symfony cache
-    //
     if (stripos($directory, 'symfony.lock') !== false) {
         writeln('Clearing symfony cache ...');
         $result = run('php bin/console cache:warmup') . "\n";
@@ -99,9 +87,7 @@ function deploy($config)
         $result .= run('php bin/console cache:clear --env=prod');
         result($result);
 
-        //
         // Update database schema
-        //
         if ($doctrine) {
             writeln('Updating database schema ...');
 
@@ -119,22 +105,47 @@ function deploy($config)
         }
     }
 
-    //
     // Restart supervisord
-    //
     writeln('Restart supervisord');
     run('sudo supervisorctl restart all');
 
-    //
     // Finished
-    //
     write("Deployed branch {$config->branch} to: {$config->name} environment\n\n");
 
-    //
     // Announce on discord
-    //
-    //writeln('Posting update to discord');
-    //run('php /home/dalamud/mog/bin/console ListCommitChangesCommand');
+    #writeln('Posting update to discord');
+    #run('php /home/dalamud/mog/bin/console ListCommitChangesCommand');
+}
+
+function deploySync($config)
+{
+    writeln('-> Connecting to sync server');
+    // set directory
+    cd($config->home);
+    
+    // Checkout branches and switch branch
+    writeln('-> Fetching branches and checking out: '. $config->branch);
+    run("git fetch");
+    run("git checkout {$config->branch}");
+    
+    // Reset any existing changes
+    $branchStatus = run('git status');
+    if (stripos($branchStatus, 'Changes not staged for commit') !== false) {
+        writeln('-> Resetting local git copy');
+        run('git reset --hard');
+        run('git status');
+    }
+    
+    // Pull latest changes
+    writeln('-> Pulling latest code and clearing cache');
+    run('git pull');
+    run('php bin/console cache:clear');
+    
+    // Restarting supervisord
+    writeln('-> Restarting supervisor');
+    run('sudo supervisorctl restart all');
+    $result = run('sudo supervisorctl status');
+    result($result);
 }
 
 // --------------------------------------------------------
@@ -162,3 +173,24 @@ task('parser', function () {
         'branch' => 'master',
     ]);
 })->onHosts('parser');
+
+task('sync', function () {
+    deploySync((Object)[
+        'name'   => 'Sync',
+        'home'   => "/home/dalamud/xivapi.com",
+        'branch' => 'rabbitmq',
+    ]);
+})->onHosts(
+    'Server1',
+    'Server2',
+    'Server3',
+    'Server4',
+    'Server5',
+    'Server6',
+    'Server7',
+    'Server8',
+    'Server9',
+    'Server10',
+    'Server11',
+    'Server12'
+);
