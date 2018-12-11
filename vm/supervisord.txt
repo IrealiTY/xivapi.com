@@ -1,12 +1,32 @@
+sudo visudo
+dalamud ALL = NOPASSWD: /usr/bin/supervisorctl
+
+
 sudo nano /etc/supervisor/conf.d/lodestone.conf
 
     9FchmRlV3vQJDw0YHyV3zRjf5CFFtL
 
+    sudo supervisorctl start all
     sudo supervisorctl stop all
     sudo supervisorctl clear all
-    sudo supervisorctl restart
+    sudo supervisorctl restart all
     sudo supervisorctl reread
+    sudo supervisorctl status
 
+
+    - Paste config
+    - sudo supervisorctl reread
+    - sudo supervisorctl update
+    - sudo supervisorctl restart all
+    - Verify: sudo supervisorctl
+
+XIVAPI
+
+[program:character_add]
+command=/usr/bin/php /home/dalamud/dalamud_staging/bin/console AutoManagerResponse character_add
+user=dalamud
+stderr_logfile=/home/dalamud/dalamud_staging/AutoManagerResponse_error.log
+stdout_logfile=/home/dalamud/dalamud_staging/AutoManagerResponse_output.log
 
 
 ---------------------- Server 1 - Adding ----------------------------------------------------------------
@@ -279,6 +299,33 @@ stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
 
 [program:pvp_team_update_1_patron]
 command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest pvp_team_update_1_patron
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_error.log
+stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
+
+
+---------------------- Server 12 - Auto Updating - Achievements ----------------------------------------------------------------
+
+[program:character_achievements_update_2_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_2_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_error.log
+stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
+
+[program:character_achievements_update_3_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_3_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_error.log
+stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
+
+[program:character_achievements_update_4_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_4_normal
+user=dalamud
+stderr_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_error.log
+stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
+
+[program:character_achievements_update_5_normal]
+command=/usr/bin/php /home/dalamud/xivapi.com/bin/console AutoManagerRequest character_achievements_update_5_normal
 user=dalamud
 stderr_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_error.log
 stdout_logfile=/home/dalamud/xivapi.com/AutoManagerRequest_output.log
