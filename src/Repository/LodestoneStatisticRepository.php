@@ -12,4 +12,14 @@ class LodestoneStatisticRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LodestoneStatistic::class);
     }
+
+    public function removeExpiredRows()
+    {
+        // 24 hours
+        $expiry = time() - (60*60*24);
+
+        $sql = $this->createQueryBuilder('ls');
+        $sql->delete()->where('ls.added < :time')->setParameter(':time', $expiry);
+        $sql->getQuery()->execute();
+    }
 }
