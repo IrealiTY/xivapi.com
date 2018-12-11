@@ -131,6 +131,10 @@ class Manager
                         case 'character_achievements_update':
                         case 'character_achievements_update_0_normal':
                         case 'character_achievements_update_1_normal':
+                        case 'character_achievements_update_2_normal':
+                        case 'character_achievements_update_3_normal':
+                        case 'character_achievements_update_4_normal':
+                        case 'character_achievements_update_5_normal':
                         case 'character_achievements_update_0_patreon':
                         case 'character_achievements_update_1_patreon':
                             CharacterAchievementQueue::response($this->em, $response);
