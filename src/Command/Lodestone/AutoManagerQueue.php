@@ -81,7 +81,7 @@ class AutoManagerQueue extends Command
         CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
         CharacterQueue::queue($repo->toUpdate(5, Entity::PRIORITY_NORMAL), 'character_update_5_normal');
 
-        // 2 priority queues for patrons
+        // 2 queues for patrons
         CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_HIGH), 'character_update_0_patreon');
         CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_update_1_patreon');
 
@@ -95,11 +95,11 @@ class AutoManagerQueue extends Command
         /** @var CharacterFriendsRepository $repo */
         $repo = $this->em->getRepository(CharacterFriends::class);
 
-        // 2 priority queues for basic updates
+        // 2 queues for basic updates
         CharacterFriendQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_friends_update_0_normal');
         CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_friends_update_1_normal');
 
-        // 2 priority queues for patrons
+        // 2 queues for patrons
         CharacterFriendQueue::queue($repo->toUpdate(0, Entity::PRIORITY_HIGH), 'character_friends_update_0_patreon');
         CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_friends_update_1_patreon');
     }
@@ -109,11 +109,15 @@ class AutoManagerQueue extends Command
         /** @var CharacterAchievementRepository $repo */
         $repo = $this->em->getRepository(CharacterAchievements::class);
 
-        // 2 priority queues for basic updates
+        // 6 queues for basic updates
         CharacterAchievementQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_achievements_update_0_normal');
         CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_1_normal');
+        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_2_normal');
+        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_3_normal');
+        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_4_normal');
+        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_5_normal');
 
-        // 2 priority queues for patrons
+        // 2 queues for patrons
         CharacterAchievementQueue::queue($repo->toUpdate(0, Entity::PRIORITY_HIGH), 'character_achievements_update_0_patreon');
         CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_achievements_update_1_patreon');
     }
