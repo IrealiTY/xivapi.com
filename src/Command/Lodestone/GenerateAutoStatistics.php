@@ -81,7 +81,7 @@ class GenerateAutoStatistics extends Command
 
         $stats->average_duration = count($stats->average_duration_data) > 0
             ? array_sum($stats->average_duration_data) / count($stats->average_duration_data) : 0;
-        
+
         $stats->average_duration_data = null;
 
         // save
