@@ -13,7 +13,8 @@ class LodestoneStatisticsController extends Controller
     public function statistics()
     {
         $json = json_decode(
-            file_get_contents(__DIR__.'/../Service/LodestoneQueue/stats.json')
+            file_get_contents(__DIR__.'/../Service/LodestoneQueue/stats.json'),
+            true
         );
 
         return $this->render('statistics/index.html.twig', [
