@@ -24,7 +24,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Average Duration</h5>
                                 <p class="card-text">
-                                    {{ stats.average_duration|round(3) }}<br>
+                                    <strong>{{ stats.average_duration|round(3) }}</strong><br><br>
                                     <small>The average time in seconds to process a lodestone request.</small>
                                 </p>
 
@@ -36,9 +36,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">Counts</h5>
                                 <p class="card-text">
-                                    {{ stats.counts.min|number_format }} past minute<br>
-                                    {{ stats.counts.hr|number_format }} past hour<br>
-                                    {{ stats.counts.day|number_format }} past day
+                                    <strong>{{ stats.counts.min|number_format }}</strong> past minute<br>
+                                    <strong>{{ stats.counts.hr|number_format }}</strong> past hour<br>
+                                    <strong>{{ stats.counts.day|number_format }}</strong> past day
                                 </p>
                             </div>
                         </div>
