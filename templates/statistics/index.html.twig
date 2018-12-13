@@ -23,7 +23,11 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Average Duration</h5>
-                                <p class="card-text">{{ stats.average_duration }}</p>
+                                <p class="card-text">
+                                    {{ stats.average_duration|round(3) }}<br>
+                                    <small>The average time in seconds to process a lodestone request.</small>
+                                </p>
+
                             </div>
                         </div>
                     </div>
@@ -32,9 +36,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">Counts</h5>
                                 <p class="card-text">
-                                    {{ stats.counts.min }} past minute<br>
-                                    {{ stats.counts.hr }} past hour<br>
-                                    {{ stats.counts.day }} past day
+                                    {{ stats.counts.min|number_format }} past minute<br>
+                                    {{ stats.counts.hr|number_format }} past hour<br>
+                                    {{ stats.counts.day|number_format }} past day
                                 </p>
                             </div>
                         </div>
@@ -42,87 +46,91 @@
                 </div>
             </div>
 
-            <hr>
-
-            <h2>Characters</h2>
+            <br><hr><br>
 
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
+                        <h2>Characters</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.character_add ?? 0 }} character_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update ?? 0 }} character_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_0_normal ?? 0 }} character_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_1_normal ?? 0 }} character_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_2_normal ?? 0 }} character_update_2_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_3_normal ?? 0 }} character_update_3_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_4_normal ?? 0 }} character_update_4_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_5_normal ?? 0 }} character_update_5_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_0_patreon ?? 0 }} character_update_0_patreon</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_1_patreon ?? 0 }} character_update_1_patreon</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_0_low ?? 0 }} character_update_0_low</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_update_1_low ?? 0 }} character_update_1_low</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_2_normal ?? 0 }}</strong> Auto-Update 3</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_3_normal ?? 0 }}</strong> Auto-Update 4</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_4_normal ?? 0 }}</strong> Auto-Update 5</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_5_normal ?? 0 }}</strong> Auto-Update 6</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_low ?? 0 }}</strong> Low-Activity Check 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_low ?? 0 }}</strong> Low-Activity Check 2</li>
                         </ul>
                     </div>
                     <div class="col-sm">
+                        <h2>Friends Lists</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_add ?? 0 }} character_friends_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_update ?? 0 }} character_friends_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_update_0_normal ?? 0 }} character_friends_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_update_1_normal ?? 0 }} character_friends_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_update_0_patreon ?? 0 }} character_friends_update_0_patreon</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_friends_update_1_patreon ?? 0 }} character_friends_update_1_patreon</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
                         </ul>
                     </div>
                     <div class="col-sm">
+                        <h2>Achievements</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_add ?? 0 }} character_achievements_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update ?? 0 }} character_achievements_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_0_normal ?? 0 }} character_achievements_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_1_normal ?? 0 }} character_achievements_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_2_normal ?? 0 }} character_achievements_update_2_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_3_normal ?? 0 }} character_achievements_update_3_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_4_normal ?? 0 }} character_achievements_update_4_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_5_normal ?? 0 }} character_achievements_update_5_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_0_patreon ?? 0 }} character_achievements_update_0_patreon</li>
-                            <li class="list-group-item">{{ stats.queue_stats.character_achievements_update_1_patreon ?? 0 }} character_achievements_update_1_patreon</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_2_normal ?? 0 }}</strong> Auto-Update 3</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_3_normal ?? 0 }}</strong> Auto-Update 4</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_4_normal ?? 0 }}</strong> Auto-Update 5</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_5_normal ?? 0 }}</strong> Auto-Update 6</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <h2>FC, LS, PVP</h2>
+            <br>
 
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
+                        <h2>Free Company</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_add ?? 0 }} free_company_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_update ?? 0 }} free_company_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_update_0_normal ?? 0 }} free_company_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_update_1_normal ?? 0 }} free_company_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_update_0_patron ?? 0 }} free_company_update_0_patron</li>
-                            <li class="list-group-item">{{ stats.queue_stats.free_company_update_1_patron ?? 0 }} free_company_update_1_patron</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
                         </ul>
                     </div>
                     <div class="col-sm">
+                        <h2>Linkshells</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_add ?? 0 }} linkshell_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_update ?? 0 }} linkshell_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_update_0_normal ?? 0 }} linkshell_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_update_1_normal ?? 0 }} linkshell_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_update_0_patron ?? 0 }} linkshell_update_0_patron</li>
-                            <li class="list-group-item">{{ stats.queue_stats.linkshell_update_1_patron ?? 0 }} linkshell_update_1_patron</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
                         </ul>
                     </div>
                     <div class="col-sm">
+                        <h2>PVP Teams</h2>
                         <ul class="list-group">
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_add ?? 0 }} pvp_team_add</li>
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_update ?? 0 }} pvp_team_update</li>
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_update_0_normal ?? 0 }} pvp_team_update_0_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_update_1_normal ?? 0 }} pvp_team_update_1_normal</li>
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_update_0_patron ?? 0 }} pvp_team_update_0_patron</li>
-                            <li class="list-group-item">{{ stats.queue_stats.pvp_team_update_1_patron ?? 0 }} pvp_team_update_1_patron</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update ?? 0 }}</strong> Mnaul Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
                         </ul>
                     </div>
                 </div>
