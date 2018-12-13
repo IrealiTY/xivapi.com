@@ -28,7 +28,7 @@ class GenerateAutoStatistics extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var LodestoneStatisticRepository $repo */
-        $repo = $this->em->getRepository(LodestoneStatistic::class)->findAll();
+        $repo = $this->em->getRepository(LodestoneStatistic::class);
 
         // delete old rows
         $repo->removeExpiredRows();
