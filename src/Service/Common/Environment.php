@@ -24,7 +24,7 @@ class Environment
             $environment = 'staging';
         }
 
-        if ($host[1] === 'local') {
+        if (isset($host[1]) && $host[1] === 'local') {
             $environment = 'local';
         }
 
