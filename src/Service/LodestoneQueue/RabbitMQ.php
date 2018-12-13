@@ -32,6 +32,8 @@ class RabbitMQ
     private $channelAsync;
     /** @var string */
     private $queue;
+    /** @var bool */
+    private $queueDeclared = false;
 
     /**
      * Connect to a queue and return this class
@@ -147,17 +149,13 @@ class RabbitMQ
     /**
      * Get the current active channel
      */
-    public function getChannel(string $channel = null): AMQPChannel
+    public function getChannel(): AMQPChannel
     {
-        if ($channel) {
-            $this->channel = $channel;
-        }
-        
         if ($this->channel === null) {
             $this->channel = $this->connection->channel(self::CHANNEL);
         }
         
-        if ($this->queue) {
+        if (!$this->queueDeclared && $this->queue) {
             $this->setQueue();
         }
 
@@ -166,6 +164,7 @@ class RabbitMQ
     
     public function setQueue(string $queue = null): RabbitMQ
     {
+        $this->queueDeclared = true;
         $this->channel->queue_declare(
             $queue ? $queue : $this->queue,
             self::QUEUE_OPTIONS['passive'],
