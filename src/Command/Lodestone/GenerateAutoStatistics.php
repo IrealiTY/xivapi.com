@@ -79,7 +79,9 @@ class GenerateAutoStatistics extends Command
             $stats->queue_stats[$ls->getQueue()] += 1;
         }
 
-        $stats->average_duration = array_sum($stats->average_duration_data) / count($stats->average_duration_data);
+        $stats->average_duration = count($stats->average_duration_data) > 0
+            ? array_sum($stats->average_duration_data) / count($stats->average_duration_data) : 0;
+        
         $stats->average_duration_data = null;
 
         // save
