@@ -24,6 +24,8 @@ trait QueueTrait
         if (empty($entries)) {
             return;
         }
+
+        echo "[debug] entries: ". count($entries) ."\n";
         
         $ids = [];
         foreach ($entries as $obj) {
@@ -44,6 +46,7 @@ trait QueueTrait
         $rabbit->connect($queue .'_request');
 
         foreach ($ids as $id) {
+            echo "[debug] batch: {$id} \n";
             $rabbit->batchMessage([
                 'queue'         => $queue,
                 'added'         => date('Y-m-d H:i:s'),
