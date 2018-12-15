@@ -2,6 +2,7 @@
 
 namespace App\Service\LodestoneQueue;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -86,12 +87,8 @@ class Manager
                 $this->now = date('Y-m-d H:i:s');
 
                 try {
-                    // reconnect to database if it has dropped
-                    if (!$this->em->getConnection()->isConnected()) {
-                        $this->em->getConnection()->connect();
-                        $this->io->text("{$this->now} Reconnected to MySQL.");
-                    }
-
+                    // connect to db
+                    $this->em->getConnection()->connect();
                     $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - PROCESSING ...");
     
                     // add finished timestamp
@@ -167,6 +164,9 @@ class Manager
                             PvPTeamQueue::response($this->em, $response);
                             break;
                     }
+    
+                    // close connection
+                    $this->em->getConnection()->close();
                     
                     // confirm
                     $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
