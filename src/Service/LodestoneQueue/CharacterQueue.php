@@ -35,17 +35,19 @@ class CharacterQueue
         // if the previous state was "adding" then this response means it's
         // a new character and we can request achievements + friends
         if ($character->getState() === Entity::STATE_ADDING) {
+            // create db records
+            $em->persist((new CharacterAchievements($character->getId()))->setState(Entity::STATE_ADDING));
+            $em->persist((new CharacterFriends($character->getId()))->setState(Entity::STATE_ADDING));
+            $em->flush();
+            
             // send of requests for achievements and friends to be added
             CharacterAchievementQueue::request($character->getId(), 'character_achievements_add');
             CharacterFriendQueue::request($character->getId(), 'character_friends_add');
             
-            // create db records
-            $em->persist((new CharacterAchievements($character->getId()))->setState(Entity::STATE_ADDING));
-            $em->persist((new CharacterFriends($character->getId()))->setState(Entity::STATE_ADDING));
-            
             // add their FC too
             if ($data->FreeCompanyId && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
                 $em->persist((new FreeCompany($data->FreeCompanyId))->setState(Entity::STATE_ADDING));
+                $em->flush();
                 FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
             }
         }
