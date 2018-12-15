@@ -165,9 +165,6 @@ class Manager
                             break;
                     }
     
-                    // close connection
-                    $this->em->getConnection()->close();
-                    
                     // confirm
                     $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
                 } catch (\Exception $ex) {
