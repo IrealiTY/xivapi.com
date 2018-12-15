@@ -7,6 +7,7 @@ server {
         staging.xivapi.local
         lodestone.xivapi.local;
 
+    listen 80;
     root /vagrant/public;
     include /etc/nginx/sites-available/common;
 }

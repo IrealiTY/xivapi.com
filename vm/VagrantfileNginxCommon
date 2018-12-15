@@ -3,7 +3,6 @@
 # Based on: Symfony 4
 #
 
-listen 80;
 sendfile off;
 client_max_body_size 50M;
 

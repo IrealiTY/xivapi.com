@@ -24,7 +24,7 @@ trait QueueTrait
         if (empty($entries)) {
             return;
         }
-        
+
         $ids = [];
         foreach ($entries as $obj) {
             $ids[] = $obj->getId();

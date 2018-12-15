@@ -6,277 +6,139 @@
     <div class="two-pane">
 
         <aside>
-            <h3>Warden</h3>
+            <h3>Queue</h3>
 
-            <a href="{{ path('statistics') }}">Statistics</a>
-            <a href="#">Exceptions</a>
+            <span>
+                <p>Rabbit MQ Stats</p>
+            </span>
+
         </aside>
 
         <main class="stats">
-            <h1>Statistics</h1>
-
-            <p>
-                Period: <strong>{{ report.start|dateRelative }}</strong>
-                to <strong>{{ report.finish|dateRelative }}</strong>
-            </p>
-
-            {% if app %}
-            <div class="card" style="border: solid 2px #ff4839;">
-                <div class="card-body">
-
-                    <h3><strong>App: {{ app.apiKey }}</strong></h3>
-                    <br>
-
-                    <table class="table table-bordered table-sm">
-                        <tr>
-                            <td width="20%"><strong>ID</strong></td>
-                            <td>{{ app.id }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>User</strong></td>
-                            <td>
-                                {% if app.user %}
-                                    <code>{{ app.user.id }}</code><br>
-                                    Discord: {{ app.user.username }}<br>
-                                    Email: {{ app.user.email }}<br>
-                                    Banned: {{ app.user.banned ? 'Yes' : 'No' }}
-                                {% else %}
-                                    No user, likely deleted. Or this is a fake key someone is trying to use.
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Information</strong></td>
-                            <td>
-                                <strong>{{ app.name }}</strong><br>
-                                {{ app.description ?: 'No Description' }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Level</strong></td>
-                            <td>{{ app.level }}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Rate Limit</strong></td>
-                            <td>{{ app.apiRateLimit }} {{ app.limited ? '(Limited)' : '' }}</td>
-                        </tr>
-                        <tr>
-                            <td>Restricted</td>
-                            <td>{{ app.restricted ? 'Yes' : 'No' }}</td>
-                        </tr>
-                        <tr>
-                            <td>Added</td>
-                            <td>{{ app.added|dateRelative }}</td>
-                        </tr>
-                        <tr>
-                            <td>Apps</td>
-                            <td>
-                                <table class="table table-bordered table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Key</th>
-                                            <th>Name/Desc</th>
-                                            <th>Added</th>
-                                            <th>Rate Limit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% if user %}
-                                        {% for app in user.apps %}
-                                            <tr>
-                                                <td><a href="{{ path('statistics', { app: app.apiKey }) }}">{{ app.apiKey }}</a></td>
-                                                <td width="30%"><strong>{{ app.name }}</strong><br>{{ app.description }}</td>
-                                                <td>{{ app.added|dateRelative }}</td>
-                                                <td>{{ app.apiRateLimit }} - {{ app.limited ? '(Limited)' : '' }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    {% else %}
-                                        <tr>
-                                            <td colspan="4">No Apps</td>
-                                        </tr>
-                                    {% endif %}
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- buttons -->
-                    <div>
-                        <form method="post" action="{{ path('statistics', { app: app.apiKey }) }}">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <label>Ban User</label>
-                                        <select id="ban" name="ban" class="form-control">
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm">
-                                        <label>Restrict User</label>
-                                        <select id="restrict" name="restrict" class="form-control">
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                        <small>Cannot make any more apps on this account.</small>
-                                    </div>
-                                    <div class="col-sm">
-                                        <label>App Rate Limit</label>
-                                        <select id="ratelimit" name="ratelimit" class="form-control">
-                                            <option value="0">0</option>
-                                            <option value="1">1</option>
-                                            <option value="5">5</option>
-                                            <option value="10" selected>10</option>
-                                            <option value="20">20</option>
-                                            <option value="50">50</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm">
-                                        <label>Delete App</label>
-                                        <select id="delete" name="delete" class="form-control">
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm">
-                                        <label>&nbsp;</label>
-                                        <div class="form-row">
-                                            <button type="submit" class="btn btn-success">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- entries -->
-                    <h3>Log Entries</h3>
-                    <table class="table table-bordered table-sm">
-                        <tbody>
-                        {% for i, line in app_records|reverse if i < 100 %}
-                            <tr>
-                                <td width="1%">{{ (i+1) }}</td>
-                                <td><code>{{ line }}</code></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-            {% endif %}
+            <h1>24-hour period statistics</h1>
 
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">{{ report.total }}</h3>
-                                <p class="card-text">Page Hits</p>
+                                <h5 class="card-title">Average Duration</h5>
+                                <p class="card-text">
+                                    <strong>{{ stats.average_duration|round(3) }}</strong><br><br>
+                                    <small>The average time in seconds to process a lodestone request.</small>
+                                </p>
+
                             </div>
                         </div>
                     </div>
                     <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                                <h3 class="card-title">{{ report.ips|length }}</h3>
-                                <p class="card-text">Unique Hits</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">{{ report.duration }}</h3>
-                                <p class="card-text">Avg Duration</p>
+                                <h5 class="card-title">Counts</h5>
+                                <p class="card-text">
+                                    <strong>{{ stats.counts.min|number_format }}</strong> past minute<br>
+                                    <strong>{{ stats.counts.hr|number_format }}</strong> past hour<br>
+                                    <strong>{{ stats.counts.day|number_format }}</strong> past day
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h2>Endpoints</h2>
-            <table class="table table-bordered table-sm">
-                <thead class="thead-dark">
-                    <tr>
-                        <th width="20%">Count</th>
-                        <th>Endpoint</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for uri, count in report.uri %}
-                    <tr>
-                        <td>{{ count|number_format }}</td>
-                        <td>{{ uri }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h2>Characters</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_2_normal ?? 0 }}</strong> Auto-Update 3</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_3_normal ?? 0 }}</strong> Auto-Update 4</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_4_normal ?? 0 }}</strong> Auto-Update 5</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_5_normal ?? 0 }}</strong> Auto-Update 6</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_0_low ?? 0 }}</strong> Low-Activity Check 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_update_1_low ?? 0 }}</strong> Low-Activity Check 2</li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h2>Friends Lists</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_friends_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h2>Achievements</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_2_normal ?? 0 }}</strong> Auto-Update 3</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_3_normal ?? 0 }}</strong> Auto-Update 4</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_4_normal ?? 0 }}</strong> Auto-Update 5</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_5_normal ?? 0 }}</strong> Auto-Update 6</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_0_patreon ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.character_achievements_update_1_patreon ?? 0 }}</strong> Patreon Update 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <br>
 
-            <h2>IP</h2>
-            <table class="table table-bordered table-sm">
-                <thead class="thead-dark">
-                <tr>
-                    <th width="20%">Count</th>
-                    <th>IP</th>
-                    <th>Avg Req/sec</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for ip, count in report.ips %}
-                    <tr>
-                        <td>{{ count|number_format }}</td>
-                        <td>{{ ip }}</td>
-                        <td>
-                            {% set reqsec = report.ip_durations_avg[ip] ?? 0 %}
-                            {{ reqsec }} &nbsp;&nbsp; {% if reqsec > 10 %}🚨 Warning{% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h2>Free Company</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.free_company_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h2>Linkshells</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update ?? 0 }}</strong> Manual Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.linkshell_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
+                        </ul>
+                    </div>
+                    <div class="col-sm">
+                        <h2>PVP Teams</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_add ?? 0 }}</strong> Add</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update ?? 0 }}</strong> Mnaul Update</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_0_normal ?? 0 }}</strong> Auto-Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_1_normal ?? 0 }}</strong> Auto-Update 2</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_0_patron ?? 0 }}</strong> Patreon Update 1</li>
+                            <li class="list-group-item"><strong>{{ stats.queue_stats.pvp_team_update_1_patron ?? 0 }}</strong> Patreon Update 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <br>
 
-            <h2>App Keys</h2>
-            <table class="table table-bordered table-sm">
-                <thead class="thead-dark">
-                <tr>
-                    <th width="20%">Count</th>
-                    <th>Key</th>
-                    <th>Avg Req/sec</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for key, count in report.keys %}
-                    <tr>
-                        <td>{{ count|number_format }}</td>
-                        <td><a href="{{ path('statistics', { app: key }) }}">{{ key }}</a></td>
-                        <td>
-                            {% set reqsec = report.key_durations_avg[key] ?? 0 %}
-                            {{ reqsec }} &nbsp;&nbsp; {% if reqsec > 10 %}🚨 Warning{% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <br>
-
-            <h3>Last 100 log lines</h3>
-            <table class="table table-bordered table-sm">
-                <tbody>
-                {% for i, line in report.lines %}
-                    <tr>
-                        <td width="1%">{{ (i+1) }}</td>
-                        <td><code>{{ line }}</code></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
+            <pre>{{ dump(stats) }}</pre>
         </main>
-    </div>
 
+    </div>
 
 {% endblock %}
