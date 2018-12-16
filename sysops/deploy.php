@@ -139,13 +139,41 @@ function deploySync($config)
     // Pull latest changes
     writeln('-> Pulling latest code and clearing cache');
     run('git pull');
-    run('php bin/console cache:clear');
+    
+    // composer update
+    #writeln('-> Updating composer libraries (it is normal for this to take a while)...');
+    #$result = run('composer update');
+    #result($result);
+    
+    // clear cache
+    writeln('-> Clearing symfony cache ...');
+    $result = run('php bin/console cache:warmup') . "\n";
+    $result .= run('php bin/console cache:clear') . "\n";
+    $result .= run('php bin/console cache:clear --env=prod');
+    result($result);
     
     // Restarting supervisord
     writeln('-> Restarting supervisor');
     run('sudo supervisorctl restart all');
     $result = run('sudo supervisorctl status');
     result($result);
+}
+
+// run fixes on servers
+function fix($config)
+{
+    writeln('-> Connecting to sync server');
+    // set directory
+    cd($config->home);
+    
+    writeln('Running fixes');
+    
+    #run("sudo sed -i 's|memory_limit = 128M|memory_limit = 500M|' /etc/php/7.2/fpm/php.ini");
+    #run("sudo service php7.2-fpm restart");
+    
+    #run('sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024');
+    #run('sudo /sbin/mkswap /var/swap.1');
+    #run('sudo /sbin/swapon /var/swap.1');
 }
 
 // --------------------------------------------------------
@@ -176,6 +204,27 @@ task('parser', function () {
 
 task('sync', function () {
     deploySync((Object)[
+        'name'   => 'Sync',
+        'home'   => "/home/dalamud/xivapi.com",
+        'branch' => 'rabbitmq',
+    ]);
+})->onHosts(
+    'Server1',
+    'Server2',
+    'Server3',
+    'Server4',
+    'Server5',
+    'Server6',
+    'Server7',
+    'Server8',
+    'Server9',
+    'Server10',
+    'Server11',
+    'Server12'
+);
+
+task('fix', function () {
+    fix((Object)[
         'name'   => 'Sync',
         'home'   => "/home/dalamud/xivapi.com",
         'branch' => 'rabbitmq',
