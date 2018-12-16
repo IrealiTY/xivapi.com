@@ -7,15 +7,19 @@ namespace App\Service\LodestoneQueue;
  */
 class LodestoneApi
 {
-    const GET_CHARACTER                 = 'getCharacter';
-    const GET_CHARACTER_FRIENDS         = 'getCharacterFriends';
-    const GET_CHARACTER_FOLLOWING       = 'getCharacterFollowing';
-    const GET_CHARACTER_ACHIEVEMENTS    = 'getCharacterAchievements';
-    // todo - FC + FC Members needs combining into 1 call and does all pages
-    const GET_FREE_COMPANY              = 'getFreeCompany';
-    const GET_FREE_COMPANY_MEMBERS      = 'getFreeCompanyMembers';
-    // todo - ls members should parse all pages
-    const GET_LINKSHELL_MEMBERS         = 'getLinkshellMembers';
-    // todo - pvp teams should parse all pages
-    const GET_PVP_TEAM_MEMBERS          = 'getPvPTeamMembers';
+    const GET_CHARACTER                   = 'getCharacter';
+    // todo - this needs a "full" method
+    const GET_CHARACTER_FRIENDS           = 'getCharacterFriends';
+    const GET_CHARACTER_FOLLOWING         = 'getCharacterFollowing';
+    const GET_CHARACTER_ACHIEVEMENTS      = 'getCharacterAchievements';
+    const GET_CHARACTER_ACHIEVEMENTS_FULL = 'getCharacterAchievements';
+
+    const GET_FREE_COMPANY                = 'getFreeCompany';
+    const GET_FREE_COMPANY_FULL           = 'getFreeCompanyFull';
+    const GET_FREE_COMPANY_MEMBERS        = 'getFreeCompanyMembers';
+    
+    const GET_LINKSHELL_MEMBERS           = 'getLinkshellMembers';
+    const GET_LINKSHELL_MEMBERS_FULL      = 'getLinkshellMembersFull';
+
+    const GET_PVP_TEAM_MEMBERS            = 'getPvPTeamMembers';
 }

@@ -14,7 +14,7 @@ class LinkshellQueue
     /**
      * What method to call on the Lodestone Parser API
      */
-    const METHOD = LodestoneApi::GET_LINKSHELL_MEMBERS;
+    const METHOD = LodestoneApi::GET_LINKSHELL_MEMBERS_FULL;
 
     /**
      * Get entity from database, if it doesn't exist, make one.

@@ -14,7 +14,7 @@ class FreeCompanyQueue
     /**
      * What method to call on the Lodestone Parser API
      */
-    const METHOD = LodestoneApi::GET_FREE_COMPANY;
+    const METHOD = LodestoneApi::GET_FREE_COMPANY_FULL;
 
     /**
      * Get entity from database, if it doesn't exist, make one.

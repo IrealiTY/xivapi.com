@@ -14,7 +14,7 @@ class CharacterAchievementQueue
     /**
      * What method to call on the Lodestone Parser API
      */
-    const METHOD = LodestoneApi::GET_CHARACTER_ACHIEVEMENTS;
+    const METHOD = LodestoneApi::GET_CHARACTER_ACHIEVEMENTS_FULL;
 
     /**
      * Get entity from database, if it doesn't exist, make one.

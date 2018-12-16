@@ -12,15 +12,14 @@ class ServiceQueues
     const CACHE_LINKSHELL_QUEUE             = 'lodestone_linkshell';
     const CACHE_PVPTEAM_QUEUE               = 'lodestone_pvpteam';
     
-    // 6 hours
-    const UPDATE_TIMEOUT = (60 * 60 * 6);
-    const TIME_LIMIT = 57;
+    // timeout for manual update
+    const UPDATE_TIMEOUT = 86400;
     
-    // total
-    const TOTAL_ACHIEVEMENT_UPDATES  = 30;
-    const TOTAL_PVP_TEAM_UPDATES     = 50;
-    const TOTAL_LINKSHELL_UPDATES    = 50;
-    const TOTAL_FREE_COMPANY_UPDATES = 50;
+    // maximum characters to process per minute
+    const TOTAL_ACHIEVEMENT_UPDATES  = 20;
+    const TOTAL_PVP_TEAM_UPDATES     = 30;
+    const TOTAL_LINKSHELL_UPDATES    = 30;
+    const TOTAL_FREE_COMPANY_UPDATES = 30;
     const TOTAL_CHARACTER_UPDATES    = 100;
     const TOTAL_CHARACTER_FRIENDS    = 50;
 }
