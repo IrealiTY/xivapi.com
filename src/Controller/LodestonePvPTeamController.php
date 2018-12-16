@@ -11,6 +11,7 @@ use App\Service\Lodestone\ServiceQueues;
 use App\Service\LodestoneQueue\PvPTeamQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LodestonePvPTeamController extends Controller
@@ -51,6 +52,12 @@ class LodestonePvPTeamController extends Controller
      */
     public function index(Request $request, $lodestoneId)
     {
+        $lodestoneId = strtolower(trim($lodestoneId));
+        
+        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || is_numeric($lodestoneId) || strlen($lodestoneId) !== 40) {
+            throw new NotFoundHttpException('Invalid lodestone ID: '. $lodestoneId);
+        }
+        
         $response = (Object)[
             'PvPTeam' => null,
             'Info' => (Object)[

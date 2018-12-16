@@ -53,8 +53,10 @@ class LodestoneLinkshellController extends Controller
      */
     public function index(Request $request, $lodestoneId)
     {
-        if ($lodestoneId < 0) {
-            throw new NotFoundHttpException('No, stop it.');
+        $lodestoneId = strtolower(trim($lodestoneId));
+        
+        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) < 16 || strlen($lodestoneId) > 20) {
+            throw new NotFoundHttpException('Invalid lodestone ID: '. $lodestoneId);
         }
 
         $start = microtime(true);
