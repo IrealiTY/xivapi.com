@@ -16,6 +16,8 @@ use App\Service\Lodestone\CharacterService;
 use App\Service\Lodestone\FreeCompanyService;
 use App\Service\Lodestone\PvPTeamService;
 use App\Service\Lodestone\ServiceQueues;
+use App\Service\LodestoneQueue\CharacterAchievementQueue;
+use App\Service\LodestoneQueue\CharacterFriendQueue;
 use App\Service\LodestoneQueue\CharacterQueue;
 use Lodestone\Api;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -265,14 +267,14 @@ class LodestoneCharacterController extends Controller
             );
         }
 
-        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
+        if ($lodestoneId !== 730968 && $this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
     
         // send a request to rabbit mq to add this character
         CharacterQueue::request($lodestoneId, 'character_update');
-        CharacterQueue::request($lodestoneId, 'character_friends_update');
-        CharacterQueue::request($lodestoneId, 'character_achievements_update');
+        CharacterFriendQueue::request($lodestoneId, 'character_friends_update');
+        CharacterAchievementQueue::request($lodestoneId, 'character_achievements_update');
 
         $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);
