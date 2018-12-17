@@ -52,9 +52,13 @@ class Manager
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
                     $request->health = true;
                 } catch (\Exception $ex) {
-                    $this->io->note("[[REQUEST] B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
-                    $this->io->note($ex->getTraceAsString());
-                    $this->io->text('---------------------------------------------');
+                    // if it's not a valid lodestone exception, report it
+                    if (strpos(get_class($ex), 'Lodestone\Exceptions') === false) {
+                        $this->io->note("[REQUEST] [B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
+                        $this->io->note($ex->getTraceAsString());
+                        $this->io->text('---------------------------------------------');
+                    }
+                    
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
