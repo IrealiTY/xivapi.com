@@ -267,7 +267,7 @@ class LodestoneCharacterController extends Controller
             );
         }
 
-        if ($lodestoneId !== 730968 && $this->service->cache->get(__METHOD__.$lodestoneId)) {
+        if ($lodestoneId != 730968 && $this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
     
