@@ -15,7 +15,10 @@
         {% endif %}
     {% endfor %}
 
+    <hr>
+
     {# custom #}
-    <a href="{{ path('docs_file', { filename: 'ChangeLogs' }) }}">Change Logs</a>
-    <a href="{{ path('docs_file', { filename: 'Icons' }) }}">Icons</a>
+    <a href="{{ path('docs_file', { filename: 'Costs' }) }}" class="{{ filename != 'Costs' ? '' : 'active' }}">Server Costs</a>
+    <a href="{{ path('docs_file', { filename: 'ChangeLogs' }) }}" class="{{ filename != 'ChangeLogs' ? '' : 'active' }}">Change Logs</a>
+    <a href="{{ path('docs_file', { filename: 'Icons' }) }}" class="{{ filename != 'Icons' ? '' : 'active' }}">Icons</a>
 </div>

@@ -1,0 +1,87 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}Server Costs - XIVAPI{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        {% include 'docs/nav.html.twig' %}
+    </aside>
+    <main class="doc-page">
+
+        <h6 style="color: #206e43">Total Monthly Cost: <strong>${{ vultr.total + digitalocean.total }}</strong></h6>
+
+        <div>
+            <a href="https://www.patreon.com/bePatron?u=13230932" target="_blank"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png"></a>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <h3>Digital Ocean</h3>
+                <p>I host main applications on US servers via DigitalOcean. These are scaled
+                and split up as demand is required.</p>
+
+                <br>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Server</th>
+                            <th>Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for price in digitalocean.servers %}
+                        <tr>
+                            <td>{{ price.name }}</td>
+                            <td>
+                                {{ price.location }}<br>
+                                <small>Ubuntu {{ price.os }} - {{ price.ram }} MB</small>
+                            </td>
+                            <td>
+                                <h4>${{ price.cost }}</h4>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <h3>Vultr</h3>
+                <p>These are all the Lodestone tracking and auto-parsing servers, they ensure
+                characters, free companies, linkshells and PVP teams are up to date.</p>
+
+                <br>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Server</th>
+                        <th>Cost</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for price in vultr.servers %}
+                        <tr>
+                            <td>{{ price.name }}</td>
+                            <td>
+                                {{ price.location }}<br>
+                                <small>{{ price.os }} - {{ price.ram }}</small>
+                            </td>
+                            <td>
+                                <h4>${{ price.cost }}</h4>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

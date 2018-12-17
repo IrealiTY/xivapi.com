@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Service\Common\GitHub;
 use App\Service\Docs\Docs;
 use App\Service\Docs\Icons;
+use App\Service\Hosting\DigitalOcean;
+use App\Service\Hosting\Vultr;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
@@ -31,6 +33,16 @@ class DocumentationController extends Controller
     public function docs(Request $request, $filename = null)
     {
         $filename = ($filename ? $filename : 'Welcome');
+    
+        // change logs
+        if (strtolower($filename) == 'costs') {
+            return $this->render('docs/docs_costs.html.twig', [
+                'vultr'        => Vultr::costs(),
+                'digitalocean' => DigitalOcean::costs(),
+                'filename'     => $filename,
+                'navigation'   => Docs::LIST
+            ]);
+        }
 
         // change logs
         if (strtolower($filename) == 'changelogs') {
