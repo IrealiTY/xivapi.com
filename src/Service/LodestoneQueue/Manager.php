@@ -54,6 +54,8 @@ class Manager
                     $request->health = true;
                 } catch (\Exception $ex) {
                     $this->io->note("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
+                    print_r($ex->getTrace());
+                    $this->io->text('---------------------------------------------');
                     $request->response = get_class($ex);
                     $request->health = false;
                 }

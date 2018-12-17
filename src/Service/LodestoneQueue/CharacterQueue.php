@@ -48,6 +48,7 @@ class CharacterQueue
             if ($data->FreeCompanyId && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
                 $em->persist((new FreeCompany($data->FreeCompanyId))->setState(Entity::STATE_ADDING));
                 $em->flush();
+
                 FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
             }
         }
