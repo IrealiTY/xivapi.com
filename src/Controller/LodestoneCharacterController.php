@@ -105,7 +105,6 @@ class LodestoneCharacterController extends Controller
         [$ent, $character, $times] = $this->service->get($lodestoneId);
         $response->Info->Character = [
             'State'     => $ent->getState(),
-            //'Modified'  => $times[0],
             'Updated'   => $times[1],
         ];
         
@@ -123,7 +122,6 @@ class LodestoneCharacterController extends Controller
                 $response->Achievements = $achievements;
                 $response->Info->Achievements = [
                     'State'     => (!$achievements && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
-                    //'Modified'  => $times[0],
                     'Updated'   => $times[1],
                 ];
             }
@@ -134,7 +132,6 @@ class LodestoneCharacterController extends Controller
                 $response->Friends = $friends;
                 $response->Info->Friends = [
                     'State'     => (!$friends && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
-                    //'Modified'  => $times[0],
                     'Updated'   => $times[1],
                 ];
             }
@@ -147,7 +144,6 @@ class LodestoneCharacterController extends Controller
                     $response->FreeCompany = $freecompany;
                     $response->Info->FreeCompany = [
                         'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        //'Modified'  => $times[0],
                         'Updated'   => $times[1],
                     ];
                 }
@@ -158,7 +154,6 @@ class LodestoneCharacterController extends Controller
                     $response->FreeCompanyMembers = $members;
                     $response->Info->FreeCompanyMembers = [
                         'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        //'Modified'  => $times[0],
                         'Updated'   => $times[1],
                     ];
                 }
@@ -172,7 +167,6 @@ class LodestoneCharacterController extends Controller
                     $response->PvPTeam = $pvpteam;
                     $response->Info->PvPTeam = [
                         'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        //'Modified'  => $times[0],
                         'Updated'   => $times[1],
                     ];
                 }
