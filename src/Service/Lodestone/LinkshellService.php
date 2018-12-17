@@ -35,10 +35,7 @@ class LinkshellService extends Service
         // send a request to rabbit mq to add this character
         LinkshellQueue::request($id, 'linkshell_add');
         
-        $ent = new Linkshell($id);
-        $this->persist($ent);
-    
-        return [ $ent, null, null ];
+        return [ new Linkshell($id), null, null ];
     }
     
     public function delete(Linkshell $ent)

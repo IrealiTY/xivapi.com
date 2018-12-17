@@ -52,15 +52,7 @@ class CharacterService extends Service
         CharacterFriendQueue::request($id, 'character_friends_add');
         CharacterAchievementQueue::request($id, 'character_achievements_add');
         
-        $ent = new Character($id);
-        $entFriends = new CharacterFriends($id);
-        $entAchievements = new CharacterAchievements($id);
-
-        $this->persist($ent);
-        $this->persist($entFriends);
-        $this->persist($entAchievements);
-
-        return [ $ent, null, null ];
+        return [ new Character($id), null, null ];
     }
     
     public function getAchievements($id): array
