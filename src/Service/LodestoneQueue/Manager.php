@@ -169,6 +169,8 @@ class Manager
                     $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+                    print_r($ex->getTrace());
+                    $this->io->text('---------------------------------------------');
                 }
             });
     
