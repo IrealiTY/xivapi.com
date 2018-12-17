@@ -49,6 +49,6 @@ class CharacterAchievementQueue
         }
 
         LodestoneData::save('character', 'achievements', $ca->getId(), $achievements);
-        $em->persist($ca->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        self::save($em, $ca->setStateCached());
     }
 }

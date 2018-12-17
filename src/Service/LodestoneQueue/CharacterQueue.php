@@ -30,24 +30,22 @@ class CharacterQueue
      */
     protected static function handle(EntityManagerInterface $em, Character $character, $data): void
     {
-        $lodestoneId = $character->getId();
+        $lodestoneId   = $character->getId();
+        $freeCompanyId = $data->FreeCompanyId ?? false;
 
-        // if the previous state was "adding" then this response means it's
-        // a new character and we can request achievements + friends
-        if ($character->getState() === Entity::STATE_ADDING) {
-            // add their FC too
-            if ($data->FreeCompanyId && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
-                $em->persist((new FreeCompany($data->FreeCompanyId))->setState(Entity::STATE_ADDING));
-                $em->flush();
-
-                FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
-            }
+        // if the character is newly added, try add their Free Company
+        if ($character->isAdding()
+            && $freeCompanyId
+            && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null
+        ) {
+            self::save($em, new FreeCompany($data->FreeCompanyId));
+            FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
         }
 
         // convert character data from names to ids
         $data = LodestoneData::convertCharacterData($data);
 
         LodestoneData::save('character', 'data', $lodestoneId, $data);
-        $em->persist($character->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        self::save($em, $character->setStateCached());
     }
 }

@@ -18,4 +18,5 @@ sudo nano /etc/supervisor/conf.d/lodestone.conf
     - sudo supervisorctl reread
     - sudo supervisorctl update
     - sudo supervisorctl restart all
+    - sudo supervisorctl clear all
     - Verify: sudo supervisorctl

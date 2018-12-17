@@ -34,7 +34,6 @@ class FreeCompanyQueue
 
         // Save Free Company Members
         LodestoneData::save('freecompany', 'members', $fc->getId(), $data->Members);
-
-        $em->persist($fc->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        self::save($em, $fc->setStateCached());
     }
 }

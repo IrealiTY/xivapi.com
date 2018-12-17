@@ -27,9 +27,9 @@ class PvPTeamQueue
     /**
      * Handle response specific to this queue
      */
-    public static function handle(EntityManagerInterface $em, PvPTeam $fc, $data): void
+    public static function handle(EntityManagerInterface $em, PvPTeam $pvp, $data): void
     {
-        LodestoneData::save('pvpteam', 'data', $fc->getId(), $data);
-        $em->persist($fc->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        LodestoneData::save('pvpteam', 'data', $pvp->getId(), $data);
+        self::save($em, $pvp->setStateCached());
     }
 }

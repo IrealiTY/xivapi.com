@@ -14,6 +14,18 @@ use Ramsey\Uuid\Uuid;
 trait QueueTrait
 {
     /**
+     * Immediately save an entity
+     *
+     * @param EntityManagerInterface $em
+     * @param $entity
+     */
+    protected static function save(EntityManagerInterface $em, $entity)
+    {
+        $em->persist($entity);
+        $em->flush();
+    }
+
+    /**
      * Queue multiple existing entries
      *
      * @param array $entries
@@ -98,13 +110,13 @@ trait QueueTrait
 
                 // register as not found
                 case NotFoundException::class:
-                    $entity->setState(Entity::STATE_NOT_FOUND)->setUpdated(time())->incrementNotFoundChecks();
+                    $entity->setStateNotFound()->incrementNotFoundChecks();
                     $em->persist($entity);
                     break;
 
                 // register as private
                 case AchievementsPrivateException::class:
-                    $entity->setState(Entity::STATE_PRIVATE)->setUpdated(time())->incrementAchievementsPrivateChecks();
+                    $entity->setStatePrivate()->incrementAchievementsPrivateChecks();
                     $em->persist($entity);
                     break;
             }
