@@ -36,8 +36,8 @@ class CharacterAchievementQueue
         ];
 
         foreach ($data->Achievements as $kind => $achieves) {
-            $achieves->Points += $achieves->PointsObtained;
-            $achieves->ParseDate += $achieves->ParseDate;
+            $achievements->Points    += $achieves->PointsObtained;
+            $achievements->ParseDate = $achieves->ParseDate;
 
             foreach ($achieves->Achievements as $achievement) {
                 $achievements->List[] = [
