@@ -108,7 +108,7 @@ class LodestoneLinkshellController extends Controller
      * @Route("/Linkshell/{lodestoneId}/Update")
      * @Route("/linkshell/{lodestoneId}/update")
      */
-    public function update(Request $request, $lodestoneId)
+    public function update($lodestoneId)
     {
         if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);

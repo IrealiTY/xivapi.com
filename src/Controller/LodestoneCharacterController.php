@@ -199,9 +199,9 @@ class LodestoneCharacterController extends Controller
         LodestoneData::verification($character);
 
         $data = [
-            'ID' => $character->ID,
-            'Bio' => $character->Bio,
-            'VerificationToken' => $character->VerificationToken,
+            'ID'                    => $character->ID,
+            'Bio'                   => $character->Bio,
+            'VerificationToken'     => $character->VerificationToken,
             'VerificationTokenPass' => $character->VerificationTokenPass,
         ];
 

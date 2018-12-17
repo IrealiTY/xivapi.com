@@ -125,7 +125,7 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function update($lodestoneId)
     {
-        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
+        if ($lodestoneId != '9231253336202687179' && $this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
 
