@@ -32,17 +32,19 @@ class CharacterQueue
      */
     protected static function handle(EntityManagerInterface $em, Character $character, $data): void
     {
+        $lodestoneId = $character->getId();
+
         // if the previous state was "adding" then this response means it's
         // a new character and we can request achievements + friends
         if ($character->getState() === Entity::STATE_ADDING) {
             // create db records
-            $em->persist((new CharacterAchievements($character->getId()))->setState(Entity::STATE_ADDING));
-            $em->persist((new CharacterFriends($character->getId()))->setState(Entity::STATE_ADDING));
+            $em->persist((new CharacterAchievements($lodestoneId))->setState(Entity::STATE_ADDING));
+            $em->persist((new CharacterFriends($lodestoneId))->setState(Entity::STATE_ADDING));
             $em->flush();
             
             // send of requests for achievements and friends to be added
-            CharacterAchievementQueue::request($character->getId(), 'character_achievements_add');
-            CharacterFriendQueue::request($character->getId(), 'character_friends_add');
+            CharacterAchievementQueue::request($lodestoneId, 'character_achievements_add');
+            CharacterFriendQueue::request($lodestoneId, 'character_friends_add');
             
             // add their FC too
             if ($data->FreeCompanyId && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null) {
@@ -56,7 +58,7 @@ class CharacterQueue
         // convert character data from names to ids
         $data = LodestoneData::convertCharacterData($data);
 
-        LodestoneData::save('character', 'data', $character->getId(), $data);
+        LodestoneData::save('character', 'data', $lodestoneId, $data);
         $em->persist($character->setState(Entity::STATE_CACHED)->setUpdated(time()));
     }
 }

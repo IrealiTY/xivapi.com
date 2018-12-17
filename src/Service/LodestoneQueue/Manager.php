@@ -91,7 +91,7 @@ class Manager
                 try {
                     // connect to db
                     $this->em->getConnection()->connect();
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - PROCESSING ...");
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - PROCESSING ...");
     
                     // add finished timestamp
                     $response->finished = microtime(true);
@@ -168,7 +168,7 @@ class Manager
                     }
     
                     // confirm
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
+                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
                     print_r($ex->getTrace());
