@@ -52,8 +52,8 @@ class Manager
                     $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
                     $request->health = true;
                 } catch (\Exception $ex) {
-                    $this->io->note("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
-                    print_r($ex->getTrace());
+                    $this->io->note("[[REQUEST] B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
+                    $this->io->note($ex->getTraceAsString());
                     $this->io->text('---------------------------------------------');
                     $request->response = get_class($ex);
                     $request->health = false;
@@ -169,7 +169,7 @@ class Manager
                     // confirm
                     $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - COMPLETE");
                 } catch (\Exception $ex) {
-                    $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+                    $this->io->note("[RESPONSE] [B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
                     print_r($ex->getTrace());
                     $this->io->text('---------------------------------------------');
                 }

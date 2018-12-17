@@ -45,7 +45,6 @@ class CharacterAchievementQueue
                     'Date' => $achievement->ObtainedTimestamp,
                 ];
             }
-
         }
 
         LodestoneData::save('character', 'achievements', $ca->getId(), $achievements);
