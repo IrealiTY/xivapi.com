@@ -27,9 +27,9 @@ class LinkshellQueue
     /**
      * Handle response specific to this queue
      */
-    public static function handle(EntityManagerInterface $em, Linkshell $fc, $data): void
+    public static function handle(EntityManagerInterface $em, Linkshell $ls, $data): void
     {
-        LodestoneData::save('linkshell', 'data', $fc->getId(), $data);
-        $em->persist($fc->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        LodestoneData::save('linkshell', 'data', $ls->getId(), $data->Members);
+        self::save($em, $ls->setStateCached());
     }
 }

@@ -67,8 +67,64 @@ class Entity
     
     public function setState($state)
     {
+        $this->updated = time();
         $this->state = $state;
         return $this;
+    }
+
+    public function setStateAdding()
+    {
+        $this->setState(Entity::STATE_ADDING);
+        return $this;
+    }
+
+    public function setStateCached()
+    {
+        $this->setState(Entity::STATE_CACHED);
+        return $this;
+    }
+
+    public function setStateNotFound()
+    {
+        $this->setState(Entity::STATE_NOT_FOUND);
+        return $this;
+    }
+
+    public function setStateBlackListed()
+    {
+        $this->setState(Entity::STATE_BLACKLISTED);
+        return $this;
+    }
+
+    public function setStatePrivate()
+    {
+        $this->setState(Entity::STATE_PRIVATE);
+        return $this;
+    }
+
+    public function isAdding()
+    {
+        return $this->getState() == self::STATE_ADDING;
+    }
+
+    public function isCached()
+    {
+        return $this->getState() == self::STATE_CACHED;
+    }
+
+    public function isNotFound()
+    {
+        return $this->getState() == self::STATE_NOT_FOUND;
+    }
+
+    public function isBlackListed()
+    {
+        return $this->getState() == self::STATE_BLACKLISTED;
+    }
+
+    public function isPrivate()
+    {
+        return $this->getState() == self::STATE_PRIVATE;
     }
     
     public function getUpdated()
@@ -76,10 +132,9 @@ class Entity
         return $this->updated;
     }
     
-    public function setUpdated($updated)
+    public function setUpdated()
     {
-        $this->updated = $updated;
-        $this->updated = $this->updated < 0 ? 0 : $this->updated;
+        $this->updated = time();
         return $this;
     }
 
@@ -90,6 +145,7 @@ class Entity
 
     public function setPriority($priority)
     {
+        $this->updated = time();
         $this->priority = $priority;
         return $this;
     }
@@ -101,12 +157,14 @@ class Entity
     
     public function setNotFoundChecks($notFoundChecks)
     {
+        $this->updated = time();
         $this->notFoundChecks = $notFoundChecks;
         return $this;
     }
     
     public function incrementNotFoundChecks()
     {
+        $this->updated = time();
         $this->setNotFoundChecks($this->notFoundChecks+1);
         return $this;
     }
@@ -118,12 +176,14 @@ class Entity
     
     public function setAchievementsPrivateChecks($achievementsPrivateChecks)
     {
+        $this->updated = time();
         $this->achievementsPrivateChecks = $achievementsPrivateChecks;
         return $this;
     }
     
     public function incrementAchievementsPrivateChecks()
     {
+        $this->updated = time();
         $this->setAchievementsPrivateChecks($this->achievementsPrivateChecks+1);
         return $this;
     }

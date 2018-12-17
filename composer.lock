@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d5fd1f0167dd641d5297bf4f1454032",
+    "content-hash": "36d748722df7a3451fe06eab76c5c974",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -1840,16 +1840,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.77",
+            "version": "v0.78",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "f16907e09b5529cd92b109cfdadcd5260691a477"
+                "reference": "16a71009a5b402012e00e0d46628ace599c1abb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/f16907e09b5529cd92b109cfdadcd5260691a477",
-                "reference": "f16907e09b5529cd92b109cfdadcd5260691a477",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/16a71009a5b402012e00e0d46628ace599c1abb2",
+                "reference": "16a71009a5b402012e00e0d46628ace599c1abb2",
                 "shasum": ""
             },
             "require": {
@@ -1873,7 +1873,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-12-08T00:22:54+00:00"
+            "time": "2018-12-16T00:22:52+00:00"
         },
         {
             "name": "google/auth",
@@ -3529,16 +3529,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.12",
+            "version": "2.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "8814dc7841db159daed0b32c2b08fb7e03c6afe7"
+                "reference": "42603ce3f42a27f7e14e54feab95db7b680ad473"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/8814dc7841db159daed0b32c2b08fb7e03c6afe7",
-                "reference": "8814dc7841db159daed0b32c2b08fb7e03c6afe7",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/42603ce3f42a27f7e14e54feab95db7b680ad473",
+                "reference": "42603ce3f42a27f7e14e54feab95db7b680ad473",
                 "shasum": ""
             },
             "require": {
@@ -3617,7 +3617,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2018-11-04T05:45:48+00:00"
+            "time": "2018-12-16T17:45:25+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -7393,16 +7393,16 @@
         },
         {
             "name": "xivapi/lodestone-parser",
-            "version": "1.8.4",
+            "version": "1.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/lodestone-parser.git",
-                "reference": "c3e7c1ae764e0c438976dca164ba6c27910caec3"
+                "reference": "ddf310a82bf9e26bc8a68a1a208eea05072d82c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/c3e7c1ae764e0c438976dca164ba6c27910caec3",
-                "reference": "c3e7c1ae764e0c438976dca164ba6c27910caec3",
+                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/ddf310a82bf9e26bc8a68a1a208eea05072d82c7",
+                "reference": "ddf310a82bf9e26bc8a68a1a208eea05072d82c7",
                 "shasum": ""
             },
             "require": {
@@ -7438,7 +7438,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-12-14T15:12:34+00:00"
+            "time": "2018-12-17T10:44:53+00:00"
         },
         {
             "name": "zendframework/zend-code",

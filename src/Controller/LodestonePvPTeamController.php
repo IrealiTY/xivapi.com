@@ -105,13 +105,13 @@ class LodestonePvPTeamController extends Controller
      * @Route("/PvpTeam/{lodestoneId}/Update")
      * @Route("/pvpteam/{lodestoneId}/update")
      */
-    public function update(Request $request, $lodestoneId)
+    public function update($lodestoneId)
     {
         if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
 
-        PvPTeamQueue::request($lodestoneId, 'character_update');
+        PvPTeamQueue::request($lodestoneId, 'pvp_team_update');
 
         $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);

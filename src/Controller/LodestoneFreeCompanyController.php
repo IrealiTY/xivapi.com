@@ -125,11 +125,11 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function update($lodestoneId)
     {
-        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
+        if ($lodestoneId != '9231253336202687179' && $this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
 
-        FreeCompanyQueue::request($lodestoneId, 'character_update');
+        FreeCompanyQueue::request($lodestoneId, 'free_company_update');
         
         $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);

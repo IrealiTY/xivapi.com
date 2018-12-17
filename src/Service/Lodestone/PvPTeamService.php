@@ -30,11 +30,8 @@ class PvPTeamService extends Service
     {
         // send a request to rabbit mq to add this character
         PvPTeamQueue::request($id, 'pvp_team_add');
-        
-        $ent = new PvPTeam($id);
-        $this->persist($ent);
-    
-        return [ $ent, null, null ];
+
+        return [ new PvPTeam($id), null, null ];
     }
     
     public function delete(PvPTeam $ent)

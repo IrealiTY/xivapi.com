@@ -48,10 +48,7 @@ class FreeCompanyService extends Service
         // send a request to rabbit mq to add this character
         FreeCompanyQueue::request($id, 'free_company_add');
         
-        $ent = new FreeCompany($id);
-        $this->persist($ent);
-    
-        return [ $ent, null, null ];
+        return [ new FreeCompany($id), null, null ];
     }
     
     public function delete(FreeCompany $ent)

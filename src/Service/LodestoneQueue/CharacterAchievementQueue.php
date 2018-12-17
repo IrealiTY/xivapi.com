@@ -29,7 +29,26 @@ class CharacterAchievementQueue
      */
     protected static function handle(EntityManagerInterface $em, CharacterAchievements $ca, $data): void
     {
-        LodestoneData::save('character', 'achievements', $ca->getId(), $data);
-        $em->persist($ca->setState(Entity::STATE_CACHED)->setUpdated(time()));
+        $achievements = (Object)[
+            'ParseDate' => time(),
+            'Points'    => 0,
+            'List'      => [],
+        ];
+
+        foreach ($data->Achievements as $kind => $achieves) {
+            $achievements->Points    += $achieves->PointsObtained;
+            $achievements->ParseDate = $achieves->ParseDate;
+
+            foreach ($achieves->Achievements as $achievement) {
+                $achievements->List[] = [
+                    'ID'   => $achievement->ID,
+                    'Date' => $achievement->ObtainedTimestamp,
+                ];
+            }
+
+        }
+
+        LodestoneData::save('character', 'achievements', $ca->getId(), $achievements);
+        self::save($em, $ca->setStateCached());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Service\LodestoneQueue;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -46,7 +45,7 @@ class Manager
                 // update times
                 $request->updated = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("{$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - PROCESSING ...");
+                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - PROCESSING ...");
 
                 // call the API class dynamically and record any exceptions
                 try {
@@ -54,13 +53,15 @@ class Manager
                     $request->health = true;
                 } catch (\Exception $ex) {
                     $this->io->note("[B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
+                    print_r($ex->getTrace());
+                    $this->io->text('---------------------------------------------');
                     $request->response = get_class($ex);
                     $request->health = false;
                 }
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
-                $this->io->text("{$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - COMPLETE");
+                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - COMPLETE");
             });
 
             // close connections
@@ -89,7 +90,7 @@ class Manager
                 try {
                     // connect to db
                     $this->em->getConnection()->connect();
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - PROCESSING ...");
+                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - PROCESSING ...");
     
                     // add finished timestamp
                     $response->finished = microtime(true);
@@ -166,9 +167,11 @@ class Manager
                     }
     
                     // confirm
-                    $this->io->text("{$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : 'Bad') ." - COMPLETE");
+                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->note("[B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+                    print_r($ex->getTrace());
+                    $this->io->text('---------------------------------------------');
                 }
             });
     
