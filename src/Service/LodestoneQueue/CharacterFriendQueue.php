@@ -14,7 +14,7 @@ class CharacterFriendQueue
     /**
      * What method to call on the Lodestone Parser API
      */
-    const METHOD = LodestoneApi::GET_CHARACTER_FRIENDS;
+    const METHOD = LodestoneApi::GET_CHARACTER_FRIENDS_FULL;
 
     /**
      * Get entity from database, if it doesn't exist, make one.
@@ -29,7 +29,7 @@ class CharacterFriendQueue
      */
     protected static function handle(EntityManagerInterface $em, CharacterFriends $ca, $data): void
     {
-        LodestoneData::save('character', 'friends', $ca->getId(), $data);
+        LodestoneData::save('character', 'friends', $ca->getId(), $data->Members);
         $em->persist($ca->setState(Entity::STATE_CACHED)->setUpdated(time()));
     }
 }

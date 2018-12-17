@@ -8,11 +8,12 @@ namespace App\Service\LodestoneQueue;
 class LodestoneApi
 {
     const GET_CHARACTER                   = 'getCharacter';
-    // todo - this needs a "full" method
     const GET_CHARACTER_FRIENDS           = 'getCharacterFriends';
+    const GET_CHARACTER_FRIENDS_FULL      = 'getCharacterFriendsFull';
     const GET_CHARACTER_FOLLOWING         = 'getCharacterFollowing';
+    const GET_CHARACTER_FOLLOWING_FULL    = 'getCharacterFollowingFull';
     const GET_CHARACTER_ACHIEVEMENTS      = 'getCharacterAchievements';
-    const GET_CHARACTER_ACHIEVEMENTS_FULL = 'getCharacterAchievements';
+    const GET_CHARACTER_ACHIEVEMENTS_FULL = 'getCharacterAchievementsFull';
 
     const GET_FREE_COMPANY                = 'getFreeCompany';
     const GET_FREE_COMPANY_FULL           = 'getFreeCompanyFull';
