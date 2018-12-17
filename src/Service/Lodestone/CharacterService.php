@@ -7,6 +7,8 @@ use App\Entity\CharacterAchievements;
 use App\Entity\CharacterFriends;
 use App\Entity\Entity;
 use App\Service\Content\LodestoneData;
+use App\Service\LodestoneQueue\CharacterAchievementQueue;
+use App\Service\LodestoneQueue\CharacterFriendQueue;
 use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
@@ -41,15 +43,22 @@ class CharacterService extends Service
      */
     public function register($id): array
     {
-        if (!is_numeric($id) || strlen($id) > 32) {
+        if (!is_numeric($id) || strlen($id) > 16) {
             throw new NotAcceptableHttpException("Invalid character id: {$id}");
         }
     
-        // send a request to rabbit mq to add this character
+        // send a request to rabbit mq to add this character + friends + achievements
         CharacterQueue::request($id, 'character_add');
+        CharacterFriendQueue::request($id, 'character_friends_add');
+        CharacterAchievementQueue::request($id, 'character_achievements_add');
         
         $ent = new Character($id);
+        $entFriends = new CharacterFriends($id);
+        $entAchievements = new CharacterAchievements($id);
+
         $this->persist($ent);
+        $this->persist($entFriends);
+        $this->persist($entAchievements);
 
         return [ $ent, null, null ];
     }
