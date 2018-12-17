@@ -15,7 +15,6 @@ class DescriptionFormatter
     /** @var array */
     public $colours = [];
     
-    
     public function format(string $description)
     {
         foreach (CsvReader::Get(__DIR__.'/UIColor.csv') as $row) {

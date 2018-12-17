@@ -111,6 +111,11 @@ class PatchContent extends ManualHelper
             $ids = $this->redis->get("ids_{$contentName}");
             $schema = $this->redis->get("schema_{$contentName}");
             
+            if (!$schema) {
+                $this->io->error('No schema for: '. $contentName);
+                continue;
+            }
+            
             // no ids? skip
             if (!$ids) {
                 continue;

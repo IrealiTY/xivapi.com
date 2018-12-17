@@ -10,7 +10,6 @@ class UIColor extends ManualHelper
     
     public function handle()
     {
-        /*
         foreach ($this->redis->get("ids_UIColor") as $id) {
             $color = $this->redis->get("xiv_UIColor{$id}");
 
@@ -23,6 +22,5 @@ class UIColor extends ManualHelper
 
             $this->redis->set("xiv_UIColor{$id}", $color, self::REDIS_DURATION);
         }
-        */
     }
 }

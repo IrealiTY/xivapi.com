@@ -137,13 +137,17 @@ function deploySync($config)
     }
     
     // Pull latest changes
-    writeln('-> Pulling latest code and clearing cache');
-    run('git pull');
+    writeln('-> Pulling latest code from github ...');
+    $result = run('git pull');
+    result($result);
+    writeln('-> Latest 10 commits:');
+    $result = run('git log -10 --pretty=format:"%h - %an, %ar : %s"');
+    result($result);
     
     // composer update
-    #writeln('-> Updating composer libraries (it is normal for this to take a while)...');
-    #$result = run('composer update');
-    #result($result);
+    writeln('-> Updating composer libraries (it is normal for this to take a while)...');
+    $result = run('composer update');
+    result($result);
     
     // clear cache
     writeln('-> Clearing symfony cache ...');
