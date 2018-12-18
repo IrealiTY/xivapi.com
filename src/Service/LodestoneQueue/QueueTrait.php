@@ -88,7 +88,7 @@ trait QueueTrait
             ->setStatus($response->health ? 'good' : 'bad')
             ->setDuration(round($response->finished - $response->updated, 3))
             ->setResponse(is_string($response->response) ? $response->response : get_class($response))
-            ->setCronjob($response->cronjob);
+            ->setCronjob($response->cronjob ?: 'none_set');
 
         $em->persist($stat);
 

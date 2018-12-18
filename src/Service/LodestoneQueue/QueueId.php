@@ -15,6 +15,6 @@ class QueueId
 
     public static function get()
     {
-        return self::$id ?: 'none';
+        return self::$id ?: 'none_set';
     }
 }
