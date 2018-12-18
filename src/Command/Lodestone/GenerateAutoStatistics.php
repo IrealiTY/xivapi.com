@@ -40,7 +40,7 @@ class GenerateAutoStatistics extends Command
         $requestOverdue = 0;
 
         foreach($requests as $req) {
-            $requestOverdue += ($req['req_sec'] - 60);
+            $requestOverdue += ($req['duration'] - 60);
         }
 
         // build stats on remaining rows
