@@ -140,8 +140,8 @@
 
             <p>
                 Current overdue state: {{ stats.request_overdue }},
-                Last request: {{ stats.request_last|dateRelative }},
-                Backlog timeout: {{ stats.request_backlog }}
+                Seconds since last request: {{ stats.request_last }},
+                Seconds overlapping due to backlog: {{ stats.request_backlog }}
             </p>
 
             <table class="table table-sm table-bordered">

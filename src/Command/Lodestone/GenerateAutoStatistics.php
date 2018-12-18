@@ -46,15 +46,16 @@ class GenerateAutoStatistics extends Command
         }
         
         // set status based on overdue amount
-        
+        $timeSinceLastRequest = time() - $requestLast;
+        $timeBacklog = $requestOverdue - $timeSinceLastRequest;
 
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
         $stats = (Object)[
             'requests'         => $requests,
             'request_overdue'  => $requestOverdue,
-            'request_last'     => $requestLast,
-            'request_backlog'  => time() - ($requestLast + $requestOverdue),
+            'request_last'     => $timeSinceLastRequest,
+            'request_backlog'  => $timeBacklog,
             
             'average_duration'      => null,
             'average_duration_data' => [],
