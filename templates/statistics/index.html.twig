@@ -49,6 +49,32 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Requests/Second</h5>
+                                <p class="card-text">
+                                    <strong>{{ stats.request_stats.req_sec|round(3) }}</strong><br><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Requests</h5>
+                                <p class="card-text">
+                                    <strong>{{ stats.request_stats.total|number_format }}</strong>
+                                    <small>Between: {{ stats.request_stats.start_time|dateRelative }} - {{ stats.request_stats.finish_time|dateRelative }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
                         <h2>Characters</h2>
                         <ul class="list-group">
                             <li class="list-group-item"><strong>{{ stats.queue_stats.character_add ?? 0 }}</strong> Add</li>

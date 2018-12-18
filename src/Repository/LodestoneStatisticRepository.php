@@ -36,6 +36,6 @@ class LodestoneStatisticRepository extends ServiceEntityRepository
             'COUNT(ls.id)/(MAX(ls.added)-MIN(ls.added)) as req_sec'
         ]);
 
-        return $sql->getQuery()->getResult();
+        return $sql->getQuery()->getResult()[0];
     }
 }
