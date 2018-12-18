@@ -29,13 +29,16 @@ class LodestoneStatisticRepository extends ServiceEntityRepository
 
         $sql = $this->createQueryBuilder('ls');
         $sql->select([
-            'COUNT(ls.id) as total',
-            'MAX(ls.added) as finish_time',
-            'MIN(ls.added) as start_time',
-            'MAX(ls.added)-MIN(ls.added) as duration',
-            'COUNT(ls.id)/(MAX(ls.added)-MIN(ls.added)) as req_sec'
-        ]);
+                'ls.cronjob',
+                'COUNT(ls.id) as total',
+                'MAX(ls.added) as finish_time',
+                'MIN(ls.added) as start_time',
+                'MAX(ls.added)-MIN(ls.added) as duration',
+                'COUNT(ls.id)/(MAX(ls.added)-MIN(ls.added)) as req_sec'
+            ])
+            ->groupBy('ls.cronjob')
+            ->orderBy('ls.cronjob', 'asc');
 
-        return $sql->getQuery()->getResult()[0];
+        return $sql->getQuery()->getResult();
     }
 }

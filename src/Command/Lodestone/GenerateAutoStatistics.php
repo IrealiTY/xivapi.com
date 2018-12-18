@@ -36,10 +36,18 @@ class GenerateAutoStatistics extends Command
         $time1minute = time() - 60;
         $time1hour   = time() - 3600;
 
+        $requests = $repo->getRequestTimeStats();
+        $requestOverdue = 0;
+
+        foreach($requests as $req) {
+            $requestOverdue += ($req['req_sec'] - 60);
+        }
+
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
         $stats = (Object)[
-            'request_stats'         => $repo->getRequestTimeStats(),
+            'request_stats'         => $requests,
+            'requests_overdue'      => $requestOverdue,
             'average_duration'      => null,
             'average_duration_data' => [],
             'method_stats'          => [],
