@@ -20,7 +20,7 @@ class Cache
     /** @var \stdClass */
     public $config;
     /** @var Redis */
-    public $instance;
+    public $instance = null;
     public $pipeline;
 
     private $options = [
@@ -34,7 +34,6 @@ class Cache
         }
 
         $this->options = (Object)$this->options;
-        $this->connect('REDIS_SERVER_LOCAL');
     }
 
     /**
@@ -87,10 +86,24 @@ class Cache
     }
 
     /**
+     * Check redis is connected
+     */
+    public function checkConnection()
+    {
+        if ($this->instance === null) {
+            $this->connect('REDIS_SERVER_LOCAL');
+        }
+
+        return $this;
+    }
+
+    /**
      * Start a pipeline
      */
     public function initPipeline()
     {
+        $this->checkConnection();
+
         if ($this->pipeline) {
             throw new \Exception('You already have a pipeline excuted, did you mean execPipeline??');
         }
@@ -108,6 +121,8 @@ class Cache
      */
     public function execPipeline()
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -123,6 +138,8 @@ class Cache
      */
     public function increment($key, $amount = 1)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -141,6 +158,8 @@ class Cache
      */
     public function decrement($key, $amount = 1)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -159,6 +178,8 @@ class Cache
      */
     public function set($key, $data, $ttl = self::DEFAULT_TIME, $serialize = false)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -188,6 +209,8 @@ class Cache
      */
     public function setTimeout($key, $ttl = self::DEFAULT_TIME)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -206,6 +229,8 @@ class Cache
      */
     public function get($key, $serialize = false)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -228,6 +253,8 @@ class Cache
      */
     public function getCount($key)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -244,6 +271,8 @@ class Cache
      */
     public function delete($key)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -257,6 +286,8 @@ class Cache
      */
     public function clear($prefix)
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -277,6 +308,8 @@ class Cache
      */
     public function flush()
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -290,6 +323,8 @@ class Cache
      */
     public function stats()
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
@@ -306,6 +341,8 @@ class Cache
      */
     public function keys($prefix = '*')
     {
+        $this->checkConnection();
+
         if ($this->isCacheDisabled()) {
             return null;
         }
