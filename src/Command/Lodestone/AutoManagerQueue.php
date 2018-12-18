@@ -75,10 +75,10 @@ class AutoManagerQueue extends Command
         CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_update_0_normal');
         $this->io->text(__METHOD__ .' character_update_1_normal');
         CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_update_1_normal');
-        // $this->io->text(__METHOD__ .' character_update_2_normal');
-        // CharacterQueue::queue($repo->toUpdate(2, Entity::PRIORITY_NORMAL), 'character_update_2_normal');
-        // $this->io->text(__METHOD__ .' character_update_3_normal');
-        // CharacterQueue::queue($repo->toUpdate(3, Entity::PRIORITY_NORMAL), 'character_update_3_normal');
+        $this->io->text(__METHOD__ .' character_update_2_normal');
+        CharacterQueue::queue($repo->toUpdate(2, Entity::PRIORITY_NORMAL), 'character_update_2_normal');
+        $this->io->text(__METHOD__ .' character_update_3_normal');
+        CharacterQueue::queue($repo->toUpdate(3, Entity::PRIORITY_NORMAL), 'character_update_3_normal');
         $this->io->text(__METHOD__ .' character_update_4_normal');
         CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
         $this->io->text(__METHOD__ .' character_update_5_normal');
