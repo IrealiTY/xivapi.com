@@ -54,7 +54,7 @@ class LodestonePvPTeamController extends Controller
     {
         $lodestoneId = strtolower(trim($lodestoneId));
         
-        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || is_numeric($lodestoneId) || strlen($lodestoneId) !== 40) {
+        if ($lodestoneId < 0 || preg_match("/[a-z0-9]/i", $lodestoneId) === false || is_numeric($lodestoneId) || strlen($lodestoneId) !== 40) {
             throw new NotFoundHttpException('Invalid lodestone ID: '. $lodestoneId);
         }
         
