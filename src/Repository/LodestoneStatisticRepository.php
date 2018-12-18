@@ -37,7 +37,7 @@ class LodestoneStatisticRepository extends ServiceEntityRepository
                 'COUNT(ls.id)/(MAX(ls.added)-MIN(ls.added)) as req_sec'
             ])
             ->groupBy('ls.cronjob')
-            ->orderBy('ls.finish_time', 'desc')
+            ->orderBy('MAX(ls.added)', 'desc')
             ->setMaxResults(100);
 
         return $sql->getQuery()->getResult();
