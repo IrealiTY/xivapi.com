@@ -52,7 +52,7 @@ class GenerateAutoStatistics extends Command
         
         /** @var LodestoneQueueStatus $queueState */
         $queueState = $this->em->getRepository(LodestoneQueueStatus::class)->findAll()[0];
-        $queueState->setActive($timeBacklog > 60)->setMessage("Current backlog time: {$timeBacklog}");
+        $queueState->setActive($timeBacklog < 60)->setMessage("Current backlog time: {$timeBacklog}");
         $this->em->persist($queueState);
         $this->em->flush();
 
