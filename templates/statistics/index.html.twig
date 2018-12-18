@@ -144,9 +144,8 @@
                 <thead>
                     <tr>
                         <th>Cron ID</th>
-                        <th>Total Requests</th>
-                        <th>Start Time</th>
-                        <th>Finish Time</th>
+                        <th>Requests</th>
+                        <th>Time</th>
                         <th>Duration</th>
                         <th>Req/Sec</th>
                     </tr>
@@ -154,10 +153,9 @@
                 <tbody>
                 {% for cron in stats.request_stats %}
                     <tr>
-                        <td><code>{{ cron.cronjob }}</code></td>
+                        <td><code>{{ cron.cronjob|slice(38) }}</code></td>
                         <td>{{ cron.total|number_format }}</td>
                         <td>{{ cron.finish_time|date('Y-m-d H:i') }}</td>
-                        <td>{{ cron.start_time|date('Y-m-d H:i') }}</td>
                         <td>{{ cron.duration }}</td>
                         <td>{{ cron.req_sec }}</td>
                     </tr>
