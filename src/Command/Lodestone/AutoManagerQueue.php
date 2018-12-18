@@ -6,6 +6,9 @@ use App\Entity\Character;
 use App\Entity\CharacterAchievements;
 use App\Entity\CharacterFriends;
 use App\Entity\Entity;
+use App\Entity\FreeCompany;
+use App\Entity\Linkshell;
+use App\Entity\PvPTeam;
 use App\Repository\CharacterAchievementRepository;
 use App\Repository\CharacterFriendsRepository;
 use App\Repository\CharacterRepository;
@@ -140,7 +143,7 @@ class AutoManagerQueue extends Command
     private function queueFreeCompanies()
     {
         /** @var FreeCompanyRepository $repo */
-        $repo = $this->em->getRepository(FreeCompanyQueue::class);
+        $repo = $this->em->getRepository(FreeCompany::class);
 
         // 2 queues for updating free companies
         $this->io->text(__METHOD__ .' free_company_update_0_normal');
@@ -156,7 +159,7 @@ class AutoManagerQueue extends Command
     private function queueLinkshells()
     {
         /** @var LinkshellRepository $repo */
-        $repo = $this->em->getRepository(LinkshellQueue::class);
+        $repo = $this->em->getRepository(Linkshell::class);
 
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' linkshell_update_0_normal');
@@ -172,7 +175,7 @@ class AutoManagerQueue extends Command
     private function queuePvpTeams()
     {
         /** @var PvPTeamRepository $repo */
-        $repo = $this->em->getRepository(PvPTeamQueue::class);
+        $repo = $this->em->getRepository(PvPTeam::class);
 
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' pvp_team_update_0_normal');
