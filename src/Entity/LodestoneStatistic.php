@@ -13,7 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  *          @ORM\Index(name="added", columns={"added"}),
  *          @ORM\Index(name="queue", columns={"queue"}),
  *          @ORM\Index(name="status", columns={"status"}),
- *          @ORM\Index(name="duration", columns={"duration"})
+ *          @ORM\Index(name="method", columns={"method"}),
+ *          @ORM\Index(name="duration", columns={"duration"}),
+ *          @ORM\Index(name="cronjob", columns={"cronjob"})
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\LodestoneStatisticRepository")
@@ -61,6 +63,11 @@ class LodestoneStatistic
      * @ORM\Column(type="string", length=200)
      */
     private $response;
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64)
+     */
+    private $cronjob;
     
     public function __construct()
     {
@@ -161,6 +168,18 @@ class LodestoneStatistic
     {
         $this->response = $response;
         
+        return $this;
+    }
+
+    public function getCronjob(): string
+    {
+        return $this->cronjob;
+    }
+
+    public function setCronjob(string $cronjob)
+    {
+        $this->cronjob = $cronjob;
+
         return $this;
     }
 }

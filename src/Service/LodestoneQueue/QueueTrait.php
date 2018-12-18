@@ -14,6 +14,7 @@ use Ramsey\Uuid\Uuid;
 
 trait QueueTrait
 {
+
     /**
      * Immediately save an entity
      *
@@ -63,6 +64,7 @@ trait QueueTrait
                 'requestId' => Uuid::uuid4()->toString(),
                 'method'    => self::METHOD,
                 'arguments' => [ $id ],
+                'cronjob'   => QueueId::get()
             ]);
         }
 
@@ -85,7 +87,9 @@ trait QueueTrait
             ->setArguments(implode(',', $response->arguments))
             ->setStatus($response->health ? 'good' : 'bad')
             ->setDuration(round($response->finished - $response->updated, 3))
-            ->setResponse(is_string($response->response) ? $response->response : get_class($response));
+            ->setResponse(is_string($response->response) ? $response->response : get_class($response))
+            ->setCronjob($response->cronjob);
+
         $em->persist($stat);
 
         //

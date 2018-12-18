@@ -21,6 +21,7 @@ use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\LodestoneQueue\FreeCompanyQueue;
 use App\Service\LodestoneQueue\LinkshellQueue;
 use App\Service\LodestoneQueue\PvPTeamQueue;
+use App\Service\LodestoneQueue\QueueId;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -52,6 +53,8 @@ class AutoManagerQueue extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
+
+        QueueId::set();
 
         $this->queueCharacters();
         $this->queueFriendLists();
