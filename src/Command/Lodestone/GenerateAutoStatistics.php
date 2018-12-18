@@ -38,16 +38,24 @@ class GenerateAutoStatistics extends Command
 
         $requests = $repo->getRequestTimeStats();
         $requestOverdue = 0;
+        $requestLast = 0;
 
         foreach($requests as $req) {
             $requestOverdue += ($req['duration'] - 60);
+            $requestLast = $req['finish_time'] > $requestLast ? $req['finish_time'] : $requestLast;
         }
+        
+        // set status based on overdue amount
+        
 
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
         $stats = (Object)[
-            'request_stats'         => $requests,
-            'requests_overdue'      => $requestOverdue,
+            'requests'         => $requests,
+            'request_overdue'  => $requestOverdue,
+            'request_last'     => $requestLast,
+            'request_backlog'  => time() - ($requestLast + $requestOverdue),
+            
             'average_duration'      => null,
             'average_duration_data' => [],
             'method_stats'          => [],

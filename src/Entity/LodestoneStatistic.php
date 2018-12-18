@@ -6,7 +6,6 @@ use Ramsey\Uuid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * - This has UpperCase variables as its game content
  * @ORM\Table(
  *     name="lodestone_statistic",
  *     indexes={
