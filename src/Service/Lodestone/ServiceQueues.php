@@ -16,7 +16,7 @@ class ServiceQueues
     const UPDATE_TIMEOUT = 86400;
     
     // maximum characters to process per minute
-    const TOTAL_CHARACTER_UPDATES    = 50;  // Max 1 page
+    const TOTAL_CHARACTER_UPDATES    = 100;  // Max 1 page
     const TOTAL_CHARACTER_FRIENDS    = 25;  // Max 4 pages
     const TOTAL_ACHIEVEMENT_UPDATES  = 10;  // Always 10 pages
     const TOTAL_FREE_COMPANY_UPDATES = 10;  // Max: 10 pages
