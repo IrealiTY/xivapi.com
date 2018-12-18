@@ -10,11 +10,11 @@ class QueueId
 
     public static function set()
     {
-        self::$id = Uuid::uuid4()->toString() . '_' . date('Y_m_d_H_i');
+        self::$id = Uuid::uuid4()->toString() . '__' . date('Y_m_d_H_i');
     }
 
     public static function get()
     {
-        return self::$id;
+        return self::$id ?: 'none';
     }
 }
