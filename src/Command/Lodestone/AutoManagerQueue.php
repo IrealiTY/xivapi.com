@@ -140,7 +140,7 @@ class AutoManagerQueue extends Command
     private function queueFreeCompanies()
     {
         /** @var FreeCompanyRepository $repo */
-        $repo = $this->em->getRepository(Character::class);
+        $repo = $this->em->getRepository(FreeCompanyQueue::class);
 
         // 2 queues for updating free companies
         $this->io->text(__METHOD__ .' free_company_update_0_normal');
@@ -156,7 +156,7 @@ class AutoManagerQueue extends Command
     private function queueLinkshells()
     {
         /** @var LinkshellRepository $repo */
-        $repo = $this->em->getRepository(Character::class);
+        $repo = $this->em->getRepository(LinkshellQueue::class);
 
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' linkshell_update_0_normal');
@@ -172,7 +172,7 @@ class AutoManagerQueue extends Command
     private function queuePvpTeams()
     {
         /** @var PvPTeamRepository $repo */
-        $repo = $this->em->getRepository(Character::class);
+        $repo = $this->em->getRepository(PvPTeamQueue::class);
 
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' pvp_team_update_0_normal');

@@ -58,11 +58,11 @@ trait QueueTrait
 
         foreach ($ids as $id) {
             $rabbit->batchMessage([
-                'queue'         => $queue,
-                'added'         => date('Y-m-d H:i:s'),
-                'requestId'     => Uuid::uuid4()->toString(),
-                'method'        => self::METHOD,
-                'arguments'     => [ $id ],
+                'queue'     => $queue,
+                'added'     => date('Y-m-d H:i:s'),
+                'requestId' => Uuid::uuid4()->toString(),
+                'method'    => self::METHOD,
+                'arguments' => [ $id ],
             ]);
         }
 
