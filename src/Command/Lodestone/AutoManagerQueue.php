@@ -78,14 +78,15 @@ class AutoManagerQueue extends Command
         CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_update_0_normal');
         $this->io->text(__METHOD__ .' character_update_1_normal');
         CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_update_1_normal');
-        $this->io->text(__METHOD__ .' character_update_2_normal');
-        CharacterQueue::queue($repo->toUpdate(2, Entity::PRIORITY_NORMAL), 'character_update_2_normal');
-        $this->io->text(__METHOD__ .' character_update_3_normal');
-        CharacterQueue::queue($repo->toUpdate(3, Entity::PRIORITY_NORMAL), 'character_update_3_normal');
-        $this->io->text(__METHOD__ .' character_update_4_normal');
-        CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
-        $this->io->text(__METHOD__ .' character_update_5_normal');
-        CharacterQueue::queue($repo->toUpdate(5, Entity::PRIORITY_NORMAL), 'character_update_5_normal');
+        
+        //$this->io->text(__METHOD__ .' character_update_2_normal');
+        //CharacterQueue::queue($repo->toUpdate(2, Entity::PRIORITY_NORMAL), 'character_update_2_normal');
+        //$this->io->text(__METHOD__ .' character_update_3_normal');
+        //CharacterQueue::queue($repo->toUpdate(3, Entity::PRIORITY_NORMAL), 'character_update_3_normal');
+        //$this->io->text(__METHOD__ .' character_update_4_normal');
+        //CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
+        //$this->io->text(__METHOD__ .' character_update_5_normal');
+        //CharacterQueue::queue($repo->toUpdate(5, Entity::PRIORITY_NORMAL), 'character_update_5_normal');
 
         // 2 queues for patrons
         $this->io->text(__METHOD__ .' character_update_0_patreon');
@@ -108,8 +109,8 @@ class AutoManagerQueue extends Command
         // 2 queues for basic updates
         $this->io->text(__METHOD__ .' character_friends_update_0_normal');
         CharacterFriendQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_friends_update_0_normal');
-        $this->io->text(__METHOD__ .' character_friends_update_1_normal');
-        CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_friends_update_1_normal');
+        // $this->io->text(__METHOD__ .' character_friends_update_1_normal');
+        // CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_friends_update_1_normal');
 
         // 2 queues for patrons
         $this->io->text(__METHOD__ .' character_friends_update_0_patreon');
@@ -152,8 +153,8 @@ class AutoManagerQueue extends Command
         // 2 queues for updating free companies
         $this->io->text(__METHOD__ .' free_company_update_0_normal');
         FreeCompanyQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'free_company_update_0_normal');
-        $this->io->text(__METHOD__ .' free_company_update_1_normal');
-        FreeCompanyQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'free_company_update_1_normal');
+        // $this->io->text(__METHOD__ .' free_company_update_1_normal');
+        // FreeCompanyQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'free_company_update_1_normal');
 
         // 1 queue for updating patron free companies
         $this->io->text(__METHOD__ .' free_company_update_0_patron');
@@ -168,8 +169,8 @@ class AutoManagerQueue extends Command
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' linkshell_update_0_normal');
         LinkshellQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'linkshell_update_0_normal');
-        $this->io->text(__METHOD__ .' linkshell_update_1_normal');
-        LinkshellQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'linkshell_update_1_normal');
+        // $this->io->text(__METHOD__ .' linkshell_update_1_normal');
+        // LinkshellQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'linkshell_update_1_normal');
 
         // 1 queue for updating patron linkshells
         $this->io->text(__METHOD__ .' linkshell_update_0_patron');
@@ -184,8 +185,8 @@ class AutoManagerQueue extends Command
         // 2 queues for updating linkshells
         $this->io->text(__METHOD__ .' pvp_team_update_0_normal');
         PvPTeamQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'pvp_team_update_0_normal');
-        $this->io->text(__METHOD__ .' pvp_team_update_1_normal');
-        PvPTeamQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'pvp_team_update_1_normal');
+        // $this->io->text(__METHOD__ .' pvp_team_update_1_normal');
+        // PvPTeamQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'pvp_team_update_1_normal');
 
         // 1 queue for updating patron linkshells
         $this->io->text(__METHOD__ .' pvp_team_update_0_patron');
