@@ -29,6 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * This would run on a cronjob on XIVAPI
+ * todo - uncomment queues are things become more stable
  */
 class AutoManagerQueue extends Command
 {
@@ -78,10 +79,10 @@ class AutoManagerQueue extends Command
         CharacterQueue::queue($repo->toUpdate(2, Entity::PRIORITY_NORMAL), 'character_update_2_normal');
         $this->io->text(__METHOD__ .' character_update_3_normal');
         CharacterQueue::queue($repo->toUpdate(3, Entity::PRIORITY_NORMAL), 'character_update_3_normal');
-        $this->io->text(__METHOD__ .' character_update_4_normal');
-        CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
-        $this->io->text(__METHOD__ .' character_update_5_normal');
-        CharacterQueue::queue($repo->toUpdate(5, Entity::PRIORITY_NORMAL), 'character_update_5_normal');
+        // $this->io->text(__METHOD__ .' character_update_4_normal');
+        // CharacterQueue::queue($repo->toUpdate(4, Entity::PRIORITY_NORMAL), 'character_update_4_normal');
+        // $this->io->text(__METHOD__ .' character_update_5_normal');
+        // CharacterQueue::queue($repo->toUpdate(5, Entity::PRIORITY_NORMAL), 'character_update_5_normal');
 
         // 2 queues for patrons
         $this->io->text(__METHOD__ .' character_update_0_patreon');
@@ -90,10 +91,10 @@ class AutoManagerQueue extends Command
         CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_update_1_patreon');
 
         // 2 queues for inactive
-        $this->io->text(__METHOD__ .' character_update_0_low');
-        CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_LOW), 'character_update_0_low');
-        $this->io->text(__METHOD__ .' character_update_1_low');
-        CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_LOW), 'character_update_1_low');
+        // $this->io->text(__METHOD__ .' character_update_0_low');
+        // CharacterQueue::queue($repo->toUpdate(0, Entity::PRIORITY_LOW), 'character_update_0_low');
+        // $this->io->text(__METHOD__ .' character_update_1_low');
+        // CharacterQueue::queue($repo->toUpdate(1, Entity::PRIORITY_LOW), 'character_update_1_low');
     }
 
     private function queueFriendLists()
@@ -110,8 +111,8 @@ class AutoManagerQueue extends Command
         // 2 queues for patrons
         $this->io->text(__METHOD__ .' character_friends_update_0_patreon');
         CharacterFriendQueue::queue($repo->toUpdate(0, Entity::PRIORITY_HIGH), 'character_friends_update_0_patreon');
-        $this->io->text(__METHOD__ .' character_friends_update_1_patreon');
-        CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_friends_update_1_patreon');
+        // $this->io->text(__METHOD__ .' character_friends_update_1_patreon');
+        // CharacterFriendQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_friends_update_1_patreon');
     }
 
     private function queueAchievements()
@@ -127,17 +128,17 @@ class AutoManagerQueue extends Command
         $this->io->text(__METHOD__ .' character_achievements_update_2_normal');
         CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_2_normal');
         $this->io->text(__METHOD__ .' character_achievements_update_3_normal');
-        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_3_normal');
-        $this->io->text(__METHOD__ .' character_achievements_update_4_normal');
-        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_4_normal');
-        $this->io->text(__METHOD__ .' character_achievements_update_5_normal');
-        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_5_normal');
+        // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_3_normal');
+        // $this->io->text(__METHOD__ .' character_achievements_update_4_normal');
+        // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_4_normal');
+        // $this->io->text(__METHOD__ .' character_achievements_update_5_normal');
+        // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_5_normal');
 
         // 2 queues for patrons
         $this->io->text(__METHOD__ .' character_achievements_update_0_patreon');
         CharacterAchievementQueue::queue($repo->toUpdate(0, Entity::PRIORITY_HIGH), 'character_achievements_update_0_patreon');
-        $this->io->text(__METHOD__ .' character_achievements_update_1_patreon');
-        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_achievements_update_1_patreon');
+        // $this->io->text(__METHOD__ .' character_achievements_update_1_patreon');
+        // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_HIGH), 'character_achievements_update_1_patreon');
     }
 
     private function queueFreeCompanies()

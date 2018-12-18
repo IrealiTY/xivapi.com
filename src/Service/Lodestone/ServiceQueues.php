@@ -16,9 +16,9 @@ class ServiceQueues
     const UPDATE_TIMEOUT = 86400;
     
     // maximum characters to process per minute
-    const TOTAL_ACHIEVEMENT_UPDATES  = 20;
-    const TOTAL_PVP_TEAM_UPDATES     = 30;
-    const TOTAL_LINKSHELL_UPDATES    = 30;
+    const TOTAL_ACHIEVEMENT_UPDATES  = 15; // 10 pages, take roughly 4 seconds
+    const TOTAL_PVP_TEAM_UPDATES     = 50; // Usually only 1 page
+    const TOTAL_LINKSHELL_UPDATES    = 40; // Max: 128 = 3 pages, 40 @ 1.5s a LS
     const TOTAL_FREE_COMPANY_UPDATES = 30;
     const TOTAL_CHARACTER_UPDATES    = 100;
     const TOTAL_CHARACTER_FRIENDS    = 50;
