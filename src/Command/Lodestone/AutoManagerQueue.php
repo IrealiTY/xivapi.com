@@ -124,7 +124,7 @@ class AutoManagerQueue extends Command
         $this->io->text(__METHOD__ .' character_achievements_update_0_normal');
         CharacterAchievementQueue::queue($repo->toUpdate(0, Entity::PRIORITY_NORMAL), 'character_achievements_update_0_normal');
         $this->io->text(__METHOD__ .' character_achievements_update_1_normal');
-        // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_1_normal');
+        CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_1_normal');
         // $this->io->text(__METHOD__ .' character_achievements_update_2_normal');
         // CharacterAchievementQueue::queue($repo->toUpdate(1, Entity::PRIORITY_NORMAL), 'character_achievements_update_2_normal');
         // $this->io->text(__METHOD__ .' character_achievements_update_3_normal');
