@@ -22,4 +22,20 @@ class LodestoneStatisticRepository extends ServiceEntityRepository
         $sql->delete()->where('ls.added < :time')->setParameter(':time', $expiry);
         $sql->getQuery()->execute();
     }
+
+    public function getRequestTimeStats()
+    {
+        // SELECT COUNT(*) as total, MAX(added) as finish_time, MIN(added) as start_time, MAX(added)-MIN(added) as duration, COUNT(*)/(MAX(added)-MIN(added)) as req_sec FROM lodestone_statistic;
+
+        $sql = $this->createQueryBuilder('ls');
+        $sql->select([
+            'COUNT(*) as total',
+            'MAX(added) as finish_time',
+            'MIN(added) as start_time',
+            'MAX(added)-MIN(added) as duration',
+            'COUNT(*)/(MAX(added)-MIN(added)) as req_sec'
+        ]);
+
+        return $sql->getQuery()->getResult();
+    }
 }

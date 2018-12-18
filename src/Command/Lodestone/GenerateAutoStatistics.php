@@ -39,6 +39,7 @@ class GenerateAutoStatistics extends Command
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
         $stats = (Object)[
+            'request_stats'         => $repo->getRequestTimeStats(),
             'average_duration'      => null,
             'average_duration_data' => [],
             'method_stats'          => [],
