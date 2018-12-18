@@ -30,22 +30,10 @@ class CharacterQueue
      */
     protected static function handle(EntityManagerInterface $em, Character $character, $data): void
     {
-        $lodestoneId   = $character->getId();
-        $freeCompanyId = $data->FreeCompanyId ?? false;
-
-        // if the character is newly added, try add their Free Company
-        if ($character->isAdding()
-            && $freeCompanyId
-            && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null
-        ) {
-            self::save($em, new FreeCompany($data->FreeCompanyId));
-            FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
-        }
-
         // convert character data from names to ids
-        $data = LodestoneData::convertCharacterData($data);
+        $data = CharacterConverter::handle($data);
 
-        LodestoneData::save('character', 'data', $lodestoneId, $data);
+        LodestoneData::save('character', 'data', $character->getId(), $data);
         self::save($em, $character->setStateCached());
     }
 }
