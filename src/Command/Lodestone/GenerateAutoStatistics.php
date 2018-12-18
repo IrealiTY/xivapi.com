@@ -2,6 +2,7 @@
 
 namespace App\Command\Lodestone;
 
+use App\Entity\LodestoneQueueStatus;
 use App\Entity\LodestoneStatistic;
 use App\Repository\LodestoneStatisticRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,6 +49,12 @@ class GenerateAutoStatistics extends Command
         // set status based on overdue amount
         $timeSinceLastRequest = time() - $requestLast;
         $timeBacklog = $requestOverdue - $timeSinceLastRequest;
+        
+        /** @var LodestoneQueueStatus $queueState */
+        $queueState = $this->em->getRepository(LodestoneQueueStatus::class)->findAll()[0];
+        $queueState->setActive($timeBacklog > 60)->setMessage("Current backlog time: {$timeBacklog}");
+        $this->em->persist($queueState);
+        $this->em->flush();
 
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
