@@ -60,6 +60,31 @@ class LodestoneCharacterController extends Controller
             ])
         );
     }
+    
+    /**
+     * @Route("/Character/{lodestoneId}/add")
+     * @Route("/character/{lodestoneId}/add")
+     */
+    public function add($lodestoneId)
+    {
+        if ($lodestoneId != 730968 && $this->service->cache->get(__METHOD__.$lodestoneId)) {
+            return $this->json(0);
+        }
+        
+        // mark the character as "adding" so that FC + PVP Teams are auto-added
+        /** @var Character $ent */
+        [$ent] = $this->service->get($lodestoneId);
+        if ($ent) {
+            $ent->setStateAdding();
+            $this->service->em->persist($ent);
+            $this->service->em->flush();
+        }
+        
+        $this->service->register($lodestoneId);
+        $this->service->cache->set(__METHOD__.$lodestoneId, 1, ServiceQueues::UPDATE_TIMEOUT);
+        
+        return $this->json(1);
+    }
 
     /**
      * @Route("/Character/{lodestoneId}")
