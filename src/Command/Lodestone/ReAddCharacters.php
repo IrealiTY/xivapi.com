@@ -22,8 +22,9 @@ class ReAddCharacters extends Command
         $characters = array_filter($characters);
         
         foreach ($characters as $id) {
-            print_r($id);
-            die;
+            $output->writeln('Add: '. $id);
+            $url = "https://staging.xivapi.com/character/{$id}/add?key=f0ef8bd32a004f1daf0d53b1";
+            file_get_contents($url);
         }
     }
 }
