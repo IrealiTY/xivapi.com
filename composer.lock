@@ -7462,16 +7462,16 @@
         },
         {
             "name": "xivapi/lodestone-parser",
-            "version": "1.8.6",
+            "version": "1.8.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xivapi/lodestone-parser.git",
-                "reference": "b41044eeccbe48c06c59804731f5b19749197977"
+                "reference": "282b590a4c8ce2da5182dc8c35ca971b98e62ace"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/b41044eeccbe48c06c59804731f5b19749197977",
-                "reference": "b41044eeccbe48c06c59804731f5b19749197977",
+                "url": "https://api.github.com/repos/xivapi/lodestone-parser/zipball/282b590a4c8ce2da5182dc8c35ca971b98e62ace",
+                "reference": "282b590a4c8ce2da5182dc8c35ca971b98e62ace",
                 "shasum": ""
             },
             "require": {
@@ -7507,7 +7507,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-12-17T19:01:02+00:00"
+            "time": "2018-12-19T17:48:53+00:00"
         },
         {
             "name": "zendframework/zend-code",
