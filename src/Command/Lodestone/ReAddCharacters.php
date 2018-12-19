@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Lodestone;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
