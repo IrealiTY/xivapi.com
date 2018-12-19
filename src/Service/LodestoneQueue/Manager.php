@@ -4,6 +4,7 @@ namespace App\Service\LodestoneQueue;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Manager
@@ -72,7 +73,15 @@ class Manager
             $requestRabbit->close();
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->note("[A] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+            $this->io->note("[A] [REQUEST] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+            
+            // this should trigger hyper visor to restart it
+            // bit of a hack right now...
+            if (get_class($ex) == AMQPRuntimeException::class) {
+                $requestRabbit->close();
+                $responseRabbit->close();
+                exit(1337);
+            }
         }
     }
     
