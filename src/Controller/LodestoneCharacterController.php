@@ -164,7 +164,7 @@ class LodestoneCharacterController extends Controller
         }
     
         // if character is in an FC
-        if ($character->FreeCompanyId) {
+        if (isset($character->FreeCompanyId)) {
             /** @var FreeCompany $ent */
             if ($content->FC) {
                 [$ent, $freecompany] = $this->fcService->get($character->FreeCompanyId);
@@ -200,10 +200,22 @@ class LodestoneCharacterController extends Controller
                     ];
                 }
             }
+        } else {
+            $response->FreeCompany = null;
+            $response->Info->FreeCompany = [
+                'State'     => 0,
+                'Updated'   => null,
+            ];
+    
+            $response->FreeCompanyMembers = null;
+            $response->Info->FreeCompanyMembers = [
+                'State'     => 0,
+                'Updated'   => null,
+            ];
         }
 
         // if character is in a PvP Team
-        if ($character->PvPTeamId) {
+        if (isset($character->PvPTeamId)) {
             /** @var PvPTeam $ent */
             if ($content->PVP) {
                 [$ent, $pvpteam] = $this->pvpService->get($character->PvPTeamId);
@@ -221,6 +233,12 @@ class LodestoneCharacterController extends Controller
                     ];
                 }
             }
+        } else {
+            $response->PvPTeam = null;
+            $response->Info->PvPTeam = [
+                'State'     => 0,
+                'Updated'   => null,
+            ];
         }
     
         return $this->json($response);
