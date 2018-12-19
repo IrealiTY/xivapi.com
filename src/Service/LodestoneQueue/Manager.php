@@ -46,7 +46,7 @@ class Manager
                 // update times
                 $request->updated = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - PROCESSING ...");
+                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments));
 
                 // call the API class dynamically and record any exceptions
                 try {
@@ -66,7 +66,6 @@ class Manager
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
-                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments) ." - COMPLETE");
             });
 
             // close connections
@@ -103,7 +102,7 @@ class Manager
                 try {
                     // connect to db
                     $this->em->getConnection()->connect();
-                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - PROCESSING ...");
+                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response));
     
                     // add finished timestamp
                     $response->finished = microtime(true);
@@ -180,7 +179,6 @@ class Manager
                     }
     
                     // confirm
-                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response) ." - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->note("[RESPONSE] [B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
                     print_r($ex->getTrace());
