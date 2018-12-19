@@ -103,7 +103,7 @@ class LodestoneCharacterController extends Controller
 
         /** @var Character $ent */
         [$ent, $character] = $this->service->get($lodestoneId);
-        if ($ent) {
+        if ($ent && $character) {
             $response->Character = $character;
             $response->Info->Character = [
                 'State'     => $ent->getState(),
