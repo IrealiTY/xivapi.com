@@ -73,15 +73,15 @@ class Manager
             $requestRabbit->close();
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->note("[A] [REQUEST] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
-            
-            // this should trigger hyper visor to restart it
-            // bit of a hack right now...
+            // can trigger due to socket closure, fine to just let hypervisor restart
             if (get_class($ex) == AMQPRuntimeException::class) {
+                $this->io->note('-- (AMQPRuntimeException) SOCKET CLOSED :: RESTARTING PROCESS --');
                 $requestRabbit->close();
                 $responseRabbit->close();
                 exit(1337);
             }
+
+            $this->io->note("[A] [REQUEST] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
         }
     }
     
