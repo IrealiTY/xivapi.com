@@ -488,6 +488,10 @@ class LodestoneData
     
     public static function extendAchievementData($achievements)
     {
+        if (!isset($achievements->List) || empty($achievements->List)) {
+            return null;
+        }
+        
         foreach ($achievements->List as $i => $achievement) {
             $achievements->List[$i] = self::extendCharacterDataHandlerSimple(
                 self::getContent("xiv_Achievement_{$achievement->ID}"),
