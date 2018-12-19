@@ -58,5 +58,7 @@ class CharacterQueue
 
         LodestoneData::save('character', 'data', $lodestoneId, $data);
         self::save($em, $character->setStateCached());
+        
+        print_r($character);
     }
 }

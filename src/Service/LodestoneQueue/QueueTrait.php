@@ -116,23 +116,20 @@ trait QueueTrait
                 // register as not found
                 case NotFoundException::class:
                     $entity->setStateNotFound()->incrementNotFoundChecks();
-                    $em->persist($entity);
+                    self::save($em, $entity);
                     break;
 
                 // register as private
                 case AchievementsPrivateException::class:
                 case ForbiddenException::class:
                     $entity->setStatePrivate()->incrementAchievementsPrivateChecks();
-                    $em->persist($entity);
+                    self::save($em, $entity);
                     break;
             }
-
-            $em->flush();
             return;
         }
 
         // send response to be handled
         self::handle($em, $entity, $response->response);
-        $em->flush();
     }
 }

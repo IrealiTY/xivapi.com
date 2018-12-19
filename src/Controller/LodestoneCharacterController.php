@@ -62,7 +62,6 @@ class LodestoneCharacterController extends Controller
     }
     
     /**
-     * @Route("/Character/{lodestoneId}/add")
      * @Route("/character/{lodestoneId}/add")
      */
     public function add($lodestoneId)
