@@ -79,7 +79,7 @@ class RabbitMQ
             $this->channelAsync->basic_ack($message->delivery_info['delivery_tag']);
         };
 
-        $this->channelAsync->basic_qos(0, 1, false);
+        $this->channelAsync->basic_qos(0, 10, false);
 
         // basic message consumer
         $this->channelAsync->basic_consume(
