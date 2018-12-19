@@ -79,6 +79,8 @@ class RabbitMQ
             $this->channelAsync->basic_ack($message->delivery_info['delivery_tag']);
         };
 
+        $this->channelAsync->basic_qos(0, 1, false);
+
         // basic message consumer
         $this->channelAsync->basic_consume(
             $this->queue,
@@ -89,8 +91,6 @@ class RabbitMQ
             self::QUEUE_OPTIONS['nowait'],
             $callback
         );
-        
-        $this->channelAsync->basic_qos(0, 1, false);
 
         // process messages
         while(count($this->channelAsync->callbacks)) {
@@ -167,6 +167,8 @@ class RabbitMQ
     public function setQueue(string $queue = null): RabbitMQ
     {
         $this->queueDeclared = true;
+
+        $this->channel->basic_qos(0, 1, false);
         $this->channel->queue_declare(
             $queue ? $queue : $this->queue,
             self::QUEUE_OPTIONS['passive'],
@@ -176,7 +178,6 @@ class RabbitMQ
             self::QUEUE_OPTIONS['nowait']
         );
     
-        $this->channel->basic_qos(0, 1, false);
         
         return $this;
     }
