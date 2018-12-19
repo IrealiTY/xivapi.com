@@ -485,4 +485,21 @@ class LodestoneData
         $data->MountsCount     = count($data->Mounts);
         $data->MountsProgress  = $data->MountsCount > 0 ? round($data->MountsCount / $data->MountsTotal, 3) * 100 : 0;
     }
+    
+    public static function extendAchievementData($achievements)
+    {
+        foreach ($achievements->List as $i => $achievement) {
+            $achievement->List[$i] = self::extendCharacterDataHandlerSimple(
+                self::getContent("xiv_Achievement_{$achievement->ID}"),
+                [
+                    "ID",
+                    "Name_[LANG]",
+                    "Points",
+                    "Icon",
+                ]
+            );
+    
+            $achievement->List[$i]->Date = $achievement->Date;
+        }
+    }
 }

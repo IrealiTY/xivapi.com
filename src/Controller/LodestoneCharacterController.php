@@ -124,6 +124,11 @@ class LodestoneCharacterController extends Controller
                     'State'     => (!$achievements && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
                     'Updated'   => $times[1],
                 ];
+    
+                // if we're to extend character info
+                if ($request->get('extended')) {
+                    LodestoneData::extendAchievementData($response->Achievements);
+                }
             }
             
             /** @var CharacterFriends $ent */
