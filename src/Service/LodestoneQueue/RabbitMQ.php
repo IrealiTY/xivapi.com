@@ -89,6 +89,8 @@ class RabbitMQ
             self::QUEUE_OPTIONS['nowait'],
             $callback
         );
+        
+        $this->channelAsync->basic_qos(0, 1, false);
 
         // process messages
         while(count($this->channelAsync->callbacks)) {
