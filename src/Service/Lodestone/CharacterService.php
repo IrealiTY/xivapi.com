@@ -51,6 +51,7 @@ class CharacterService extends Service
         CharacterQueue::request($id, 'character_add');
         CharacterFriendQueue::request($id, 'character_friends_add');
         CharacterAchievementQueue::request($id, 'character_achievements_add');
+        sleep(1);
         
         return [ new Character($id), null, null ];
     }
