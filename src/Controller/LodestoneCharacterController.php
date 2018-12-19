@@ -103,10 +103,18 @@ class LodestoneCharacterController extends Controller
 
         /** @var Character $ent */
         [$ent, $character, $times] = $this->service->get($lodestoneId);
-        $response->Info->Character = [
-            'State'     => $ent->getState(),
-            'Updated'   => $times[1],
-        ];
+        if ($ent) {
+            $response->Info->Character = [
+                'State'     => $ent->getState(),
+                'Updated'   => $times[1],
+            ];
+        } else {
+            $response->Character = null;
+            $response->Info->Character = [
+                'State'     => 1,
+                'Updated'   => null
+            ];
+        }
         
         if ($ent->getState() == Entity::STATE_CACHED) {
             $response->Character = $character;
@@ -119,26 +127,42 @@ class LodestoneCharacterController extends Controller
             /** @var CharacterAchievements $ent */
             if ($content->AC) {
                 [$ent, $achievements, $times] = $this->service->getAchievements($lodestoneId);
-                $response->Achievements = $achievements;
-                $response->Info->Achievements = [
-                    'State'     => (!$achievements && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
-                    'Updated'   => $times[1],
-                ];
+                if ($ent) {
+                    $response->Achievements = $achievements;
+                    $response->Info->Achievements = [
+                        'State'     => (!$achievements && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
+                        'Updated'   => $times[1],
+                    ];
     
-                // if we're to extend character info
-                if ($request->get('extended')) {
-                    LodestoneData::extendAchievementData($response->Achievements);
+                    // if we're to extend character info
+                    if ($request->get('extended')) {
+                        LodestoneData::extendAchievementData($response->Achievements);
+                    }
+                } else {
+                    $response->Achievements = null;
+                    $response->Info->Achievements = [
+                        'State'     => 1,
+                        'Updated'   => null,
+                    ];
                 }
             }
             
             /** @var CharacterFriends $ent */
             if ($content->FR) {
                 [$ent, $friends, $times] = $this->service->getFriends($lodestoneId);
-                $response->Friends = $friends;
-                $response->Info->Friends = [
-                    'State'     => (!$friends && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
-                    'Updated'   => $times[1],
-                ];
+                if ($ent) {
+                    $response->Friends = $friends;
+                    $response->Info->Friends = [
+                        'State'     => (!$friends && $ent->getState() == 2) ? Entity::STATE_ADDING : $ent->getState(),
+                        'Updated'   => $times[1],
+                    ];
+                } else {
+                    $response->Friends = null;
+                    $response->Info->Friends = [
+                        'State'     => 1,
+                        'Updated'   => null,
+                    ];
+                }
             }
         
             // if character is in an FC
@@ -146,21 +170,37 @@ class LodestoneCharacterController extends Controller
                 /** @var FreeCompany $ent */
                 if ($content->FC) {
                     [$ent, $freecompany, $times] = $this->fcService->get($character->FreeCompanyId);
-                    $response->FreeCompany = $freecompany;
-                    $response->Info->FreeCompany = [
-                        'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        'Updated'   => $times[1],
-                    ];
+                    if ($ent) {
+                        $response->FreeCompany = $freecompany;
+                        $response->Info->FreeCompany = [
+                            'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
+                            'Updated'   => $times[1],
+                        ];
+                    } else {
+                        $response->FreeCompany = null;
+                        $response->Info->FreeCompany = [
+                            'State'     => 1,
+                            'Updated'   => null,
+                        ];
+                    }
                 }
                 
                 /** @var FreeCompany $ent */
                 if ($content->FCM) {
                     [$ent, $members, $times] = $this->fcService->getMembers($character->FreeCompanyId);
-                    $response->FreeCompanyMembers = $members;
-                    $response->Info->FreeCompanyMembers = [
-                        'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        'Updated'   => $times[1],
-                    ];
+                    if ($ent) {
+                        $response->FreeCompanyMembers = $members;
+                        $response->Info->FreeCompanyMembers = [
+                            'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
+                            'Updated'   => $times[1],
+                        ];
+                    } else {
+                        $response->FreeCompanyMembers = null;
+                        $response->Info->FreeCompanyMembers = [
+                            'State'     => 1,
+                            'Updated'   => null,
+                        ];
+                    }
                 }
             }
     
@@ -169,11 +209,19 @@ class LodestoneCharacterController extends Controller
                 /** @var PvPTeam $ent */
                 if ($content->PVP) {
                     [$ent, $pvpteam, $times] = $this->pvpService->get($character->PvPTeamId);
-                    $response->PvPTeam = $pvpteam;
-                    $response->Info->PvPTeam = [
-                        'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        'Updated'   => $times[1],
-                    ];
+                    if ($ent) {
+                        $response->PvPTeam = $pvpteam;
+                        $response->Info->PvPTeam = [
+                            'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
+                            'Updated'   => $times[1],
+                        ];
+                    } else {
+                        $response->PvPTeam = null;
+                        $response->Info->PvPTeam = [
+                            'State'     => 1,
+                            'Updated'   => null,
+                        ];
+                    }
                 }
             }
         }
