@@ -173,6 +173,8 @@ class RabbitMQ
             self::QUEUE_OPTIONS['auto_delete'],
             self::QUEUE_OPTIONS['nowait']
         );
+    
+        $this->channel->basic_qos(0, 5, false);
         
         return $this;
     }
