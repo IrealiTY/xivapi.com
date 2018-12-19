@@ -174,7 +174,7 @@ class RabbitMQ
             self::QUEUE_OPTIONS['nowait']
         );
     
-        $this->channel->basic_qos(0, 5, false);
+        $this->channel->basic_qos(0, 1, false);
         
         return $this;
     }
