@@ -80,10 +80,10 @@ class Lodestone extends DocBuilder implements DocInterface
             ->gap()
     
             // DevBlogs
-            ->h6('Dev Blogs')
-            ->route('/lodestone/devblogs')
-            ->usage('{endpoint}/lodestone/devblogs')
-            ->text('Get the latest DevBlogs information, this is pulled from an XML feed.')
+            ->h6('Dev Blog')
+            ->route('/lodestone/devblog')
+            ->usage('{endpoint}/lodestone/devblog')
+            ->text('Get the latest Developer Blog information, this is pulled from an XML feed.')
             ->gap()
 
             // DevPosts
