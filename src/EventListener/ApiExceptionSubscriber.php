@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Service\Common\Statistics;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,12 +41,15 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             'Error'   => true,
             'Message' => "API EXCEPTION: {$message}",
             'Debug' => [
+                'ID'      => Uuid::uuid4()->toString(),
                 'Class'   => get_class($ex),
                 'File'    => "#{$ex->getLine()} {$file}",
                 'Method'  => $event->getRequest()->getMethod(),
                 'Path'    => $event->getRequest()->getPathInfo(),
                 'Note'    => "Get on discord: https://discord.gg/MFFVHWC and complain to @vekien :)",
                 'Code'    => method_exists($ex, 'getStatusCode') ? $ex->getStatusCode() : 500,
+                'Time'    => time(),
+                'Date'    => date('Y-m-d H:i:s'),
             ]
         ];
         
