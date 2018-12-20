@@ -23,21 +23,17 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            return null;
-        }
-    
         $ex         = $event->getException();
         $path       = $event->getRequest()->getPathInfo();
         $pathinfo   = pathinfo($path);
     
-        
         if (isset($pathinfo['extension'])) {
             $event->setResponse(new Response("File not found: ". $path, 404));
             return null;
         }
         
         $file = str_ireplace('/home/dalamud/dalamud', '', $ex->getFile());
+        $file = str_ireplace('/home/dalamud/dalamud_staging', '', $file);
         $message = $ex->getMessage() ?: '(no-exception-message)';
         
         $json = [
@@ -52,6 +48,12 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
                 'Code'    => method_exists($ex, 'getStatusCode') ? $ex->getStatusCode() : 500,
             ]
         ];
+        
+        file_put_contents(__DIR__.'/exceptions.txt', json_encode($json, JSON_PRETTY_PRINT).PHP_EOL.PHP_EOL, FILE_APPEND);
+    
+        if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
+            return null;
+        }
 
         $response = new JsonResponse($json, $json['Debug']['Code']);
         $response->headers->set('Content-Type','application/json');

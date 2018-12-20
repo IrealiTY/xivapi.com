@@ -2,6 +2,7 @@
 
 namespace App\Command\Lodestone;
 
+use App\Entity\LodestoneQueueStatus;
 use App\Entity\LodestoneStatistic;
 use App\Repository\LodestoneStatisticRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,16 +39,31 @@ class GenerateAutoStatistics extends Command
 
         $requests = $repo->getRequestTimeStats();
         $requestOverdue = 0;
+        $requestLast = 0;
 
         foreach($requests as $req) {
             $requestOverdue += ($req['duration'] - 60);
+            $requestLast = $req['finish_time'] > $requestLast ? $req['finish_time'] : $requestLast;
         }
+        
+        // set status based on overdue amount
+        $timeSinceLastRequest = time() - $requestLast;
+        $timeBacklog = $requestOverdue - $timeSinceLastRequest;
+        
+        /** @var LodestoneQueueStatus $queueState */
+        $queueState = $this->em->getRepository(LodestoneQueueStatus::class)->findAll()[0];
+        $queueState->setActive($timeBacklog < 60)->setMessage("Current backlog time: {$timeBacklog}");
+        $this->em->persist($queueState);
+        $this->em->flush();
 
         // build stats on remaining rows
         /** @var LodestoneStatistic $ls */
         $stats = (Object)[
-            'request_stats'         => $requests,
-            'requests_overdue'      => $requestOverdue,
+            'requests'         => $requests,
+            'request_overdue'  => $requestOverdue,
+            'request_last'     => $timeSinceLastRequest,
+            'request_backlog'  => $timeBacklog,
+            
             'average_duration'      => null,
             'average_duration_data' => [],
             'method_stats'          => [],

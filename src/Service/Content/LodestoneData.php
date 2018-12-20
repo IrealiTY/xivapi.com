@@ -9,21 +9,14 @@ use Ramsey\Uuid\Uuid;
 
 class LodestoneData
 {
-    const CACHE_KEY = 'local_character_data';
-
-    /** @var array */
-    private static $content = [];
     /** @var Cache */
     private static $cache;
     
     public static function folder(string $type, string $id)
     {
-        $folder = implode('/', [
-            getenv('MOUNT_STORAGE'),
-            $type,
-            substr($id, -4),
-            $id,
-        ]);
+        $mount    = getenv('MOUNT_STORAGE');
+        $idFolder = substr($id, -4);
+        $folder   = "{$mount}/{$type}/{$idFolder}/{$id}";
         
         if (!is_dir($folder)) {
             mkdir($folder, 0777, true);
@@ -85,13 +78,6 @@ class LodestoneData
     
     #-------------------------------------------------------------------------------------------------------------------
     
-    public static function initContentCache()
-    {
-        $cache = new Cache();
-        self::$content = $cache->get(self::CACHE_KEY);
-        self::$cache = $cache;
-    }
-    
     public static function getContent($key)
     {
         if (self::$cache === null) {
@@ -99,155 +85,6 @@ class LodestoneData
         }
 
         return self::$cache->get($key) ?: null;
-    }
-    
-    public static function findContent($category, $string)
-    {
-        return self::$content->{$category}->{Hash::hash($string)} ?? "[NOT FOUND: {$category} - {$string}]";
-    }
-    
-    /**
-     * Converts character data down to just raw ids
-     */
-    public static function convertCharacterData($data)
-    {
-        if (empty(self::$content)) {
-            self::initContentCache();
-        }
-        
-        self::verification($data);
-        
-        //
-        // ActiveClassJob
-        //
-        unset($data->ActiveClassJob->ClassName);
-        unset($data->ActiveClassJob->JobName);
-        
-        //
-        // Misc
-        //
-        $data->Gender        = $data->Gender == 'male' ? 1 : 2;
-        $data->Town          = self::findContent('Town', $data->Town->Name);
-        $data->GuardianDeity = self::findContent('GuardianDeity', $data->GuardianDeity->Name);
-        $data->Race          = self::findContent('Race', $data->Race);
-        $data->Tribe         = self::findContent('Tribe', $data->Tribe);
-        $data->Title         = self::findContent('Title', $data->Title);
-        
-        //
-        // Build gearset
-        //
-        $set = new \stdClass();
-        $set->GearKey    = "{$data->ActiveClassJob->ClassID}_{$data->ActiveClassJob->JobID}";
-        $set->ClassID    = $data->ActiveClassJob->ClassID;
-        $set->JobID      = $data->ActiveClassJob->JobID;
-        $set->Level      = $data->ActiveClassJob->Level;
-        $set->Gear       = new \stdClass();
-        $set->Attributes = [];
-        
-        //
-        // Attributes
-        //
-        foreach ($data->Attributes as $attr) {
-            $attr->Name = ($attr->Name === 'Critical Hit Rate') ? 'Critical Hit' : $attr->Name;
-            $set->Attributes[self::findContent('BaseParam', $attr->Name)] = $attr->Value;
-        }
-        
-        //
-        // Gear
-        //
-        foreach ($data->Gear as $slot => $item) {
-            $item->ID = self::findContent('Item', $item->Name);
-            
-            // has dye?
-            if (isset($item->Dye) && $item->Dye) {
-                $item->Dye = self::findContent('Item', $item->Dye->Name);
-            }
-            
-            // has mirage?
-            if (isset($item->Mirage) && $item->Mirage) {
-                $item->Mirage = self::findContent('Item', $item->Mirage->Name);
-            }
-            
-            // has materia?
-            if (isset($item->Materia) && $item->Materia) {
-                foreach ($item->Materia as $m => $materia) {
-                    $item->Materia[$m] = self::findContent('Item', $materia->Name);
-                }
-            }
-            
-            // don't need these
-            unset($item->Slot);
-            unset($item->Name);
-            unset($item->Category);
-            
-            $set->Gear->{$slot} = $item;
-        }
-        
-        unset($data->Attributes);
-        unset($data->Gear);
-        $data->GearSet = $set;
-        
-        //
-        // ClassJobs
-        //
-        foreach ($data->ClassJobs as $classJob) {
-            unset($classJob->ClassName);
-            unset($classJob->JobName);
-        }
-        
-        //
-        // Grand Company
-        //
-        if (isset($data->GrandCompany->Name)) {
-            $town = [
-                'Maelstrom' => 'GCRankLimsa',
-                'Order of the Twin Adder' => 'GCRankGridania',
-                'Immortal Flames' => 'GCRankUldah',
-            ];
-            
-            $townSelected   = $town[$data->GrandCompany->Name];
-            $genderSelected = $data->Gender == 1 ? 'Male' : 'Female';
-            $rankDataSet    = "{$townSelected}{$genderSelected}Text";
-            
-            $data->GrandCompany->NameID = self::findContent('GrandCompany', $data->GrandCompany->Name);
-            $data->GrandCompany->RankID = self::findContent($rankDataSet, $data->GrandCompany->Rank);
-            
-            unset($data->GrandCompany->Name);
-            unset($data->GrandCompany->Rank);
-            unset($data->GrandCompany->Icon);
-        }
-        
-        //
-        // Minions and Mounts
-        //
-        foreach ($data->Minions as $m => $minion) {
-            $data->Minions[$m] = self::findContent('Companion', $minion->Name);
-
-            // add all minions of light
-            if (in_array($data->Minions[$m], [67,68,69,70])) {
-                $data->Minions[] = 67;
-                $data->Minions[] = 68;
-                $data->Minions[] = 69;
-                $data->Minions[] = 70;
-            }
-
-            // add all wind up leaders
-            if (in_array($data->Minions[$m], [71,72,72,74])) {
-                $data->Minions[] = 71;
-                $data->Minions[] = 72;
-                $data->Minions[] = 72;
-                $data->Minions[] = 74;
-            }
-        }
-        
-        foreach ($data->Mounts as $m => $mount) {
-            $data->Mounts[$m] = self::findContent('Mount', $mount->Name);
-        }
-
-        $data->Minions = array_values(array_unique($data->Minions));
-        $data->Mounts = array_values(array_unique($data->Mounts));
-        
-        return $data;
     }
     
     /**
@@ -647,5 +484,26 @@ class LodestoneData
         $data->MountsTotal     = $totals[1];
         $data->MountsCount     = count($data->Mounts);
         $data->MountsProgress  = $data->MountsCount > 0 ? round($data->MountsCount / $data->MountsTotal, 3) * 100 : 0;
+    }
+    
+    public static function extendAchievementData($achievements)
+    {
+        if (!isset($achievements->List) || empty($achievements->List)) {
+            return null;
+        }
+        
+        foreach ($achievements->List as $i => $achievement) {
+            $achievements->List[$i] = self::extendCharacterDataHandlerSimple(
+                self::getContent("xiv_Achievement_{$achievement->ID}"),
+                [
+                    "ID",
+                    "Name_[LANG]",
+                    "Points",
+                    "Icon",
+                ]
+            );
+    
+            $achievements->List[$i]->Date = $achievement->Date;
+        }
     }
 }

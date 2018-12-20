@@ -51,6 +51,7 @@ class CharacterService extends Service
         CharacterQueue::request($id, 'character_add');
         CharacterFriendQueue::request($id, 'character_friends_add');
         CharacterAchievementQueue::request($id, 'character_achievements_add');
+        sleep(1);
         
         return [ new Character($id), null, null ];
     }
@@ -61,7 +62,7 @@ class CharacterService extends Service
         $ent = $this->getRepository(CharacterAchievements::class)->find($id);
 
         if (!$ent) {
-            [ null, null, null ];
+            return [ null, null, null ];
         }
         
         if ($ent->getState() == Entity::STATE_CACHED) {
@@ -75,10 +76,11 @@ class CharacterService extends Service
     {
         /** @var Character $ent */
         $ent = $this->getRepository(CharacterFriends::class)->find($id);
-
+    
         if (!$ent) {
-            throw new NotFoundHttpException();
+            return [ null, null, null ];
         }
+    
     
         if ($ent->getState() == Entity::STATE_CACHED) {
             $data = LodestoneData::load('character', 'friends', $id);

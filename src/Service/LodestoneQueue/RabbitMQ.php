@@ -173,6 +173,7 @@ class RabbitMQ
             self::QUEUE_OPTIONS['auto_delete'],
             self::QUEUE_OPTIONS['nowait']
         );
+    
         
         return $this;
     }

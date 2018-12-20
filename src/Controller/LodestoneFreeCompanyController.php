@@ -88,12 +88,19 @@ class LodestoneFreeCompanyController extends Controller
             /** @var FreeCompany $ent */
             if ($content->FCM) {
                 [$ent, $members, $times] = $this->service->getMembers($freecompany->ID);
-                $response->FreeCompanyMembers = $members;
-                $response->Info->FreeCompanyMembers = [
-                    'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                    //'Modified'  => $times[0],
-                    'Updated'   => $times[1],
-                ];
+                if ($ent) {
+                    $response->FreeCompanyMembers = $members;
+                    $response->Info->FreeCompanyMembers = [
+                        'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
+                        'Updated'   => $times[1],
+                    ];
+                } else {
+                    $response->FreeCompanyMembers = null;
+                    $response->Info->FreeCompanyMembers = [
+                        'State'     => 1,
+                        'Updated'   => null,
+                    ];
+                }
             }
         }
     

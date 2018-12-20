@@ -5,6 +5,7 @@ namespace App\Service\LodestoneQueue;
 use App\Entity\Character;
 use App\Entity\Entity;
 use App\Entity\FreeCompany;
+use App\Entity\PvPTeam;
 use App\Service\Content\LodestoneData;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -32,7 +33,8 @@ class CharacterQueue
     {
         $lodestoneId   = $character->getId();
         $freeCompanyId = $data->FreeCompanyId ?? false;
-
+        $pvpTeamId     = $data->PvPTeamId ?? false;
+        
         // if the character is newly added, try add their Free Company
         if ($character->isAdding()
             && $freeCompanyId
@@ -41,9 +43,18 @@ class CharacterQueue
             self::save($em, new FreeCompany($data->FreeCompanyId));
             FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
         }
-
+    
+        // if the character is newly added, try add their pvp team
+        if ($character->isAdding()
+            && $pvpTeamId
+            && $em->getRepository(PvPTeam::class)->find($data->PvPTeamId) === null
+        ) {
+            self::save($em, new PvPTeam($data->PvPTeamId));
+            PvPTeamQueue::request($data->PvPTeamId, 'pvp_team_add');
+        }
+        
         // convert character data from names to ids
-        $data = LodestoneData::convertCharacterData($data);
+        $data = CharacterConverter::handle($data);
 
         LodestoneData::save('character', 'data', $lodestoneId, $data);
         self::save($em, $character->setStateCached());

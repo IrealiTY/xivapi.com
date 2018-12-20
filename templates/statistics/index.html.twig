@@ -138,7 +138,11 @@
 
             <h3>Auto-Cron Job Statistics (max: 100)</h3>
 
-            <p>Current overdue state: {{ stats.requests_overdue }} seconds</p>
+            <p>
+                Current overdue state: {{ stats.request_overdue }},
+                Seconds since last request: {{ stats.request_last }},
+                Seconds overlapping due to backlog: {{ stats.request_backlog }}
+            </p>
 
             <table class="table table-sm table-bordered">
                 <thead>
@@ -151,7 +155,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for cron in stats.request_stats %}
+                {% for cron in stats.requests %}
                     <tr>
                         <td><code>{{ cron.cronjob|slice(38) }}</code></td>
                         <td>{{ cron.total|number_format }}</td>

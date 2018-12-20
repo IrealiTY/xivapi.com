@@ -1,46 +1,39 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Lodestone;
 
-use App\Service\Content\LodestoneData;
-use App\Service\Content\Hash;
+use App\Service\LodestoneQueue\CharacterConverter;
 use App\Service\Redis\Cache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * This should run every day or week
- *      0 0 * * 0 /usr/bin/php /home/dalamud/dalamud/bin/console BuildCharacterGameCacheCommand
+ * This would run on the XIVAPI side. XIVAPI processes responses.
  */
-class BuildCharacterGameCacheCommand extends Command
+class BuildCharacterData extends Command
 {
-    use CommandHelperTrait;
-    
-    /** @var Cache $cache */
+    /** @var SymfonyStyle */
+    private $io;
+    /** @var Cache */
     private $cache;
     /** @var array */
     private $data;
     
-    public function __construct(?string $name = null, Cache $cache)
-    {
-        parent::__construct($name);
-        $this->cache = $cache;
-    }
-    
     protected function configure()
     {
-        $this
-            ->setName('BuildCharacterGameCacheCommand')
-            ->setDescription('Cache game data for characters')
-        ;
+        $this->setName('BuildCharacterData');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->setSymfonyStyle($input, $output);
-        $this->io->title('Patch Management');
-
+        $this->cache = new Cache();
+        $this->cache->checkConnection();
+        
+        $this->io = new SymfonyStyle($input, $output);
+        $this->io->title('Building character data');
+    
         $this->CacheMounts();
         $this->cacheGeneric('Companion');
         $this->cacheGeneric('Race');
@@ -57,10 +50,17 @@ class BuildCharacterGameCacheCommand extends Command
         $this->cacheGeneric('GCRankUldahFemaleText');
         $this->cacheGeneric('GCRankUldahMaleText');
         $this->cacheItems();
-
-        // cache for 100 days!
-        $this->cache->set(LodestoneData::CACHE_KEY, $this->data, (60*60*24*100));
-        $this->complete();
+        
+        $code = var_export($this->data, true);
+        $code = str_ireplace([ 'array (', ')' ], [ '[', ']' ], $code);
+    
+        $template = __DIR__.'/../../Service/LodestoneQueue/CharacterDataTemplate.template';
+        $template = file_get_contents($template);
+        $template = str_ireplace('{{DATA}}', $code, $template);
+        file_put_contents(
+            __DIR__ . '/../../Service/LodestoneQueue/CharacterData.php',
+            $template
+        );
     }
     
     private function cacheGeneric($contentName)
@@ -68,25 +68,25 @@ class BuildCharacterGameCacheCommand extends Command
         $this->io->text("Cache: {$contentName}");
         foreach ($this->cache->get("ids_{$contentName}") as $id) {
             $content = $this->cache->get("xiv_{$contentName}_{$id}");
-            $this->data[$contentName][Hash::hash($content->Name_en)] = $content->ID;
+            $this->data[$contentName][CharacterConverter::convert($content->Name_en)] = $content->ID;
             
             if (isset($content->NameFemale_en)) {
-                $this->data[$contentName][Hash::hash($content->NameFemale_en)] = $content->ID;
+                $this->data[$contentName][CharacterConverter::convert($content->NameFemale_en)] = $content->ID;
             }
         }
     }
-
+    
     private function CacheMounts()
     {
         $this->io->text("Cache: Mount");
         foreach ($this->cache->get("ids_Mount") as $id) {
             $content = $this->cache->get("xiv_Mount_{$id}");
-
+            
             if ($content->Order == -1) {
                 continue;
             }
-
-            $this->data['Mount'][Hash::hash($content->Name_en)] = $content->ID;
+            
+            $this->data['Mount'][CharacterConverter::convert($content->Name_en)] = $content->ID;
         }
     }
     
@@ -101,20 +101,14 @@ class BuildCharacterGameCacheCommand extends Command
             $this->io->progressAdvance();
             
             $item = $this->cache->get("xiv_Item_{$id}");
-
+            
             // no name? skip
             if (empty($item->Name_en)) {
                 continue;
             }
-
+            
             // build hash
-            $hash = Hash::hash($item->Name_en);
-
-            // check for dupes
-            if (isset($this->data['Item'][$hash])) {
-                $this->io->error('Duplicate for: '. $item->Name_en);
-            }
-
+            $hash = CharacterConverter::convert($item->Name_en);
             $this->data['Item'][$hash] = $item->ID;
         }
         $this->io->progressFinish();
