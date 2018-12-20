@@ -79,6 +79,8 @@ class RabbitMQ
             $this->channelAsync->basic_ack($message->delivery_info['delivery_tag']);
         };
 
+        $this->channelAsync->basic_qos(0, 100, false);
+
         // basic message consumer
         $this->channelAsync->basic_consume(
             $this->queue,
@@ -165,6 +167,8 @@ class RabbitMQ
     public function setQueue(string $queue = null): RabbitMQ
     {
         $this->queueDeclared = true;
+
+        $this->channel->basic_qos(0, 100, false);
         $this->channel->queue_declare(
             $queue ? $queue : $this->queue,
             self::QUEUE_OPTIONS['passive'],
