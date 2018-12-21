@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Common\Arrays;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -46,6 +47,36 @@ class ApplicationsController extends Controller
         $this->session     = $session;
         $this->apps        = $apps;
         $this->cache       = $cache;
+    }
+
+    /**
+     * @Route("/app-stats")
+     */
+    public function stats()
+    {
+        $apps = $this->cache->keys("keystats_*");
+        $ips  = $this->cache->keys("ipstats_*");
+
+        $results = [];
+        foreach($apps as $i => $key) {
+            $id = explode('_', $key)[1] ?? false;
+            if (!$id) { continue; }
+
+            $count = $this->cache->getCount($key);
+
+            $app = $this->appManager->getByKey($id);
+            $results[$count][] = [
+                $key,
+                $count,
+                $app ? $app->getApiKey() : 'no-app',
+                $app ? $app->getName() : 'no name',
+                $app ? $app->getUser()->getUsername() : 'no user'
+            ];
+        }
+
+        krsort($results);
+
+        return $this->json($results);
     }
     
     /**
