@@ -4,10 +4,8 @@ namespace App\Controller;
 
 use App\Exception\UnauthorizedAccessException;
 use App\Service\Apps\AppManager;
-use App\Service\Common\GoogleAnalytics;
 use App\Service\Companion\Companion;
 use App\Service\Redis\Cache;
-use Elasticsearch\Common\Exceptions\Forbidden403Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;

@@ -6,7 +6,6 @@ use App\Service\Apps\AppManager;
 use App\Service\Common\Environment;
 use App\Service\Common\GoogleAnalytics;
 use App\Service\Common\Language;
-use App\Service\Common\Maintenance;
 use App\Service\Redis\Cache;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -59,6 +58,7 @@ class RequestListener
         Environment::set($request);
         Environment::ensureValidHost($request);
         Language::set($request);
+        GoogleAnalytics::hit($request->getPathInfo());
         $this->apps->track($request);
     }
 }

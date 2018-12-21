@@ -2,7 +2,6 @@
 
 namespace App\Service\User;
 
-use App\Service\Common\GoogleAnalytics;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request;
 
