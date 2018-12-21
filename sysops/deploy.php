@@ -145,9 +145,9 @@ function deploySync($config)
     result($result);
     
     // composer update
-    writeln('-> Updating composer libraries (it is normal for this to take a while)...');
-    $result = run('composer update');
-    result($result);
+    //writeln('-> Updating composer libraries (it is normal for this to take a while)...');
+    //$result = run('composer update');
+    //result($result);
     
     // clear cache
     writeln('-> Clearing symfony cache ...');
