@@ -27,9 +27,9 @@ class CharacterFriendQueue
     /**
      * Handle response specific to this queue
      */
-    protected static function handle(EntityManagerInterface $em, CharacterFriends $cf, $data): void
+    protected static function handle(EntityManagerInterface $em, CharacterFriends $cf, $lodestoneId, $data): void
     {
-        LodestoneData::save('character', 'friends', $cf->getId(), $data->Members);
+        LodestoneData::save('character', 'friends', $lodestoneId, $data->Members);
         self::save($em, $cf->setStateCached());
     }
 }

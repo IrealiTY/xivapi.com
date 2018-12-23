@@ -41,7 +41,7 @@ trait QueueTrait
 
         $ids = [];
         foreach ($entries as $obj) {
-            $ids[] = $obj->getId();
+            $ids[] = $obj['id'];
         }
 
         self::request($ids, $queue);
@@ -52,64 +52,36 @@ trait QueueTrait
      */
     public static function request($ids, string $queue)
     {
-        $ids = is_string($ids) ? [ $ids ] : $ids;
-
         $rabbit = new RabbitMQ();
         $rabbit->connect($queue .'_request');
-
-        foreach ($ids as $id) {
-            $rabbit->batchMessage([
-                'queue'     => $queue,
-                'added'     => date('Y-m-d H:i:s'),
-                'requestId' => Uuid::uuid4()->toString(),
-                'method'    => self::METHOD,
-                'arguments' => [ $id ],
-                'cronjob'   => QueueId::get()
-            ]);
-        }
-
-        $rabbit->sendBatch()->close();
+        $rabbit->sendMessage([
+            'requestId' => QueueId::get(),
+            'queue'     => $queue,
+            'added'     => time(),
+            'method'    => self::METHOD,
+            'ids'       => $ids,
+        ]);
+        
+        $rabbit->close();
     }
 
     /**
      * Handle a response from rabbitmq
      */
-    public static function response(EntityManagerInterface $em, $response): void
+    public static function response(EntityManagerInterface $em, $lodestoneId, $data): void
     {
-        //
-        // Record stats
-        //
-        // Stats
-        $stat = new LodestoneStatistic();
-        $stat
-            ->setQueue($response->queue)
-            ->setMethod($response->method)
-            ->setArguments(implode(',', $response->arguments))
-            ->setStatus($response->health ? 'good' : 'bad')
-            ->setDuration(round($response->finished - $response->updated, 3))
-            ->setResponse(is_string($response->response) ? $response->response : get_class($response))
-            ->setCronjob($response->cronjob ?: 'none_set');
-
-        $em->persist($stat);
-
-        //
-        // Process response
-        //
-
-        // grab the characters lodestone id from the first argument
-        $lodestoneId = $response->arguments[0];
-
         /** @var Character $entity */
         $entity = self::getEntity($em, $lodestoneId);
 
         // handle response state
         // if there was an error
-        if (!$response->health) {
-            switch($response->response) {
+        if (is_string($data)) {
+            switch($data) {
                 // unknown error
                 default: break;
 
                 // todo - not sure what to do here
+                case \Exception::class:
                 case GenericException::class:
                     break;
 
@@ -130,6 +102,6 @@ trait QueueTrait
         }
 
         // send response to be handled
-        self::handle($em, $entity, $response->response);
+        self::handle($em, $entity, $lodestoneId, $data);
     }
 }

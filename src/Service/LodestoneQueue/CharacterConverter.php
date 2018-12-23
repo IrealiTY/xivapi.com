@@ -146,7 +146,5 @@ class CharacterConverter
     
         $data->Minions = array_values(array_unique($data->Minions));
         $data->Mounts = array_values(array_unique($data->Mounts));
-    
-        return $data;
     }
 }

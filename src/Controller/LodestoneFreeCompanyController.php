@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Entity;
-use App\Entity\FreeCompany;
+use App\Exception\ContentGoneException;
 use App\Service\Apps\AppManager;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\FreeCompanyService;
@@ -11,7 +10,6 @@ use App\Service\Lodestone\ServiceQueues;
 use App\Service\LodestoneQueue\FreeCompanyQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -36,8 +34,6 @@ class LodestoneFreeCompanyController extends Controller
      */
     public function search(Request $request)
     {
-        $this->apps->fetch($request, true);
-
         return $this->json(
             Japan::query('/japan/search/freecompany', [
                 'name'   => $request->get('name'),
@@ -55,10 +51,6 @@ class LodestoneFreeCompanyController extends Controller
     {
         $lodestoneId = strtolower(trim($lodestoneId));
         
-        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) < 16 || strlen($lodestoneId) > 20) {
-            throw new NotFoundHttpException('Invalid lodestone ID: '. $lodestoneId);
-        }
-
         // choose which content you want
         $data = $request->get('data') ? explode(',', strtoupper($request->get('data'))) : [];
         $content = (object)[
@@ -66,79 +58,56 @@ class LodestoneFreeCompanyController extends Controller
         ];
     
         $response = (Object)[
-            'FreeCompany'        => null,
-            'FreeCompanyMembers' => null,
+            'FreeCompany'            => null,
+            'FreeCompanyMembers'     => null,
             'Info' => (Object)[
                 'FreeCompany'        => null,
                 'FreeCompanyMembers' => null,
             ],
         ];
 
-        /** @var FreeCompany $ent */
-        [$ent, $freecompany, $times] = $this->service->get($lodestoneId);
+        $freecompany = $this->service->get($lodestoneId);
+        $response->FreeCompany = $freecompany->data;
         $response->Info->FreeCompany = [
-            'State'     => $ent->getState(),
-            //'Modified'  => $times[0],
-            'Updated'   => $times[1],
+            'State'     => $freecompany->ent->getState(),
+            'Updated'   => $freecompany->ent->getUpdated()
         ];
     
-        if ($ent->getState() == Entity::STATE_CACHED) {
-            $response->FreeCompany = $freecompany;
-    
-            /** @var FreeCompany $ent */
-            if ($content->FCM) {
-                [$ent, $members, $times] = $this->service->getMembers($freecompany->ID);
-                if ($ent) {
-                    $response->FreeCompanyMembers = $members;
-                    $response->Info->FreeCompanyMembers = [
-                        'State'     => $ent ? $ent->getState() : Entity::STATE_NONE,
-                        'Updated'   => $times[1],
-                    ];
-                } else {
-                    $response->FreeCompanyMembers = null;
-                    $response->Info->FreeCompanyMembers = [
-                        'State'     => 1,
-                        'Updated'   => null,
-                    ];
-                }
-            }
+        if ($content->FCM) {
+            $members = $this->service->getMembers($freecompany->ID);
+            $response->FreeCompanyMembers = $members;
+            $response->Info->FreeCompanyMembers = [
+                'State'     => $members->ent->getState(),
+                'Updated'   => $members->ent->getUpdated()
+            ];
         }
     
         return $this->json($response);
     }
-    
-    /**
-     * @Route("/FreeCompany/{lodestoneId}/Delete")
-     * @Route("/freecompany/{lodestoneId}/delete")
-     */
-    public function delete(Request $request, $lodestoneId)
-    {
-        $this->apps->fetch($request, true);
 
-        /** @var FreeCompany $ent */
-        [$ent] = $this->service->get($lodestoneId);
-        
-        // delete it if the character was not found
-        if ($ent->getState() === FreeCompany::STATE_NOT_FOUND) {
-            return $this->json($this->service->delete($ent));
-        }
-    
-        return $this->json(false);
-    }
-    
     /**
      * @Route("/FreeCompany/{lodestoneId}/Update")
      * @Route("/freecompany/{lodestoneId}/update")
      */
     public function update($lodestoneId)
     {
-        if ($lodestoneId != '9231253336202687179' && $this->service->cache->get(__METHOD__.$lodestoneId)) {
+        $freecompany = $this->service->get($lodestoneId);
+    
+        if ($freecompany->ent->isBlackListed) {
+            throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
+        }
+    
+        if ($freecompany->ent->isAdding()) {
+            throw new ContentGoneException(ContentGoneException::CODE, 'Not Added');
+        }
+        
+        if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
 
         FreeCompanyQueue::request($lodestoneId, 'free_company_update');
         
-        $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);
+        $this->service->cache->set(__METHOD__.$lodestoneId, 1, ServiceQueues::UPDATE_TIMEOUT);
         return $this->json(1);
     }
 }

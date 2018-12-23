@@ -16,7 +16,7 @@ class Entity
     const PRIORITY_NORMAL   = 0;  // everyone gets this
     const PRIORITY_DEAD     = 1;  // Characters considered dead
     const PRIORITY_LOW      = 2;  // characters that hardly change,
-    const PRIORITY_HIGH     = 10; // patreon characters
+    const PRIORITY_PATRON   = 10; // patreon characters
     
     /**
      * @ORM\Id

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Exception\UnauthorizedAccessException;
-use App\Service\Apps\AppManager;
 use App\Service\Companion\Companion;
 use App\Service\Redis\Cache;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,16 +16,13 @@ class CompanionMarketController extends Controller
 {
     const ENDPOINT_CACHE_DURATION = 60;
 
-    /** @var AppManager */
-    private $apps;
     /** @var Companion */
     private $companion;
     /** @var Cache */
     private $cache;
     
-    public function __construct(AppManager $apps, Companion $companion)
+    public function __construct(Companion $companion)
     {
-        $this->apps = $apps;
         $this->companion  = $companion;
         $this->cache      = new Cache();
     }
@@ -48,10 +44,8 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/{server}/items/{itemId}")
      */
-    public function itemPrices(Request $request, string $server, int $itemId)
+    public function itemPrices(string $server, int $itemId)
     {
-        $this->apps->fetch($request, true);
-
         $key = 'companion_market_items_'. md5($server . $itemId);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemPrices($itemId);
@@ -64,10 +58,8 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/{server}/items/{itemId}/history")
      */
-    public function itemHistory(Request $request, string $server, int $itemId)
+    public function itemHistory(string $server, int $itemId)
     {
-        $this->apps->fetch($request, true);
-
         $key = 'companion_market_items_history_'. md5($server . $itemId);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getItemHistory($itemId);
@@ -80,10 +72,8 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/{server}/category/{category}")
      */
-    public function categoryList(Request $request, string $server, int $category)
+    public function categoryList(string $server, int $category)
     {
-        $this->apps->fetch($request, true);
-
         $key = 'companion_market_category_'. md5($server . $category);
         if (!$data = $this->cache->get($key)) {
             $data = $this->companion->setServer($server)->getCategoryList($category);
@@ -96,10 +86,8 @@ class CompanionMarketController extends Controller
     /**
      * @Route("/market/categories")
      */
-    public function categories(Request $request)
+    public function categories()
     {
-        $this->apps->fetch($request, true);
-
         return $this->json(
             $this->companion->getCategories()
         );

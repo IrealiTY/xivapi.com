@@ -10,7 +10,7 @@ class QueueId
 
     public static function set()
     {
-        self::$id = Uuid::uuid4()->toString() . '__' . date('Y_m_d_H_i');
+        self::$id = substr(Uuid::uuid4()->toString(), 0, 8) . '.' . date('Y_m_d_H_i');
     }
 
     public static function get()

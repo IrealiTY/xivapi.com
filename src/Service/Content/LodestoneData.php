@@ -11,7 +11,52 @@ class LodestoneData
 {
     /** @var Cache */
     private static $cache;
+
+    /**
+     * Save some lodestone data
+     *
+     * @param string $type
+     * @param string $filename
+     * @param $id
+     * @param array $data
+     */
+    public static function save(string $type, string$filename, $id, array $data)
+    {
+        file_put_contents(
+            self::folder($type, $id) .'/'. $filename .'.json',
+            json_encode($data)
+        );
+    }
     
+    /**
+     * Load some lodestone data
+     *
+     * @param string $type
+     * @param string $filename
+     * @param $id
+     * @return mixed|null
+     */
+    public static function load(string $type, string $filename, $id)
+    {
+        $json = null;
+        $jsonFilename = self::folder($type, $id) .'/'. $filename .'.json';
+
+        if (file_exists($jsonFilename)) {
+            $json = json_decode(
+                file_get_contents($jsonFilename)
+            );
+        }
+
+        return $json;
+    }
+    
+    /**
+     * Check for a storage folder, creates it on runtime.
+     *
+     * @param string $type
+     * @param string $id
+     * @return string
+     */
     public static function folder(string $type, string $id)
     {
         $mount    = getenv('MOUNT_STORAGE');
@@ -27,56 +72,8 @@ class LodestoneData
     
     #-------------------------------------------------------------------------------------------------------------------
     
-    public static function save($type, $filename, $id, $data)
-    {
-        file_put_contents(self::folder($type, $id) .'/'. $filename .'.json', json_encode($data));
-        
-        // this is just to update cache
-        self::modified($type, $filename, $id);
-    }
-
-    public static function delete($type, $filename, $id)
-    {
-        @unlink(self::folder($type, $id) .'/'. $filename .'.json');
-    }
+    // todo - below should be in its own file
     
-    public static function load($type, $filename, $id)
-    {
-        $json = null;
-        $jsonFilename = self::folder($type, $id) .'/'. $filename .'.json';
-
-        if (file_exists($jsonFilename)) {
-            $json = json_decode(file_get_contents($jsonFilename));
-        }
-
-        return [ $json, self::modified($type, $filename, $id) ];
-    }
-    
-    public static function modified($type, $filename, $id)
-    {
-        $filename = self::folder($type, $id) .'/'. $filename .'.json';
-
-        if (!file_exists($filename)) {
-            return [null, null];
-        }
-        
-        $key      = 'content_modified_'. md5($filename);
-        $cache    = new Cache();
-        $hash     = sha1(trim(file_get_contents($filename)));
-        $updated  = filemtime($filename);
-        $modified = $cache->get($key) ?: null;
-        
-        // if no modified cached or hash has changed
-        if ($modified == null || $hash != $modified[0]) {
-            $modified = [ $hash, time() ];
-            $cache->set($key, $modified, (60*60*24*999));
-        }
-        
-        unset($cache);
-        return [ $modified[1], $updated ];
-    }
-    
-    #-------------------------------------------------------------------------------------------------------------------
     
     public static function getContent($key)
     {
@@ -351,7 +348,7 @@ class LodestoneData
             $data->GearSet->ClassID,
             $data->GearSet->JobID
         );
-
+        
         //
         // Gear Attributes
         //
@@ -364,7 +361,7 @@ class LodestoneData
                 ]
             );
 
-            $data->GearSet->Attributes->{$id} = [
+            $data->GearSet->Attributes[$id] = [
                 'Attribute' => $attr,
                 'Value' => $value
             ];

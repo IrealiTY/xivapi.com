@@ -8,93 +8,100 @@ use App\Entity\CharacterFriends;
 use App\Entity\Entity;
 use App\Service\Content\LodestoneData;
 use App\Service\LodestoneQueue\CharacterAchievementQueue;
+use App\Service\LodestoneQueue\CharacterConverter;
 use App\Service\LodestoneQueue\CharacterFriendQueue;
 use App\Service\LodestoneQueue\CharacterQueue;
 use App\Service\Service;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CharacterService extends Service
 {
     /**
      * Get a character; this will add the character if they do not exist
      */
-    public function get($id): array
+    public function get($lodestoneId, bool $extended = null): \stdClass
     {
+        if (!is_numeric($lodestoneId) || $lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) > 16) {
+            throw new NotAcceptableHttpException("Invalid character id: {$lodestoneId}");
+        }
+
         /** @var Character $ent */
-        $ent = $this->getRepository(Character::class)->find($id);
-        return $ent ? $this->fetch($ent) : $this->register($id);
+        if ($ent = $this->getRepository(Character::class)->find($lodestoneId)) {
+            // if entity is cached, grab the data
+            if ($ent->isCached()) {
+                $data = LodestoneData::load('character', 'data', $lodestoneId);
+                CharacterConverter::handle($data);
+                
+                if ($extended) {
+                    LodestoneData::extendCharacterData($data);
+                }
+            }
+            
+            return (Object)[
+                'ent'  => $ent,
+                'data' => $data ?? null,
+            ];
+        }
+    
+        CharacterQueue::request($lodestoneId, 'character_add');
+        CharacterFriendQueue::request($lodestoneId, 'character_friends_add');
+        CharacterAchievementQueue::request($lodestoneId, 'character_achievements_add');
+        
+        return (Object)[
+            'ent'  => new Character($lodestoneId),
+            'data' => null,
+        ];
     }
     
     /**
-     * Fetch an existing character
+     * Get character achievements
      */
-    public function fetch(Character $ent): array
+    public function getAchievements($lodestoneId, bool $extended = null): \stdClass
     {
-        if ($ent->getState() === Character::STATE_CACHED) {
-            $data = LodestoneData::load('character', 'data', $ent->getId());
+        /** @var Character $ent */
+        if ($ent = $this->getRepository(CharacterAchievements::class)->find($lodestoneId)) {
+            // if entity is cached, grab the data
+            if ($ent->isCached()) {
+                $data = LodestoneData::load('character', 'achievements', $lodestoneId);
+                
+                if ($extended) {
+                    LodestoneData::extendAchievementData($data);
+                }
+            }
+    
+            return (Object)[
+                'ent'  => $ent,
+                'data' => $data ?? null,
+            ];
         }
-        
-        return [ $ent, $data[0] ?? null, $data[1] ?? null ];
+    
+        return (Object)[
+            'ent'  => new CharacterAchievements($lodestoneId),
+            'data' => null,
+        ];
     }
     
     /**
-     * Register a new character to be added to the site
+     * Get character friends
      */
-    public function register($id): array
-    {
-        if (!is_numeric($id) || strlen($id) > 16) {
-            throw new NotAcceptableHttpException("Invalid character id: {$id}");
-        }
-    
-        // send a request to rabbit mq to add this character + friends + achievements
-        CharacterQueue::request($id, 'character_add');
-        CharacterFriendQueue::request($id, 'character_friends_add');
-        CharacterAchievementQueue::request($id, 'character_achievements_add');
-        sleep(1);
-        
-        return [ new Character($id), null, null ];
-    }
-    
-    public function getAchievements($id): array
+    public function getFriends($lodestoneId): \stdClass
     {
         /** @var Character $ent */
-        $ent = $this->getRepository(CharacterAchievements::class)->find($id);
-
-        if (!$ent) {
-            return [ null, null, null ];
-        }
-        
-        if ($ent->getState() == Entity::STATE_CACHED) {
-            $data = LodestoneData::load('character', 'achievements', $id);
-        }
+        if ($ent = $this->getRepository(CharacterFriends::class)->find($lodestoneId)) {
+            // if entity is cached, grab the data
+            if ($ent->getState() == Entity::STATE_CACHED) {
+                $data = LodestoneData::load('character', 'friends', $lodestoneId);
+            }
     
-        return [ $ent, $data[0] ?? null, $data[1] ?? null ];
-    }
-
-    public function getFriends($id): array
-    {
-        /** @var Character $ent */
-        $ent = $this->getRepository(CharacterFriends::class)->find($id);
-    
-        if (!$ent) {
-            return [ null, null, null ];
+            return (Object)[
+                'ent'  => $ent,
+                'data' => $data ?? null,
+            ];
         }
     
-    
-        if ($ent->getState() == Entity::STATE_CACHED) {
-            $data = LodestoneData::load('character', 'friends', $id);
-        }
-    
-        return [ $ent, $data[0] ?? null, $data[1] ?? null ];
-    }
-    
-    public function delete(Character $ent)
-    {
-        $path = LodestoneData::folder('character', $ent->getId());
-        @unlink("{$path}/data.json");
-        @unlink("{$path}/achievements.json");
-        @unlink("{$path}/friends.json");
-        $this->remove($ent);
+        return (Object)[
+            'ent'  => new CharacterFriends($lodestoneId),
+            'data' => null,
+        ];
     }
 }

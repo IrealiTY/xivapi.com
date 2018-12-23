@@ -2,6 +2,7 @@
 
 namespace App\Service\LodestoneQueue;
 
+use App\Entity\LodestoneStatistic;
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Api;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
@@ -42,45 +43,55 @@ class Manager
             $responseRabbit->connect("{$queue}_response");
 
             // read requests
+            $this->io->text('Reading messages...');
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 // update times
-                $request->updated = microtime(true);
+                $request->responses = [];
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("[REQUEST] {$this->now} {$request->requestId} | {$request->queue} | {$request->method} ". implode(',', $request->arguments));
-
-                // call the API class dynamically and record any exceptions
-                try {
-                    $request->response = call_user_func_array([new Api(), $request->method], $request->arguments);
-                    $request->health = true;
-                } catch (\Exception $ex) {
-                    // if it's not a valid lodestone exception, report it
-                    if (strpos(get_class($ex), 'Lodestone\Exceptions') === false) {
-                        $this->io->note("[REQUEST] [B] LODESTONE Exception ". get_class($ex) ." at: {$this->now}");
-                        $this->io->note($ex->getTraceAsString());
-                        $this->io->text('---------------------------------------------');
+                $this->io->text("REQUEST :: [$request->requestId] {$this->now} :: {$request->queue} - START");
+                
+                // loop through request ids
+                foreach ($request->ids as $id) {
+                    $this->io->text("REQUEST :: {$this->now} :: {$request->queue} :: {$request->method} {$id}");
+    
+                    // call the API class dynamically and record any exceptions
+                    try {
+                        $request->responses[$id] = call_user_func_array([new Api(), $request->method], [ $id ]);
+                    } catch (\Exception $ex) {
+                        $this->io->error("[10] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
+                        $request->responses[$id] = get_class($ex);
+                        
+                        // if it's not a valid lodestone exception, report it
+                        if (strpos(get_class($ex), 'Lodestone\Exceptions') === false) {
+                            $this->io->note(json_encode($request, JSON_PRETTY_PRINT));
+                            $this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
+                            break;
+                        }
                     }
-                    
-                    $request->response = get_class($ex);
-                    $request->health = false;
                 }
+                
+                file_put_contents(__DIR__.'/data.json', json_encode($request, JSON_PRETTY_PRINT));
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
+                $this->io->text("REQUEST :: [$request->requestId] {$this->now} :: {$request->queue} - COMPLETE");
             });
 
             // close connections
+            $this->io->text('Closing RabbitMQ Connections...');
             $requestRabbit->close();
             $responseRabbit->close();
         } catch (\Exception $ex) {
             // can trigger due to socket closure, fine to just let hypervisor restart
             if (get_class($ex) == AMQPRuntimeException::class) {
-                $this->io->note('-- (AMQPRuntimeException) SOCKET CLOSED :: RESTARTING PROCESS --');
+                $this->io->text('-- (AMQPRuntimeException) SOCKET CLOSED :: RESTARTING PROCESS --');
                 $requestRabbit->close();
                 $responseRabbit->close();
                 exit(1337);
             }
-
-            $this->io->note("[A] [REQUEST] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
+    
+            $this->io->error("[35] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
+            $this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
         }
     }
     
@@ -96,99 +107,114 @@ class Manager
             $responseRabbit->connect("{$queue}_response");
             
             // read responses
+            $this->io->text('Reading messages...');
             $responseRabbit->readMessageAsync(function($response) {
                 $this->now = date('Y-m-d H:i:s');
-
+                $this->io->text("REQUEST :: [$response->requestId] {$this->now} :: {$response->queue} - START");
+    
                 try {
                     // connect to db
                     $this->em->getConnection()->connect();
-                    $this->io->text("[RESPONSE] {$this->now} {$response->requestId} | {$response->queue} | {$response->method} ". implode(',', $response->arguments) ." | ". ($response->health ? 'Good' : $response->response));
     
-                    // add finished timestamp
-                    $response->finished = microtime(true);
+                    // Record stats
+                    $stat = new LodestoneStatistic();
+                    $stat
+                        ->setQueue($response->queue)
+                        ->setMethod($response->method)
+                        ->setDuration(round(time() - $response->added, 4))
+                        ->setCount(count($response->ids))
+                        ->setRequestId($response->requestId ?: 'none_set');
+    
+                    $this->em->persist($stat);
+                    $this->em->flush();
+    
+                    foreach ($response->responses as $id => $data) {
+                        $this->io->text("REQUEST :: {$this->now} :: {$response->queue} :: {$response->method} {$id}");
 
-                    // handle response based on queue
-                    switch($response->queue) {
-                        default:
-                            $this->io->text("Unknown response queue: {$response->queue}");
-                            return;
+                        // handle response based on queue
+                        switch($response->queue) {
+                            default:
+                                $this->io->error("Unknown response queue: {$response->queue}");
+                                return;
+    
+                            case 'test_character_update':
+                            case 'character_add':
+                            case 'character_update':
+                            case 'character_update_0_normal':
+                            case 'character_update_1_normal':
+                            case 'character_update_2_normal':
+                            case 'character_update_3_normal':
+                            case 'character_update_4_normal':
+                            case 'character_update_5_normal':
+                            case 'character_update_0_patreon':
+                            case 'character_update_1_patreon':
+                            case 'character_update_0_low':
+                            case 'character_update_1_low':
+                                CharacterQueue::response($this->em, $id, $data);
+                                break;
         
-                        case 'character_add':
-                        case 'character_update':
-                        case 'character_update_0_normal':
-                        case 'character_update_1_normal':
-                        case 'character_update_2_normal':
-                        case 'character_update_3_normal':
-                        case 'character_update_4_normal':
-                        case 'character_update_5_normal':
-                        case 'character_update_0_patreon':
-                        case 'character_update_1_patreon':
-                        case 'character_update_0_low':
-                        case 'character_update_1_low':
-                            CharacterQueue::response($this->em, $response);
-                            break;
-    
-                        case 'character_friends_add':
-                        case 'character_friends_update':
-                        case 'character_friends_update_0_normal':
-                        case 'character_friends_update_1_normal':
-                        case 'character_friends_update_0_patreon':
-                        case 'character_friends_update_1_patreon':
-                            CharacterFriendQueue::response($this->em, $response);
-                            break;
-    
-                        case 'character_achievements_add':
-                        case 'character_achievements_update':
-                        case 'character_achievements_update_0_normal':
-                        case 'character_achievements_update_1_normal':
-                        case 'character_achievements_update_2_normal':
-                        case 'character_achievements_update_3_normal':
-                        case 'character_achievements_update_4_normal':
-                        case 'character_achievements_update_5_normal':
-                        case 'character_achievements_update_0_patreon':
-                        case 'character_achievements_update_1_patreon':
-                            CharacterAchievementQueue::response($this->em, $response);
-                            break;
-    
-                        case 'free_company_add':
-                        case 'free_company_update':
-                        case 'free_company_update_0_normal':
-                        case 'free_company_update_1_normal':
-                        case 'free_company_update_0_patron':
-                        case 'free_company_update_1_patron':
-                            FreeCompanyQueue::response($this->em, $response);
-                            break;
-    
-                        case 'linkshell_add':
-                        case 'linkshell_update':
-                        case 'linkshell_update_0_normal':
-                        case 'linkshell_update_1_normal':
-                        case 'linkshell_update_0_patron':
-                        case 'linkshell_update_1_patron':
-                            LinkshellQueue::response($this->em, $response);
-                            break;
-    
-                        case 'pvp_team_add':
-                        case 'pvp_team_update':
-                        case 'pvp_team_update_0_normal':
-                        case 'pvp_team_update_1_normal':
-                        case 'pvp_team_update_0_patron':
-                        case 'pvp_team_update_1_patron':
-                            PvPTeamQueue::response($this->em, $response);
-                            break;
+                            case 'character_friends_add':
+                            case 'character_friends_update':
+                            case 'character_friends_update_0_normal':
+                            case 'character_friends_update_1_normal':
+                            case 'character_friends_update_0_patreon':
+                            case 'character_friends_update_1_patreon':
+                                CharacterFriendQueue::response($this->em, $id, $data);
+                                break;
+        
+                            case 'character_achievements_add':
+                            case 'character_achievements_update':
+                            case 'character_achievements_update_0_normal':
+                            case 'character_achievements_update_1_normal':
+                            case 'character_achievements_update_2_normal':
+                            case 'character_achievements_update_3_normal':
+                            case 'character_achievements_update_4_normal':
+                            case 'character_achievements_update_5_normal':
+                            case 'character_achievements_update_0_patreon':
+                            case 'character_achievements_update_1_patreon':
+                                CharacterAchievementQueue::response($this->em, $id, $data);
+                                break;
+        
+                            case 'free_company_add':
+                            case 'free_company_update':
+                            case 'free_company_update_0_normal':
+                            case 'free_company_update_1_normal':
+                            case 'free_company_update_0_patron':
+                            case 'free_company_update_1_patron':
+                                FreeCompanyQueue::response($this->em, $id, $data);
+                                break;
+        
+                            case 'linkshell_add':
+                            case 'linkshell_update':
+                            case 'linkshell_update_0_normal':
+                            case 'linkshell_update_1_normal':
+                            case 'linkshell_update_0_patron':
+                            case 'linkshell_update_1_patron':
+                                LinkshellQueue::response($this->em, $id, $data);
+                                break;
+        
+                            case 'pvp_team_add':
+                            case 'pvp_team_update':
+                            case 'pvp_team_update_0_normal':
+                            case 'pvp_team_update_1_normal':
+                            case 'pvp_team_update_0_patron':
+                            case 'pvp_team_update_1_patron':
+                                PvPTeamQueue::response($this->em, $id, $data);
+                                break;
+                        }
                     }
     
-                    // confirm
+                    $this->io->text("REQUEST :: [$response->requestId] {$this->now} :: {$response->queue} - COMPLETE");
                 } catch (\Exception $ex) {
-                    $this->io->note("[RESPONSE] [B] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()}");
-                    print_r($ex->getTrace());
-                    $this->io->text('---------------------------------------------');
+                    $this->io->error("[40] RESPONSE :: Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
+                    $this->io->note($ex->getTraceAsString());
                 }
             });
     
             $responseRabbit->close();
         } catch (\Exception $ex) {
-            $this->io->note("[C] Exception ". get_class($ex) ." at: {$this->now} = {$ex->getTraceAsString()}");
+            $this->io->error("[80] RESPONSE :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} {$ex->getLine()} #{$ex->getFile()}");
+            //$this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
         }
     }
 }

@@ -40,6 +40,7 @@ class RabbitMQ
      */
     public function connect(string $queue = null): RabbitMQ
     {
+        $this->queue = $queue;
         $this->connection = new AMQPStreamConnection(
             getenv('API_RABBIT_IP'),
             getenv('API_RABBIT_PORT'),
@@ -47,7 +48,6 @@ class RabbitMQ
             getenv('API_RABBIT_PASSWORD')
         );
 
-        $this->queue = $queue;
         return $this;
     }
 
@@ -78,8 +78,6 @@ class RabbitMQ
             $handler(json_decode($message->body));
             $this->channelAsync->basic_ack($message->delivery_info['delivery_tag']);
         };
-
-        $this->channelAsync->basic_qos(0, 100, false);
 
         // basic message consumer
         $this->channelAsync->basic_consume(
@@ -167,8 +165,6 @@ class RabbitMQ
     public function setQueue(string $queue = null): RabbitMQ
     {
         $this->queueDeclared = true;
-
-        $this->channel->basic_qos(0, 100, false);
         $this->channel->queue_declare(
             $queue ? $queue : $this->queue,
             self::QUEUE_OPTIONS['passive'],
@@ -177,7 +173,6 @@ class RabbitMQ
             self::QUEUE_OPTIONS['auto_delete'],
             self::QUEUE_OPTIONS['nowait']
         );
-    
         
         return $this;
     }

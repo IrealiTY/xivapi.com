@@ -29,9 +29,8 @@ class CharacterQueue
     /**
      * Handle response specific to this queue
      */
-    protected static function handle(EntityManagerInterface $em, Character $character, $data): void
+    protected static function handle(EntityManagerInterface $em, Character $character, $lodestoneId, $data): void
     {
-        $lodestoneId   = $character->getId();
         $freeCompanyId = $data->FreeCompanyId ?? false;
         $pvpTeamId     = $data->PvPTeamId ?? false;
         
@@ -41,7 +40,7 @@ class CharacterQueue
             && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null
         ) {
             self::save($em, new FreeCompany($data->FreeCompanyId));
-            FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
+            # FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
         }
     
         // if the character is newly added, try add their pvp team
@@ -50,11 +49,11 @@ class CharacterQueue
             && $em->getRepository(PvPTeam::class)->find($data->PvPTeamId) === null
         ) {
             self::save($em, new PvPTeam($data->PvPTeamId));
-            PvPTeamQueue::request($data->PvPTeamId, 'pvp_team_add');
+            # PvPTeamQueue::request($data->PvPTeamId, 'pvp_team_add');
         }
         
         // convert character data from names to ids
-        $data = CharacterConverter::handle($data);
+        # $data = CharacterConverter::handle($data);
 
         LodestoneData::save('character', 'data', $lodestoneId, $data);
         self::save($em, $character->setStateCached());

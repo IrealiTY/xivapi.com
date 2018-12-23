@@ -2,16 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Entity;
-use App\Entity\Linkshell;
-use App\Service\Apps\AppManager;
+use App\Exception\ContentGoneException;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\LinkshellService;
 use App\Service\Lodestone\ServiceQueues;
 use App\Service\LodestoneQueue\LinkshellQueue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -19,14 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LodestoneLinkshellController extends Controller
 {
-    /** @var AppManager */
-    private $apps;
     /** @var LinkshellService */
     private $service;
     
-    public function __construct(AppManager $apps, LinkshellService $service)
+    public function __construct(LinkshellService $service)
     {
-        $this->apps = $apps;
         $this->service = $service;
     }
     
@@ -36,8 +30,6 @@ class LodestoneLinkshellController extends Controller
      */
     public function search(Request $request)
     {
-        $this->apps->fetch($request, true);
-
         return $this->json(
             Japan::query('/japan/search/linkshell', [
                 'name'   => $request->get('name'),
@@ -51,57 +43,25 @@ class LodestoneLinkshellController extends Controller
      * @Route("/Linkshell/{lodestoneId}")
      * @Route("/linkshell/{lodestoneId}")
      */
-    public function index(Request $request, $lodestoneId)
+    public function index($lodestoneId)
     {
         $lodestoneId = strtolower(trim($lodestoneId));
         
-        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) < 16 || strlen($lodestoneId) > 20) {
-            throw new NotFoundHttpException('Invalid lodestone ID: '. $lodestoneId);
-        }
-
-        $start = microtime(true);
-        $this->apps->fetch($request);
-    
         $response = (Object)[
-            'Linkshell' => null,
+            'Linkshell'     => null,
             'Info' => (Object)[
                 'Linkshell' => null,
             ],
         ];
 
-        /** @var Linkshell $ent */
-        [$ent, $linkshell, $times] = $this->service->get($lodestoneId);
+        $linkshell = $this->service->get($lodestoneId);
+        $response->Linkshell = $linkshell->data;
         $response->Info->Linkshell = [
-            'State'     => $ent->getState(),
-            //'Modified'  => $times[0],
-            'Updated'   => $times[1],
+            'State'     => $linkshell->ent->getState(),
+            'Updated'   => $linkshell->ent->getUpdated()
         ];
     
-        if ($ent->getState() == Entity::STATE_CACHED) {
-            $response->Linkshell = $linkshell;
-        }
-    
-        $duration = microtime(true) - $start;
         return $this->json($response);
-    }
-    
-    /**
-     * @Route("/Linkshell/{lodestoneId}/Delete")
-     * @Route("/linkshell/{lodestoneId}/delete")
-     */
-    public function delete(Request $request, $lodestoneId)
-    {
-        $this->apps->fetch($request, true);
-
-        /** @var Linkshell $ent */
-        [$ent] = $this->service->get($lodestoneId);
-        
-        // delete it if the character was not found
-        if ($ent->getState() === Linkshell::STATE_NOT_FOUND) {
-            return $this->json($this->service->delete($ent));
-        }
-
-        return $this->json(false);
     }
     
     /**
@@ -110,10 +70,20 @@ class LodestoneLinkshellController extends Controller
      */
     public function update($lodestoneId)
     {
+        $linkshell = $this->service->get($lodestoneId);
+    
+        if ($linkshell->ent->isBlackListed) {
+            throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
+        }
+    
+        if ($linkshell->ent->isAdding()) {
+            throw new ContentGoneException(ContentGoneException::CODE, 'Not Added');
+        }
+    
         if ($this->service->cache->get(__METHOD__.$lodestoneId)) {
             return $this->json(0);
         }
-
+        
         LinkshellQueue::request($lodestoneId, 'linkshell_update');
 
         $this->service->cache->set(__METHOD__.$lodestoneId, ServiceQueues::UPDATE_TIMEOUT);

@@ -11,10 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
  *     indexes={
  *          @ORM\Index(name="added", columns={"added"}),
  *          @ORM\Index(name="queue", columns={"queue"}),
- *          @ORM\Index(name="status", columns={"status"}),
  *          @ORM\Index(name="method", columns={"method"}),
  *          @ORM\Index(name="duration", columns={"duration"}),
- *          @ORM\Index(name="cronjob", columns={"cronjob"})
+ *          @ORM\Index(name="request_id", columns={"request_id"}),
+ *          @ORM\Index(name="count", columns={"count"})
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\LodestoneStatisticRepository")
@@ -43,30 +43,20 @@ class LodestoneStatistic
      */
     private $method;
     /**
-     * @var string
-     * @ORM\Column(type="string", length=200)
-     */
-    private $arguments;
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=10)
-     */
-    private $status;
-    /**
      * @var float
      * @ORM\Column(type="float")
      */
     private $duration;
     /**
      * @var string
-     * @ORM\Column(type="string", length=200)
-     */
-    private $response;
-    /**
-     * @var string
      * @ORM\Column(type="string", length=64)
      */
-    private $cronjob;
+    private $requestId;
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $count;
     
     public function __construct()
     {
@@ -121,30 +111,6 @@ class LodestoneStatistic
         
         return $this;
     }
-    
-    public function getArguments(): string
-    {
-        return $this->arguments;
-    }
-    
-    public function setArguments(string $arguments)
-    {
-        $this->arguments = $arguments;
-        
-        return $this;
-    }
-    
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-    
-    public function setStatus(string $status)
-    {
-        $this->status = $status;
-        
-        return $this;
-    }
 
     public function getDuration(): float
     {
@@ -157,28 +123,28 @@ class LodestoneStatistic
 
         return $this;
     }
-
-    public function getResponse(): string
+    
+    public function getRequestId(): string
     {
-        return $this->response;
+        return $this->requestId;
     }
     
-    public function setResponse(string $response)
+    public function setRequestId(string $requestId)
     {
-        $this->response = $response;
+        $this->requestId = $requestId;
         
         return $this;
     }
-
-    public function getCronjob(): string
+    
+    public function getCount(): int
     {
-        return $this->cronjob;
+        return $this->count;
     }
-
-    public function setCronjob(string $cronjob)
+    
+    public function setCount(int $count)
     {
-        $this->cronjob = $cronjob;
-
+        $this->count = $count;
+        
         return $this;
     }
 }

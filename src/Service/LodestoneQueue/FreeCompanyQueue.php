@@ -27,13 +27,10 @@ class FreeCompanyQueue
     /**
      * Handle response specific to this queue
      */
-    public static function handle(EntityManagerInterface $em, FreeCompany $fc, $data): void
+    public static function handle(EntityManagerInterface $em, FreeCompany $fc, $lodestoneId, $data): void
     {
-        // Save Free Company
-        LodestoneData::save('freecompany', 'data', $fc->getId(), $data->Profile);
-
-        // Save Free Company Members
-        LodestoneData::save('freecompany', 'members', $fc->getId(), $data->Members);
+        LodestoneData::save('freecompany', 'data', $lodestoneId, $data->Profile);
+        LodestoneData::save('freecompany', 'members', $lodestoneId, $data->Members);
         self::save($em, $fc->setStateCached());
     }
 }

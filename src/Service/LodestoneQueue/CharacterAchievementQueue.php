@@ -27,7 +27,7 @@ class CharacterAchievementQueue
     /**
      * Handle response specific to this queue
      */
-    protected static function handle(EntityManagerInterface $em, CharacterAchievements $ca, $data): void
+    protected static function handle(EntityManagerInterface $em, CharacterAchievements $ca, $lodestoneId, $data): void
     {
         $achievements = (Object)[
             'ParseDate' => time(),
@@ -47,7 +47,7 @@ class CharacterAchievementQueue
             }
         }
 
-        LodestoneData::save('character', 'achievements', $ca->getId(), $achievements);
+        LodestoneData::save('character', 'achievements', $lodestoneId, $achievements);
         self::save($em, $ca->setStateCached());
     }
 }
