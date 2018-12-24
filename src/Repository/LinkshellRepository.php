@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Entity;
 use App\Entity\Linkshell;
 use App\Service\Lodestone\ServiceQueues;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,6 +21,7 @@ class LinkshellRepository extends ServiceEntityRepository
         $sql->select('a.id')
             ->where("a.priority = :a")
             ->setParameter(':a', $priority)
+            ->andWhere('a.state = '. Entity::STATE_CACHED)
             ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_LINKSHELL_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_LINKSHELL_UPDATES * $page);
