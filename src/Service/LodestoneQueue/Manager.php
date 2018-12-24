@@ -128,7 +128,7 @@ class Manager
                     $this->em->flush();
     
                     foreach ($response->responses as $id => $data) {
-                        $this->io->text("> ". str_pad($id, 15) ." (". is_string($data) ? $data : 'OK' .")");
+                        $this->io->text("> ". str_pad($id, 15));
 
                         // handle response based on queue
                         switch($response->queue) {
