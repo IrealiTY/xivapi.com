@@ -76,7 +76,7 @@ class Manager
                 
                 // report duration
                 $duration = round(microtime(true) - $start, 3);
-                $this->io->text("REQUESTS END --- Date: {$this->now} --- {$request->queue} --- Duration: {$duration}");
+                $this->io->text("REQUESTS END   --- Date: {$this->now} --- {$request->queue} --- Duration: {$duration}");
             });
 
             // close connections
@@ -209,7 +209,7 @@ class Manager
     
                 // report duration
                 $duration = round(microtime(true) - $start, 3);
-                $this->io->text("RESPONSES END --- Date: {$this->now} --- {$response->queue} --- Duration: {$duration}");
+                $this->io->text("RESPONSES END   --- Date: {$this->now} --- {$response->queue} --- Duration: {$duration}");
             });
     
             $responseRabbit->close();
