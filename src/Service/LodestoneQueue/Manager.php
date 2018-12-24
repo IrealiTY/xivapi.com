@@ -56,16 +56,16 @@ class Manager
                     // call the API class dynamically and record any exceptions
                     try {
                         $request->responses[$id] = call_user_func_array([new Api(), $request->method], [ $id ]);
-                        $this->io->text("> {$request->method} ". str_pad($id, 15) ." (OK)");
+                        #$this->io->text("> ". time() ." {$request->method}  ". str_pad($id, 15) ."  (OK)");
                     } catch (\Exception $ex) {
                         $request->responses[$id] = get_class($ex);
-                        $this->io->text("> {$request->method} ". str_pad($id, 15) ." (". get_class($ex) .")");
+                        #$this->io->text("> ". time() ." {$request->method}  ". str_pad($id, 15) ."  (". get_class($ex) .")");
                         
                         // if it's not a valid lodestone exception, report it
                         if (strpos(get_class($ex), 'Lodestone\Exceptions') === false) {
                             $this->io->error("[10] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
-                            $this->io->note(json_encode($request, JSON_PRETTY_PRINT));
-                            $this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
+                            $this->io->error(json_encode($request, JSON_PRETTY_PRINT));
+                            $this->io->error($ex->getTraceAsString());
                             break;
                         }
                     }
@@ -93,7 +93,7 @@ class Manager
             }
     
             $this->io->error("[35] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
-            $this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
+            $this->io->error($ex->getTraceAsString());
         }
     }
     
@@ -129,10 +129,8 @@ class Manager
     
                     $this->em->persist($stat);
                     $this->em->flush();
-    
+                    
                     foreach ($response->responses as $id => $data) {
-                        $this->io->text("> ". str_pad($id, 15));
-
                         // handle response based on queue
                         switch($response->queue) {
                             default:
@@ -206,7 +204,7 @@ class Manager
                     }
                 } catch (\Exception $ex) {
                     $this->io->error("[40] RESPONSE :: Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
-                    $this->io->note($ex->getTraceAsString());
+                    $this->io->error($ex->getTraceAsString());
                 }
     
                 // report duration
@@ -217,7 +215,7 @@ class Manager
             $responseRabbit->close();
         } catch (\Exception $ex) {
             $this->io->error("[80] RESPONSE :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} {$ex->getLine()} #{$ex->getFile()}");
-            //$this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
+            $this->io->error($ex->getTraceAsString());
         }
     }
 }
