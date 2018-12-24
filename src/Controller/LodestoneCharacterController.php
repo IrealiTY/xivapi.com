@@ -32,6 +32,19 @@ class LodestoneCharacterController extends Controller
         $this->fcService  = $fcService;
         $this->pvpService = $pvpService;
     }
+    
+    /**
+     * todo - temp
+     * @Route("/character/{lodestoneId}/add")
+     */
+    public function add($lodestoneId)
+    {
+        CharacterQueue::request($lodestoneId, 'character_add');
+        CharacterFriendQueue::request($lodestoneId, 'character_friends_add');
+        CharacterAchievementQueue::request($lodestoneId, 'character_achievements_add');
+        return $this->json(1);
+    }
+    
 
     /**
      * @Route("/Character/Search")
