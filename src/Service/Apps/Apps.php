@@ -11,6 +11,7 @@ use App\Controller\LodestonePvPTeamController;
 use App\Controller\LodestoneStatisticsController;
 use App\Controller\SearchController;
 use App\Controller\XivGameContentController;
+use App\Entity\App;
 use App\Exception\ApiRestrictedException;
 use App\Service\Redis\Redis;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,12 +54,14 @@ class Apps
         // grab controller related to this API request
         $controller = explode('::', $request->attributes->get('_controller'))[0];
 
-        // grab key and app
-        $app = self::$manager->getByKey($request->get('key'));
-
+        /** @var App $app */
+        $app = $request->get('key') ? self::$manager->getByKey($request->get('key')) : false;
+        
         // check if app can access this endpoint
-        if (in_array($controller, self::URL) && (empty($key) || $app == false)) {
-            throw new ApiRestrictedException(ApiRestrictedException::CODE, ApiRestrictedException::MESSAGE);
+        if (in_array($controller, self::URL) && getenv('APP_ENV') != 'dev') {
+            if ($app == false) {
+                throw new ApiRestrictedException(ApiRestrictedException::CODE, ApiRestrictedException::MESSAGE);
+            }
         }
 
         // track app requests

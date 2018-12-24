@@ -44,10 +44,6 @@ class RequestListener
             }
         }
 
-        // register app keys
-        Apps::setManager($this->appManager);
-        Apps::register($request);
-
         // register environment
         Environment::register($request);
 
@@ -56,5 +52,9 @@ class RequestListener
 
         // record analytics
         GoogleAnalytics::record($request);
+    
+        // register app keys
+        Apps::setManager($this->appManager);
+        Apps::register($request);
     }
 }

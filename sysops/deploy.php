@@ -172,6 +172,10 @@ function fix($config)
     
     writeln('Running fixes');
     
+    run('sudo supervisorctl stop all');
+    $result = run('sudo supervisorctl status');
+    result($result);
+    
     #run("sudo sed -i 's|memory_limit = 128M|memory_limit = 500M|' /etc/php/7.2/fpm/php.ini");
     #run("sudo service php7.2-fpm restart");
     

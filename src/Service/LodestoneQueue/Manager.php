@@ -137,7 +137,6 @@ class Manager
                                 $this->io->error("Unknown response queue: {$response->queue}");
                                 return;
     
-                            case 'test_character_update':
                             case 'character_add':
                             case 'character_update':
                             case 'character_update_0_normal':

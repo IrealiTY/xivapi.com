@@ -20,7 +20,7 @@ class LodestoneData
      * @param $id
      * @param array $data
      */
-    public static function save(string $type, string$filename, $id, array $data)
+    public static function save(string $type, string$filename, $id, $data)
     {
         file_put_contents(
             self::folder($type, $id) .'/'. $filename .'.json',
@@ -73,7 +73,6 @@ class LodestoneData
     #-------------------------------------------------------------------------------------------------------------------
     
     // todo - below should be in its own file
-    
     
     public static function getContent($key)
     {
