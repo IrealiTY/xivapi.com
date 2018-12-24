@@ -3,24 +3,22 @@
 namespace App\EventListener;
 
 use App\Service\Apps\AppManager;
+use App\Service\Apps\Apps;
 use App\Service\Common\Environment;
-use App\Service\Common\GoogleAnalytics;
 use App\Service\Common\Language;
-use App\Service\Redis\Cache;
+use App\Service\ThirdParty\GoogleAnalytics;
+use App\Service\ThirdParty\Sentry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class RequestListener
 {
     /** @var AppManager */
-    private $apps;
-    /** @var Cache */
-    private $cache;
+    private $appManager;
 
-    public function __construct(AppManager $apps, Cache $cache)
+    public function __construct(AppManager $appManager)
     {
-        $this->apps = $apps;
-        $this->cache = $cache;
+        $this->appManager = $appManager;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -29,36 +27,34 @@ class RequestListener
             return;
         }
 
-        if ($sentry = getenv('SENTRY')) {
-            (new \Raven_Client($sentry))->install();
-        }
-        
+        // Install Sentry to track errors
+        Sentry::install();
 
         /** @var Request $request */
         $request = $event->getRequest();
-    
+
+        // Quick hack to allow json body requests
         if ($json = $request->getContent()) {
             if (trim($json[0]) === '{') {
                 $json = \GuzzleHttp\json_decode($json);
-    
+
                 foreach($json as $key => $value) {
                     $request->request->set($key, $value);
                 }
             }
         }
 
-        if ($key = $request->get('key')) {
-            $key = "keystats_". $key;
-            $this->cache->increment($key);
+        // register app keys
+        Apps::setManager($this->appManager);
+        Apps::register($request);
 
-            $ip = "ipstats_". strtoupper(md5($request->getClientIp()));
-            $this->cache->increment($ip);
-        }
-        
-        Environment::set($request);
-        Environment::ensureValidHost($request);
-        Language::set($request);
-        GoogleAnalytics::hit($request->getPathInfo());
-        $this->apps->track($request);
+        // register environment
+        Environment::register($request);
+
+        // register language based on domain
+        Language::register($request);
+
+        // record analytics
+        GoogleAnalytics::record($request);
     }
 }

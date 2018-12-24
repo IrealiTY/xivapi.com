@@ -3,14 +3,11 @@
 namespace App\Service\LodestoneQueue;
 
 use App\Entity\Character;
-use App\Entity\Entity;
-use App\Entity\LodestoneStatistic;
 use Doctrine\ORM\EntityManagerInterface;
 use Lodestone\Exceptions\AchievementsPrivateException;
 use Lodestone\Exceptions\ForbiddenException;
 use Lodestone\Exceptions\GenericException;
 use Lodestone\Exceptions\NotFoundException;
-use Ramsey\Uuid\Uuid;
 
 trait QueueTrait
 {

@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use App\Service\Common\Statistics;
+use App\Service\Common\Environment;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,21 +39,22 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         
         $json = [
             'Error'   => true,
-            'Message' => "API EXCEPTION: {$message}",
-            'Debug' => [
+            'Message' => "XIVAPI ERROR: {$message}",
+            'Debug'   => [
                 'ID'      => Uuid::uuid4()->toString(),
                 'Class'   => get_class($ex),
                 'File'    => "#{$ex->getLine()} {$file}",
                 'Method'  => $event->getRequest()->getMethod(),
                 'Path'    => $event->getRequest()->getPathInfo(),
-                'Note'    => "Get on discord: https://discord.gg/MFFVHWC and complain to @vekien :)",
+                'HasKey'  => $event->getRequest()->get('key') ? 'Yes' : 'No',
+                'Action'  => $event->getRequest()->attributes->get('_controller'),
                 'Code'    => method_exists($ex, 'getStatusCode') ? $ex->getStatusCode() : 500,
                 'Time'    => time(),
                 'Date'    => date('Y-m-d H:i:s'),
+                'Note'    => "Get on discord: https://discord.gg/MFFVHWC and complain to @Vekien :)",
+                'Env'     => constant(Environment::CONSTANT),
             ]
         ];
-        
-        file_put_contents(__DIR__.'/exceptions.txt', json_encode($json, JSON_PRETTY_PRINT).PHP_EOL.PHP_EOL, FILE_APPEND);
     
         if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
             return null;

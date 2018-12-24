@@ -10,7 +10,6 @@ use App\Service\User\Time;
 use App\Service\User\UserService;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpParser\Node\Expr\Cast\Object_;
 use Symfony\Component\HttpFoundation\Request;
 
 class AppManager
@@ -282,7 +281,10 @@ class AppManager
      */
     public function getByKey(string $id)
     {
-        return $this->em->getRepository(App::class)->findOneBy([ 'apiKey' => $id ]);
+        $id = strtolower(trim($id));
+        return $this->em->getRepository(App::class)->findOneBy([
+            'apiKey' => $id
+        ]);
     }
 
     /**

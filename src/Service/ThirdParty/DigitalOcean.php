@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Hosting;
+namespace App\Service\ThirdParty;
 
 use App\Service\Common\Arrays;
 use DigitalOceanV2\Adapter\GuzzleHttpAdapter;
@@ -9,6 +9,9 @@ use DigitalOceanV2\Entity\Droplet;
 
 class DigitalOcean
 {
+    /**
+     * Get DigitalOcean costs
+     */
     public static function costs()
     {
         $adapter = new GuzzleHttpAdapter(getenv('DIGITALOCEAN_TOKEN_ID'));

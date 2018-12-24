@@ -42,7 +42,7 @@ class Language
     /**
      * Set the language for the API
      */
-    public static function set(Request $request): void
+    public static function register(Request $request): void
     {
         self::$lang = $request->get('language') ?? self::DEFAULT;
         

@@ -5,20 +5,26 @@ namespace App\Service\Common;
 use App\Exception\UnauthorizedAccessException;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Handle application environments
- */
 class Environment
 {
     const CONSTANT = 'ENVIRONMENT';
 
-    // set environment
-    public static function set(Request $request)
+    /**
+     * Register the environment and check the host domain
+     */
+    public static function register(Request $request)
+    {
+        self::setEnvironmentConstant($request);
+        self::checkValidHostDomain($request);
+    }
+
+    /**
+     * Sets the environment variable for prod, staging, local
+     */
+    public static function setEnvironmentConstant(Request $request)
     {
         $environment = 'prod';
-
-        $host = $request->getHost();
-        $host = explode('.', $host);
+        $host = explode('.', $request->getHost());
 
         if ($host[0] === 'staging') {
             $environment = 'staging';
@@ -37,7 +43,7 @@ class Environment
      * Checks the request came from a valid host, this restricts
      * '/japan/xxx' endpoints to 'lodestone.xivapi.com'
      */
-    public static function ensureValidHost(Request $request)
+    public static function checkValidHostDomain(Request $request)
     {
         $path = explode('/', $request->getPathInfo());
         if ($request->getHost() == 'lodestone.xivapi.com' && $path[1] !== 'japan') {

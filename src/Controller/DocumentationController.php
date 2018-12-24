@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Service\Common\GitHub;
 use App\Service\Docs\Docs;
 use App\Service\Docs\Icons;
-use App\Service\Hosting\DigitalOcean;
-use App\Service\Hosting\Vultr;
+use App\Service\ThirdParty\GitHub;
+use App\Service\ThirdParty\DigitalOcean;
+use App\Service\ThirdParty\Vultr;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;

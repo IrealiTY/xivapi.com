@@ -3,7 +3,6 @@
 namespace App\Service\LodestoneQueue;
 
 use App\Entity\Character;
-use App\Entity\Entity;
 use App\Entity\FreeCompany;
 use App\Entity\PvPTeam;
 use App\Service\Content\LodestoneData;
@@ -40,7 +39,7 @@ class CharacterQueue
             && $em->getRepository(FreeCompany::class)->find($data->FreeCompanyId) === null
         ) {
             self::save($em, new FreeCompany($data->FreeCompanyId));
-            # FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
+            FreeCompanyQueue::request($data->FreeCompanyId, 'free_company_add');
         }
     
         // if the character is newly added, try add their pvp team
@@ -49,12 +48,9 @@ class CharacterQueue
             && $em->getRepository(PvPTeam::class)->find($data->PvPTeamId) === null
         ) {
             self::save($em, new PvPTeam($data->PvPTeamId));
-            # PvPTeamQueue::request($data->PvPTeamId, 'pvp_team_add');
+            PvPTeamQueue::request($data->PvPTeamId, 'pvp_team_add');
         }
         
-        // convert character data from names to ids
-        # $data = CharacterConverter::handle($data);
-
         LodestoneData::save('character', 'data', $lodestoneId, $data);
         self::save($em, $character->setStateCached());
     }

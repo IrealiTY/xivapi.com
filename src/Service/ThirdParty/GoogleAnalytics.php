@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Service\Common;
+namespace App\Service\ThirdParty;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interact with Google Analytics
@@ -20,6 +21,7 @@ class GoogleAnalytics
     const OPTIONS  = [
         'v'   => 1,
         'tid' => 'UA-125096878-1',
+        't'   => 'pageview',
     ];
 
     public static function getClient()
@@ -29,6 +31,11 @@ class GoogleAnalytics
             'timeout'  => self::TIMEOUT
         ]);
     }
+
+    public static function record(Request $request)
+    {
+        self::hit($request->getPathInfo());
+    }
     
     /**
      * Post a hit to Google Analytics
@@ -36,11 +43,9 @@ class GoogleAnalytics
     public static function hit(string $route): void
     {
         $options = self::OPTIONS;
-        $options['t'] = 'pageview';
-        $options['dp'] = $route;
-
+        $options['dp']  = $route;
         $options['cid'] = Uuid::uuid4()->toString();
-        $options['z'] = mt_rand(0,999999);
+        $options['z']   = mt_rand(0,999999);
 
         try {
             self::getClient()->post('/collect', [

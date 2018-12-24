@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.82.1",
+            "version": "3.82.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f3c38c0d74fba49fdaa1ce856412ea1017513002"
+                "reference": "a0353c24b18d2ba0f5bb7ca8a478b4ce0b8153f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f3c38c0d74fba49fdaa1ce856412ea1017513002",
-                "reference": "f3c38c0d74fba49fdaa1ce856412ea1017513002",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a0353c24b18d2ba0f5bb7ca8a478b4ce0b8153f7",
+                "reference": "a0353c24b18d2ba0f5bb7ca8a478b4ce0b8153f7",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-12-19T22:35:44+00:00"
+            "time": "2018-12-21T22:21:50+00:00"
         },
         {
             "name": "cboden/ratchet",
@@ -1923,16 +1923,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.78",
+            "version": "v0.79",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "16a71009a5b402012e00e0d46628ace599c1abb2"
+                "reference": "74f7cdab80c6f2766d5fb9e484fe4fe8334c96e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/16a71009a5b402012e00e0d46628ace599c1abb2",
-                "reference": "16a71009a5b402012e00e0d46628ace599c1abb2",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/74f7cdab80c6f2766d5fb9e484fe4fe8334c96e3",
+                "reference": "74f7cdab80c6f2766d5fb9e484fe4fe8334c96e3",
                 "shasum": ""
             },
             "require": {
@@ -1956,7 +1956,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-12-16T00:22:52+00:00"
+            "time": "2018-12-22T00:23:08+00:00"
         },
         {
             "name": "google/auth",
@@ -7815,16 +7815,16 @@
         },
         {
             "name": "symfony/maker-bundle",
-            "version": "v1.10.0",
+            "version": "v1.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/maker-bundle.git",
-                "reference": "aa37ea1323ac888913bdd3e5f83d846798729449"
+                "reference": "2ba2b563a6ca17cd7723b451b9ed4702ece9d8ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/aa37ea1323ac888913bdd3e5f83d846798729449",
-                "reference": "aa37ea1323ac888913bdd3e5f83d846798729449",
+                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/2ba2b563a6ca17cd7723b451b9ed4702ece9d8ae",
+                "reference": "2ba2b563a6ca17cd7723b451b9ed4702ece9d8ae",
                 "shasum": ""
             },
             "require": {
@@ -7877,7 +7877,7 @@
                 "scaffold",
                 "scaffolding"
             ],
-            "time": "2018-12-13T18:54:47+00:00"
+            "time": "2018-12-20T19:51:03+00:00"
         },
         {
             "name": "symfony/profiler-pack",

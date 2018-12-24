@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Service\Common;
+namespace App\Service\ThirdParty;
 
 use App\Service\Redis\Cache;
 
-/**
- * Access GitHub repository information
- */
 class GitHub
 {
+    /**
+     * Grab all github commit history
+     */
     public static function getGithubCommitHistory()
     {
         $key     = 'github_commits';

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Hosting;
+namespace App\Service\ThirdParty;
 
 use App\Service\Common\Arrays;
 use GuzzleHttp\Client;
@@ -9,33 +9,32 @@ use GuzzleHttp\RequestOptions;
 
 class Vultr
 {
-    private static function client(): Client
+    /**
+     * Get Vultr costs
+     */
+    public static function costs()
     {
-        return new Client([
+        $client = new Client([
             RequestOptions::HEADERS => [
                 'API-Key' => getenv('VULTR_API_KEY')
             ]
         ]);
-    }
-    
-    public static function costs()
-    {
+
         /** @var Response $response */
-        $response = self::client()->get('https://api.vultr.com/v1/server/list');
+        $response = $client->get('https://api.vultr.com/v1/server/list');
         $servers  = json_decode($response->getBody());
-        
-        $list  = [];
-        $total = 0;
+        $list     = [];
+        $total    = 0;
         
         foreach ($servers as $server) {
             $total += (float)$server->cost_per_month;
             
             $list[] = [
-                'os'         => $server->os,
-                'ram'        => $server->ram,
-                'location'   => $server->location,
-                'cost'       => $server->cost_per_month,
-                'name'       => $server->label,
+                'os'       => $server->os,
+                'ram'      => $server->ram,
+                'location' => $server->location,
+                'cost'     => $server->cost_per_month,
+                'name'     => $server->label,
             ];
         }
         
