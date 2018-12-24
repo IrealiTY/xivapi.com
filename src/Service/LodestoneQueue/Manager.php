@@ -46,6 +46,7 @@ class Manager
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 // update times
                 $request->responses = [];
+                $start = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
                 $this->io->text("REQUESTS START --- Date: {$this->now} --- {$request->queue}");
                 
@@ -70,11 +71,12 @@ class Manager
                     }
                 }
                 
-                file_put_contents(__DIR__.'/data.json', json_encode($request, JSON_PRETTY_PRINT));
-
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
-                $this->io->text("REQUESTS START --- Date: {$this->now} --- {$request->queue}");
+                
+                // report duration
+                $duration = round(microtime(true) - $start, 3);
+                $this->io->text("REQUESTS END --- Date: {$this->now} --- {$request->queue} --- Duration: {$duration}");
             });
 
             // close connections
@@ -108,6 +110,7 @@ class Manager
             
             // read responses
             $responseRabbit->readMessageAsync(function($response) {
+                $start = microtime(true);
                 $this->now = date('Y-m-d H:i:s');
                 $this->io->text("RESPONSES START --- Date: {$this->now} --- {$response->queue}");
     
@@ -208,7 +211,9 @@ class Manager
                     $this->io->note($ex->getTraceAsString());
                 }
     
-                $this->io->text("RESPONSES END --- Date: {$this->now} --- {$response->queue}");
+                // report duration
+                $duration = round(microtime(true) - $start, 3);
+                $this->io->text("RESPONSES END --- Date: {$this->now} --- {$response->queue} --- Duration: {$duration}");
             });
     
             $responseRabbit->close();
