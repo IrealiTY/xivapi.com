@@ -16,10 +16,10 @@ class CharacterRepository extends ServiceEntityRepository
 
     public function getUpdateIds(int $priority = 0, int $page = 0)
     {
-        $sql = $this->createQueryBuilder('c');
-        $sql->select('c.id')
-            ->where("c.priority = :p")
-            ->setParameter(':p', $priority)
+        $sql = $this->createQueryBuilder('a');
+        $sql->select('a.id')
+            ->where("a.priority = :a")
+            ->setParameter(':a', $priority)
             ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_CHARACTER_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_CHARACTER_UPDATES * $page);
