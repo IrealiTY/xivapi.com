@@ -20,6 +20,7 @@ class PvPTeamRepository extends ServiceEntityRepository
         $sql->select('a.id')
             ->where("a.priority = :a")
             ->setParameter(':a', $priority)
+            ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_PVP_TEAM_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_PVP_TEAM_UPDATES * $page);
         

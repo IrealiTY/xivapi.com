@@ -20,6 +20,7 @@ class CharacterAchievementRepository extends ServiceEntityRepository
         $sql->select('a.id')
             ->where("a.priority = :a")
             ->setParameter(':a', $priority)
+            ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_ACHIEVEMENT_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_ACHIEVEMENT_UPDATES * $page);
         

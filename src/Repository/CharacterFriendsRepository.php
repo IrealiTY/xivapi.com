@@ -20,6 +20,7 @@ class CharacterFriendsRepository extends ServiceEntityRepository
         $sql->select('a.id')
             ->where("a.priority = :a")
             ->setParameter(':a', $priority)
+            ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_CHARACTER_FRIENDS)
             ->setFirstResult(ServiceQueues::TOTAL_CHARACTER_FRIENDS * $page);
         

@@ -20,6 +20,7 @@ class CharacterRepository extends ServiceEntityRepository
         $sql->select('c.id')
             ->where("c.priority = :p")
             ->setParameter(':p', $priority)
+            ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_CHARACTER_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_CHARACTER_UPDATES * $page);
         

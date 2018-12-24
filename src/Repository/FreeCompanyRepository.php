@@ -20,6 +20,7 @@ class FreeCompanyRepository extends ServiceEntityRepository
         $sql->select('a.id')
             ->where("a.priority = :a")
             ->setParameter(':a', $priority)
+            ->orderBy('a.updated', 'asc')
             ->setMaxResults(ServiceQueues::TOTAL_FREE_COMPANY_UPDATES)
             ->setFirstResult(ServiceQueues::TOTAL_FREE_COMPANY_UPDATES * $page);
         
