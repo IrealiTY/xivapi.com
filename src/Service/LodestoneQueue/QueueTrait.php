@@ -49,7 +49,7 @@ trait QueueTrait
      */
     public static function request($ids, string $queue)
     {
-        $ids = is_array($ids) ?: [ $ids ];
+        $ids = is_array($ids) ? $ids : [ $ids ];
         
         $rabbit = new RabbitMQ();
         $rabbit->connect($queue .'_request');
