@@ -204,8 +204,6 @@ class Manager
                                 break;
                         }
                     }
-    
-                    $this->io->text("REQUEST :: [$response->requestId] {$this->now} :: {$response->queue} - COMPLETE");
                 } catch (\Exception $ex) {
                     $this->io->error("[40] RESPONSE :: Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
                     $this->io->note($ex->getTraceAsString());
