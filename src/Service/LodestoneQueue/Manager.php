@@ -43,26 +43,26 @@ class Manager
             $responseRabbit->connect("{$queue}_response");
 
             // read requests
-            $this->io->text('Reading messages...');
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 // update times
                 $request->responses = [];
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("REQUEST :: [$request->requestId] {$this->now} :: {$request->queue} - START");
+                $this->io->text("REQUESTS START --- Date: {$this->now} --- {$request->queue}");
                 
                 // loop through request ids
                 foreach ($request->ids as $id) {
-                    $this->io->text("REQUEST :: {$this->now} :: {$request->queue} :: {$request->method} {$id}");
     
                     // call the API class dynamically and record any exceptions
                     try {
                         $request->responses[$id] = call_user_func_array([new Api(), $request->method], [ $id ]);
+                        $this->io->text("> {$request->method} ". str_pad($id, 15) ." (OK)");
                     } catch (\Exception $ex) {
-                        $this->io->error("[10] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
                         $request->responses[$id] = get_class($ex);
+                        $this->io->text("> {$request->method} ". str_pad($id, 15) ." (". get_class($ex) .")");
                         
                         // if it's not a valid lodestone exception, report it
                         if (strpos(get_class($ex), 'Lodestone\Exceptions') === false) {
+                            $this->io->error("[10] REQUEST :: ". get_class($ex) ." at: {$this->now} -- {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
                             $this->io->note(json_encode($request, JSON_PRETTY_PRINT));
                             $this->io->note(json_encode($ex->getTrace(), JSON_PRETTY_PRINT));
                             break;
@@ -74,7 +74,7 @@ class Manager
 
                 // send the request back with the response
                 $responseRabbit->sendMessage($request);
-                $this->io->text("REQUEST :: [$request->requestId] {$this->now} :: {$request->queue} - COMPLETE");
+                $this->io->text("REQUESTS START --- Date: {$this->now} --- {$request->queue}");
             });
 
             // close connections
@@ -107,10 +107,9 @@ class Manager
             $responseRabbit->connect("{$queue}_response");
             
             // read responses
-            $this->io->text('Reading messages...');
             $responseRabbit->readMessageAsync(function($response) {
                 $this->now = date('Y-m-d H:i:s');
-                $this->io->text("REQUEST :: [$response->requestId] {$this->now} :: {$response->queue} - START");
+                $this->io->text("RESPONSES START --- Date: {$this->now} --- {$response->queue}");
     
                 try {
                     // connect to db
@@ -129,7 +128,7 @@ class Manager
                     $this->em->flush();
     
                     foreach ($response->responses as $id => $data) {
-                        $this->io->text("REQUEST :: {$this->now} :: {$response->queue} :: {$response->method} {$id}");
+                        $this->io->text("> ". str_pad($id, 15) ." (". is_string($data) ? $data : 'OK' .")");
 
                         // handle response based on queue
                         switch($response->queue) {
@@ -208,6 +207,8 @@ class Manager
                     $this->io->error("[40] RESPONSE :: Exception ". get_class($ex) ." at: {$this->now} = {$ex->getMessage()} #{$ex->getLine()} {$ex->getFile()}");
                     $this->io->note($ex->getTraceAsString());
                 }
+    
+                $this->io->text("RESPONSES END --- Date: {$this->now} --- {$response->queue}");
             });
     
             $responseRabbit->close();
