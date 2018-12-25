@@ -48,7 +48,7 @@ class Manager
                 $request->responses = [];
                 $startTime = microtime(true);
                 $startDate = date('H:i:s');
-                $this->io->text("REQUESTS START : ". $startDate ." - {$request->queue}");
+                $this->io->text("REQUESTS START : ". str_pad($request->queue, 50) ." - ". $startDate);
                 
                 // loop through request ids
                 foreach ($request->ids as $id) {
@@ -77,7 +77,7 @@ class Manager
                 
                 // report duration
                 $duration = round(microtime(true) - $startTime, 3);
-                $this->io->text("REQUESTS END   : ". $startDate ." > ". date('H:i:s') ." - {$request->queue} = {$duration}");
+                $this->io->text("REQUESTS END   : ". str_pad($request->queue, 50) ." - ". $startDate ." > ". date('H:i:s') ." = {$duration}");
             });
 
             // close connections
@@ -113,7 +113,7 @@ class Manager
             $responseRabbit->readMessageAsync(function($response) {
                 $startTime = microtime(true);
                 $startDate = date('H:i:s');
-                $this->io->text("RESPONSES START : ". $startDate ." - {$response->queue}");
+                $this->io->text("RESPONSES START : ". str_pad($response->queue, 50) ." - ". $startDate);
     
                 try {
                     // connect to db
@@ -210,7 +210,7 @@ class Manager
     
                 // report duration
                 $duration = round(microtime(true) - $startTime, 3);
-                $this->io->text("RESPONSES END   : ". $startDate ." > ". date('H:i:s') ." - {$response->queue} = {$duration}");
+                $this->io->text("RESPONSES END   :  ". str_pad($response->queue, 50) ." - ". $startDate ." > ". date('H:i:s') ." = {$duration}");
             });
     
             $responseRabbit->close();
