@@ -52,6 +52,11 @@ class AutoManagerQueue extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
+        
+        if (date('i') == 30 || date('i') == 31) {
+            $this->io->text('Skipping for Hypervisord restart.');
+            return;
+        }
 
         $this->queueCharacters();
         $this->queueFriendLists();
