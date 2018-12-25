@@ -114,22 +114,23 @@ class Manager
                 $startTime = microtime(true);
                 $startDate = date('H:i:s');
     
+                // connect to db
+                // todo - possible cpu leak here
+                $this->em->getConnection()->connect();
+    
+                // Record stats
+                $stat = new LodestoneStatistic();
+                $stat
+                    ->setQueue($response->queue)
+                    ->setMethod($response->method)
+                    ->setDuration(round(time() - $response->added, 4))
+                    ->setCount(count($response->ids))
+                    ->setRequestId($response->requestId ?: 'none_set');
+    
+                $this->em->persist($stat);
+                $this->em->flush();
+    
                 try {
-                    // connect to db
-                    $this->em->getConnection()->connect();
-    
-                    // Record stats
-                    $stat = new LodestoneStatistic();
-                    $stat
-                        ->setQueue($response->queue)
-                        ->setMethod($response->method)
-                        ->setDuration(round(time() - $response->added, 4))
-                        ->setCount(count($response->ids))
-                        ->setRequestId($response->requestId ?: 'none_set');
-    
-                    $this->em->persist($stat);
-                    $this->em->flush();
-                    
                     foreach ($response->responses as $id => $data) {
                         // handle response based on queue
                         switch($response->queue) {
@@ -210,6 +211,7 @@ class Manager
                 // report duration
                 $duration = round(microtime(true) - $startTime, 3);
                 $this->io->text("RESPONSE COMPLETE : ". str_pad($response->queue, 50) ." - ". $startDate ." > ". date('H:i:s') ." = {$duration}");
+                $this->em->getConnection()->close();
             });
     
             $responseRabbit->close();
