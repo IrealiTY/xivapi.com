@@ -210,7 +210,7 @@ class Manager
     
                 // report duration
                 $duration = round(microtime(true) - $startTime, 3);
-                $this->io->text("RESPONSES END   :  ". str_pad($response->queue, 50) ." - ". $startDate ." > ". date('H:i:s') ." = {$duration}");
+                $this->io->text("RESPONSES END   : ". str_pad($response->queue, 50) ." - ". $startDate ." > ". date('H:i:s') ." = {$duration}");
             });
     
             $responseRabbit->close();
