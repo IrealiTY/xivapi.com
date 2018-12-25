@@ -46,12 +46,13 @@ class Manager
             $requestRabbit->readMessageAsync(function($request) use ($responseRabbit) {
                 // update times
                 $request->responses = [];
-                $start = microtime(true);
-                $this->now = date('Y-m-d H:i:s');
-                $this->io->text("REQUESTS START --- Date: {$this->now} --- {$request->queue}");
+                $startTime = microtime(true);
+                $startDate = date('H:i:s');
+                $this->io->text("REQUESTS START : ". $startDate ." - {$request->queue}");
                 
                 // loop through request ids
                 foreach ($request->ids as $id) {
+                    $this->now = date('Y-m-d H:i:s');
     
                     // call the API class dynamically and record any exceptions
                     try {
@@ -75,8 +76,8 @@ class Manager
                 $responseRabbit->sendMessage($request);
                 
                 // report duration
-                $duration = round(microtime(true) - $start, 3);
-                $this->io->text("REQUESTS END   --- Date: {$this->now} --- {$request->queue} --- Duration: {$duration}");
+                $duration = round(microtime(true) - $startTime, 3);
+                $this->io->text("REQUESTS END   : ". $startDate ." > ". date('H:i:s') ." - {$request->queue} = {$duration}");
             });
 
             // close connections
@@ -110,9 +111,9 @@ class Manager
             
             // read responses
             $responseRabbit->readMessageAsync(function($response) {
-                $start = microtime(true);
-                $this->now = date('Y-m-d H:i:s');
-                $this->io->text("RESPONSES START --- Date: {$this->now} --- {$response->queue}");
+                $startTime = microtime(true);
+                $startDate = date('H:i:s');
+                $this->io->text("RESPONSES START : ". $startDate ." - {$response->queue}");
     
                 try {
                     // connect to db
@@ -208,8 +209,8 @@ class Manager
                 }
     
                 // report duration
-                $duration = round(microtime(true) - $start, 3);
-                $this->io->text("RESPONSES END   --- Date: {$this->now} --- {$response->queue} --- Duration: {$duration}");
+                $duration = round(microtime(true) - $startTime, 3);
+                $this->io->text("RESPONSES END   : ". $startDate ." > ". date('H:i:s') ." - {$response->queue} = {$duration}");
             });
     
             $responseRabbit->close();
