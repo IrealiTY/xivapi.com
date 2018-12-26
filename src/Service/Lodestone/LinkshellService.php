@@ -15,7 +15,7 @@ class LinkshellService extends Service
      */
     public function get($lodestoneId): \stdClass
     {
-        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) < 35 || strlen($lodestoneId) > 45) {
+        if ($lodestoneId < 0 || preg_match("/[a-z]/i", $lodestoneId) || strlen($lodestoneId) < 15 || strlen($lodestoneId) > 20) {
             throw new NotAcceptableHttpException('Invalid lodestone ID: '. $lodestoneId);
         }
     
