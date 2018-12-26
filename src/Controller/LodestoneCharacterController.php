@@ -124,9 +124,9 @@ class LodestoneCharacterController extends Controller
         }
         
         // free company
-        if (isset($character->FreeCompanyId)) {
+        if (isset($character->data->FreeCompanyId)) {
             if ($content->FC) {
-                $freecompany = $this->fcService->get($character->FreeCompanyId);
+                $freecompany = $this->fcService->get($character->data->FreeCompanyId);
                 $response->FreeCompany = $freecompany->data;
                 $response->Info->FreeCompany = [
                     'State'     => $freecompany->ent->getState(),
@@ -135,7 +135,7 @@ class LodestoneCharacterController extends Controller
             }
             
             if ($content->FCM) {
-                $members = $this->fcService->getMembers($character->FreeCompanyId);
+                $members = $this->fcService->getMembers($character->data->FreeCompanyId);
                 $response->FreeCompanyMembers = $members->data;
                 $response->Info->FreeCompanyMembers = [
                     'State'     => $members->ent->getState(),
@@ -145,9 +145,9 @@ class LodestoneCharacterController extends Controller
         }
 
         // if character is in a PvP Team
-        if (isset($character->PvPTeamId)) {
+        if (isset($character->data->PvPTeamId)) {
             if ($content->PVP) {
-                $pvp = $this->pvpService->get($character->PvPTeamId);
+                $pvp = $this->pvpService->get($character->data->PvPTeamId);
                 $response->PvPTeam = $pvp->data;
                 $response->Info->PvPTeam = [
                     'State'     => $pvp->ent->getState(),
