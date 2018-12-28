@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ApiRestrictedException extends HttpException
 {
     const CODE    = 429;
-    const MESSAGE = 'A valid API key that has access to this endpoint is required.';
+    const MESSAGE = 'Your API key does not have access to this endpoint.';
 
     public function __construct()
     {

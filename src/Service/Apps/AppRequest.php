@@ -76,11 +76,11 @@ class AppRequest
         $controller = explode('::', $request->attributes->get('_controller'))[0];
 
         /** @var App $app */
-        $app = $request->get('key') ? self::$manager->getByKey($request->get('key')) : false;
+        $app = self::$manager->getByKey($request->get('key') ?: null);
         
         // check if app can access this endpoint
-        if (in_array($controller, self::URL) && getenv('IS_LOCAL') == '1') {
-            if ($app == false) {
+        if (in_array($controller, self::URL)) {
+            if (empty($request->get('key')) || $app == null) {
                 throw new ApiRestrictedException();
             }
         }
@@ -127,16 +127,26 @@ class AppRequest
     public static function handleRateLimit(Request $request)
     {
         if ($app = self::app()) {
-            $ip = md5($request->getClientIp());
-            $key = "app_rate_limit_ip_{$ip}_{$app->getApiKey()}";
+            $ip       = md5($request->getClientIp());
+            $keyNow   = "app_rate_limit_ip_{$ip}_{$app->getApiKey()}_now";
+            $keyBurst = "app_rate_limit_ip_{$ip}_{$app->getApiKey()}_burst";
 
-            // increment any counts
-            $count = Redis::Cache()->get($key);
+            // increment req counts
+            $count = Redis::Cache()->get($keyNow);
             $count = $count ? $count + 1 : 1;
-            Redis::Cache()->set($key, $count, 1);
+            Redis::Cache()->set($keyNow, $count, 1);
+
+            // increment burst
+            $burst = Redis::Cache()->get($keyBurst);
+            $burst = $burst ? $burst + 1 : 1;
+            Redis::Cache()->set($keyBurst, $burst, 5);
+
+            // rate limit is 2x while not in burst timeout
+            $burstlimit = 5;
+            $ratelimit  = $burst > $burstlimit ? $app->getApiRateLimit() : ($app->getApiRateLimit() * 2);
 
             // check limit against this ip
-            if ($count > $app->getApiRateLimit()) {
+            if ($count > $ratelimit && $burst > $burstlimit) {
                 // if the app has Google Analytics, send an event
                 if ($app->hasGoogleAnalytics()) {
                     GoogleAnalytics::event(

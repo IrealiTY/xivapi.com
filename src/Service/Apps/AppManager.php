@@ -42,8 +42,12 @@ class AppManager
     /**
      * Fetch an app via its key
      */
-    public function getByKey(string $id)
+    public function getByKey(?string $id)
     {
+        if (empty($id)) {
+            return null;
+        }
+
         $id = strtolower(trim($id));
         return $this->em->getRepository(App::class)->findOneBy([
             'apiKey' => $id
