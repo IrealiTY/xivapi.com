@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\ThirdParty\GoogleAnalytics;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -75,6 +76,14 @@ class ApplicationsController extends Controller
         krsort($results);
 
         return $this->json($results);
+    }
+
+    /**
+     * @Route("/app-google")
+     */
+    public function googleTest(Request $request)
+    {
+        GoogleAnalytics::event();
     }
     
     /**

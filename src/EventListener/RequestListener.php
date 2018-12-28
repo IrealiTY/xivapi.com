@@ -51,7 +51,7 @@ class RequestListener
         Language::register($request);
 
         // record analytics
-        GoogleAnalytics::record($request);
+        GoogleAnalytics::hit($request->getPathInfo());
     
         // register app keys
         Apps::setManager($this->appManager);
