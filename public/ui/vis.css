@@ -283,6 +283,10 @@ small {
   font-size: 12px;
   text-transform: uppercase; }
 
+.table .form-group,
+.table p {
+  margin-bottom: 0; }
+
 .navbar.bg-dark {
   background-color: #202020 !important; }
 

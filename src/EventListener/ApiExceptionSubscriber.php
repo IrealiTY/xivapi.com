@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Service\Apps\AppRequest;
 use App\Service\Common\Environment;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -39,7 +40,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         
         $json = [
             'Error'   => true,
-            'Message' => "XIVAPI ERROR: {$message}",
+            'Subject' => 'XIVAPI Service Error',
+            'Message' => $message,
             'Debug'   => [
                 'ID'      => Uuid::uuid4()->toString(),
                 'Class'   => get_class($ex),
@@ -57,12 +59,15 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         ];
     
         if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            return null;
+            //return null;
         }
 
         $response = new JsonResponse($json, $json['Debug']['Code']);
         $response->headers->set('Content-Type','application/json');
         $response->headers->set('Access-Control-Allow-Origin','*');
         $event->setResponse($response);
+
+        // log
+        AppRequest::handleException($json);
     }
 }

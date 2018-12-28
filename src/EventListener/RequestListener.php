@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Service\Apps\AppManager;
-use App\Service\Apps\Apps;
+use App\Service\Apps\AppRequest;
 use App\Service\Common\Environment;
 use App\Service\Common\Language;
 use App\Service\ThirdParty\GoogleAnalytics;
@@ -51,10 +51,12 @@ class RequestListener
         Language::register($request);
 
         // record analytics
-        GoogleAnalytics::hit($request->getPathInfo());
+        GoogleAnalytics::hit(GoogleAnalytics::XIVAPI_ID, $request->getPathInfo());
     
         // register app keys
-        Apps::setManager($this->appManager);
-        Apps::register($request);
+        AppRequest::setManager($this->appManager);
+        AppRequest::handleAppRequestRegistration($request);
+        AppRequest::handleTracking($request);
+        AppRequest::handleRateLimit($request);
     }
 }

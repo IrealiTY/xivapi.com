@@ -139,7 +139,6 @@ class ApplicationsController extends Controller
 
         return $this->render('app/app.html.twig', [
             'app'     => $app,
-            'stats'   => $this->apps->getStats($app),
             'form'    => $form->createView(),
             'message' => $message ?? false,
         ]);

@@ -20,14 +20,6 @@
 
         <br>
 
-        <div>
-            <a href="{{ path('app_manage', { id: app.id }) }}" class="btn btn-primary">Application</a>
-            &nbsp;&nbsp;&nbsp;
-            <a href="{{ path('app_manage_map', { id: app.id }) }}" class="btn btn-outline-primary">Mapping Data</a>
-        </div>
-
-        <br><br>
-
         {% if app.isRestricted() %}
             <div class="alert alert-danger">
                 Mass crawling detected, this key has been restricted.
@@ -42,32 +34,11 @@
             </div>
         {% endif %}
 
-        <div class="card">
-            <div class="card-body">
-                {{ form_start(form) }}
-                <div class="row">
-                    <div class="col">{{ form_row(form.name) }}</div>
-                    <div class="col">{{ form_row(form.description) }}</div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ form_row(form.save) }}
-                    </div>
-                </div>
-                {{ form_end(form) }}
-            </div>
-        </div>
-
-        <br>
-
+        {# APP FORM #}
+        {{ form_start(form) }}
         <table class="table table-bordered">
             <tr>
-                <td colspan="2" class="table-title">
-                    <h3>Details</h3>
-                </td>
-            </tr>
-            <tr>
-                <td width="30%">
+                <td>
                     <strong>API Key</strong>
                     <br><br>
                     <div>
@@ -78,20 +49,25 @@
                 <td>
                     <h3><code>{{ app.apiKey }}</code></h3>
                     <strong>Example usage:</strong>
-                    <pre style="margin: 4px 0;"><code>$ curl https://xivapi.com/Item/1675?key={{ app.apiKey }}</code></pre>
+                    <pre style="margin: 4px 0;"><code>$ curl https://xivapi.com/item/1675?key={{ app.apiKey }}</code></pre>
+                    <a href="https://xivapi.com/item/1675?key={{ app.apiKey }}" target="_blank">https://xivapi.com/Item/1675?key={{ app.apiKey }}</a>
                 </td>
             </tr>
             <tr>
-                <td><strong>App ID</strong></td>
-                <td>{{ app.id }}</td>
+                <td width="25%"><strong>Name</strong></td>
+                <td>{{ form_row(form.name) }}</td>
             </tr>
             <tr>
-                <td><strong>Level</strong></td>
-                <td>{{ app.level }}</td>
+                <td><strong>Description</strong></td>
+                <td>{{ form_row(form.description) }}</td>
             </tr>
             <tr>
-                <td colspan="2" class="table-title">
-                    <h3>Requests</h3>
+                <td><strong>Google Analytics ID</strong></td>
+                <td>
+                    {{ form_row(form.googleAnalyticsId) }}
+                    <br>
+                    <p>If you wish to track your app, enter your Google Analytics Tracking ID.</p>
+                    <p><a href="https://analytics.google.com/analytics/web/?authuser=1#/" target="_blank">Open Google Analytics</a></p>
                 </td>
             </tr>
             <tr>
@@ -111,144 +87,110 @@
                 </td>
             </tr>
             <tr>
-                <td><strong>Requests per second</strong></td>
-                <td>
-                    {{ stats.REQ_PER_SEC ?: 0 }} per second
-                    <div>
-                        <small>Based on the last 1000 requests</small>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td><strong>Requests (Total)</strong></td>
-                <td>{{ stats.CACHE_HITS_TOTAL|number_format ?: 0 }}</td>
-            </tr>
-            <tr>
-                <td><strong>Requests (Rate Limited)</strong></td>
-                <td>{{ stats.CACHE_HITS_LIMITED|number_format ?: 0 }}</td>
-            </tr>
 
-            {# Tags #}
-            <tr>
-                <td colspan="2" class="table-title">
-                    <h3>Tags</h3>
-                </td>
             </tr>
-            
-            {% for tag, value in stats.TAGS %}
-                <tr>
-                    <td><strong>{{ tag }}</strong></td>
-                    <td>{{ value|number_format }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="2">
-                        If you are interested in recording stat counters,
-                        <a href="/docs#section-3">view the documentation on tags.</a>
-                        <br>
-                        <strong>Usage</strong>
-                        <code>xivapi.com?key=XXX&tags=lorem,ipsum</code>
-                    </td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td colspan="2" class="table-title">{{ form_row(form.save) }}</td>
+            </tr>
         </table>
+        {{ form_end(form) }}
 
         <br>
-        <h3>Requests</h3>
 
-        <p>
-            <small>Per minute over {{ stats.CHART_LENGTH_HRS }} hours (realtime)</small>
-        </p>
+        {# GOOGLE ANALYTICS #}
+        <h3>Google Analytics</h3>
+        <br>
 
-        <div class="app-dev-chart">
-            <canvas id="reqPerMin" class="app-dev-chart"></canvas>
-        </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-        <script>
-            new Chart(document.getElementById("reqPerMin"), {
-                type: 'bar',
+        <h5>Built-in Events</h5>
+        <p>XIVAPI provides some built-in events for Google Analytics, these are:</p>
 
-                data: {
-                    labels: {{ stats.CHART|keys|json_encode|raw }},
-                    datasets: [{
-                        label: 'Req per minute',
-                        data: [{{ stats.CHART|join(',') }}],
+        <ol>
+            <li>
+                <h5 class="text-danger">Rate Limit Exception</h5>
+                <p>Provides an incremental count of when your app is rate-limited. The label represents
+                a MD5 hash of the client IP, you can use this to look at potential abusers of your app
+                and blacklist any spam.</p>
 
-                        backgroundColor: 'rgba(87,35,162,1)',
-
-                        borderWidth: 0
-
-                        /*
-                        backgroundColor: [
-                            'rgba(87,35,162,1)'
-                        ],
-
-                        borderColor: [
-                            'rgba(87,35,162,1)'
-                        ],
-
-                        borderWidth: 2,
-                        pointRadius: 1,
-                        pointBorderWidth: 3,
-                        cubicInterpolationMode: 'monotone'
-                        */
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        position: 'nearest',
-                        intersect: false
-                    },
-                    scales: {
-                        yAxes: [{
-                            gridLines: {
-                                zeroLineColor: 'rgba(87,35,162,1)',
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                //steps: 10,
-                                //stepValue: 5,
-                                max: {{ stats.CHART_MAX }}
-                            }
-                        }]
-                    }
-                }
-            })
-        </script>
-
-        <p>
-            <small>The last <strong>1,000</strong> records out of <strong>{{ stats.HISTORY|length }}</strong> requests over the past {{ stats.CHART_LENGTH_HRS }} hours</small>
-        </p>
-
-        <div class="app-history-table">
-            <table class="table table-bordered table-sm">
-                <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Date</th>
-                    <th>Method</th>
-                    <th width="40%">Endpoint</th>
-                    <th>Language</th>
-                </tr>
-                </thead>
-                {% for row in stats.HISTORY_TABLE %}
+                <table class="table table-sm table-bordered">
+                    <thead>
                     <tr>
-                        <td><small style="font-size: 13px;">{{ row.Unix ~'.'~ row.MS }}</small></td>
-                        <td><small style="font-size: 13px;">{{ row.Time }}.{{ row.MS }}</small></td>
-                        <td><strong  style="font-size: 13px;">{{ row.Method }}</strong></td>
-                        <td><code>{{ row.Endpoint }}</code></td>
-                        <td><code>{{ row.Language }}</code></td>
+                        <th width="25%">Category</th>
+                        <th width="25%">Action</th>
+                        <th width="25%">Label</th>
+                        <th width="25%">Value</th>
                     </tr>
-                {% else %}
+                    </thead>
+                    <tbody>
                     <tr>
-                        <td colspan="5">
-                            <small>No data right now, queries will appear here as you use the API with your key!</small>
-                        </td>
+                        <td>Exceptions</td>
+                        <td>ApiRateLimitException</td>
+                        <td><code>md5(ip)</code></td>
+                        <td>+1</td>
                     </tr>
-                {% endfor %}
-            </table>
-        </div>
+                    </tbody>
+                </table>
+                <br>
+            </li>
+            <li>
+                <h5 class="text-danger">No Access Exception</h5>
+                <p>Your app tried to access an endpoint that it does not have permissions to. The label
+                shows the endpoint with the value being an incremental count.</p>
+
+                <table class="table table-sm table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="25%">Category</th>
+                        <th width="25%">Action</th>
+                        <th width="25%">Label</th>
+                        <th width="25%">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Exceptions</td>
+                        <td>ApiRestrictedException</td>
+                        <td><code>/[endpoint]</code></td>
+                        <td>+1</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+            </li>
+            <li>
+                <h5 class="text-danger">Service Error Exceptions</h5>
+                <p>This is when the API returns an error, <strong>2 events are posted</strong>.</p>
+                <p>
+                    <span class="text-info">ApiServiceErrorException</span>: The error message as the label.<br>
+                    <span class="text-info">ApiServiceCodeException</span>: The HTTP status code (eg 500, 429, etc)
+                </p>
+                <table class="table table-sm table-bordered">
+                    <thead>
+                    <tr>
+                        <th width="25%">Category</th>
+                        <th width="25%">Action</th>
+                        <th width="25%">Label</th>
+                        <th width="25%">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Exceptions</td>
+                        <td>ApiServiceErrorException</td>
+                        <td><code>[error message]</code></td>
+                        <td>+1</td>
+                    </tr>
+                    <tr>
+                        <td>Exceptions</td>
+                        <td>ApiServiceCodeException</td>
+                        <td><code>[http code]</code></td>
+                        <td>+1</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+            </li>
+        </ol>
+
     </main>
 </div>
 

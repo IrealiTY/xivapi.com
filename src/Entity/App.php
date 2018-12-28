@@ -6,7 +6,19 @@ use Ramsey\Uuid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="apps")
+ * @ORM\Table(
+ *     name="apps",
+ *     indexes={
+ *          @ORM\Index(name="added", columns={"added"}),
+ *          @ORM\Index(name="name", columns={"name"}),
+ *          @ORM\Index(name="google_analytics_id", columns={"google_analytics_id"}),
+ *          @ORM\Index(name="level", columns={"level"}),
+ *          @ORM\Index(name="api_key", columns={"api_key"}),
+ *          @ORM\Index(name="api_rate_limit", columns={"api_rate_limit"}),
+ *          @ORM\Index(name="restricted", columns={"restricted"}),
+ *          @ORM\Index(name="default", columns={"default"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\AppRepository")
  */
 class App
@@ -45,6 +57,11 @@ class App
     private $name;
     /**
      * @var string
+     * @ORM\Column(type="string", length=20, nullable=true)
+     */
+    private $googleAnalyticsId = null;
+    /**
+     * @var string
      * @ORM\Column(type="string", length=400, nullable=true)
      */
     private $description;
@@ -73,6 +90,11 @@ class App
      * @ORM\Column(type="boolean", name="is_default")
      */
     private $default = false;
+    /**
+     * @var array
+     * @ORM\Column(type="array")
+     */
+    private $access = [];
     
     public function __construct()
     {
@@ -125,7 +147,7 @@ class App
         return $this;
     }
 
-    public function getUser():?User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -152,7 +174,7 @@ class App
         return $this->description;
     }
 
-    public function setDescription($description)
+    public function setDescription(?string $description = null)
     {
         $this->description = $description;
         return $this;
@@ -209,6 +231,35 @@ class App
     public function setRestricted(bool $restricted)
     {
         $this->restricted = $restricted;
+
+        return $this;
+    }
+
+    public function getGoogleAnalyticsId(): ?string
+    {
+        return $this->googleAnalyticsId;
+    }
+
+    public function setGoogleAnalyticsId(?string $googleAnalyticsId = null)
+    {
+        $this->googleAnalyticsId = $googleAnalyticsId;
+
+        return $this;
+    }
+
+    public function hasGoogleAnalytics(): bool
+    {
+        return !empty($this->googleAnalyticsId);
+    }
+
+    public function getAccess(): array
+    {
+        return $this->access;
+    }
+
+    public function setAccess(array $access)
+    {
+        $this->access = $access;
 
         return $this;
     }

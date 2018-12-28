@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class GoogleAnalytics
 {
     const ENDPOINT      = 'http://www.google-analytics.com';
-    const TRACKKING_ID  = 'UA-125096878-1';
+    const XIVAPI_ID     = 'UA-125096878-1';
     const VERSION       = 1;
     const TIMEOUT       = 5;
 
@@ -46,15 +46,15 @@ class GoogleAnalytics
     /**
      * Post a hit to Google Analytics
      */
-    public static function hit(string $url): void
+    public static function hit(string $trackingId, string $url): void
     {
         self::query([
             't'   => 'pageview',
-            'tid' => self::TRACKKING_ID,
             'v'   => self::VERSION,
             'cid' => Uuid::uuid4()->toString(),
             'z'   => mt_rand(0, 999999),
 
+            'tid' => $trackingId,
             'dp'  => $url,
         ]);
     }
@@ -62,15 +62,15 @@ class GoogleAnalytics
     /**
      * Record an event
      */
-    public static function event(string $category, string $action, string $label = '', int $value = 1): void
+    public static function event(string $trackingId, string $category, string $action, string $label = '', int $value = 1): void
     {
         self::query([
             't'   => 'event',
-            'tid' => self::TRACKKING_ID,
             'v'   => self::VERSION,
             'cid' => Uuid::uuid4()->toString(),
             'z'   => mt_rand(0, 999999),
 
+            'tid' => $trackingId,
             'ec'  => $category,
             'ea'  => $action,
             'el'  => $label,
