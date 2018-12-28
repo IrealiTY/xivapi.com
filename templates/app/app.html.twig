@@ -73,7 +73,7 @@
             <tr>
                 <td><strong>Rate Limit</strong></td>
                 <td>
-                    {{ app.apiRateLimit }} per second
+                    {{ app.apiRateLimit }} per second, burst: {{ (app.apiRateLimit*2) }} - 5 second cooldown
                     <div>
                         <small>Rate limit is per (hashed) IP request</small>
                     </div>
