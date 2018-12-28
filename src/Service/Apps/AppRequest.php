@@ -86,7 +86,7 @@ class AppRequest
         }
 
         // Do nothing if no app has been found (likely not using API)
-        if ($app === false) {
+        if ($app == false) {
             return;
         }
 
