@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Service\Common\Arrays;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -55,7 +54,6 @@ class ApplicationsController extends Controller
     public function stats()
     {
         $apps = $this->cache->keys("keystats_*");
-        $ips  = $this->cache->keys("ipstats_*");
 
         $results = [];
         foreach($apps as $i => $key) {
@@ -64,7 +62,7 @@ class ApplicationsController extends Controller
 
             $count = $this->cache->getCount($key);
 
-            $app = $this->appManager->getByKey($id);
+            $app = $this->apps->getByKey($id);
             $results[$count][] = [
                 $key,
                 $count,
