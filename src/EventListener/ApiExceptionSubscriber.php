@@ -4,6 +4,8 @@ namespace App\EventListener;
 
 use App\Service\Apps\AppRequest;
 use App\Service\Common\Environment;
+use App\Service\Redis\Redis;
+use App\Service\ThirdParty\Sentry;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,8 +60,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             ]
         ];
     
-        if (getenv('IS_LOCAL') || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            //return null;
+        if (getenv('IS_LOCAL') == '1' || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
+            return null;
         }
 
         $response = new JsonResponse($json, $json['Debug']['Code']);
@@ -69,5 +71,12 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
         // log
         AppRequest::handleException($json);
+
+        // flag to sentry if havent done so already
+        if (Redis::Cache()->get('sentry_limit_'. md5($message)) == null) {
+            // cache for 15 minutes
+            Redis::Cache()->set('sentry_limit_'. md5($message), 1, 900);
+            Sentry::install();
+        }
     }
 }
