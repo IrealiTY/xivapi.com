@@ -14,6 +14,7 @@ use App\Controller\XivGameContentController;
 use App\Entity\App;
 use App\Exception\ApiRestrictedException;
 use App\Service\Redis\Redis;
+use App\Service\ThirdParty\GoogleAnalytics;
 use Symfony\Component\HttpFoundation\Request;
 
 class Apps
@@ -67,18 +68,11 @@ class Apps
         // track app requests
         self::$manager->track($request);
 
-        // (beta) record general statistics
-        self::recordGeneralStatistics($request);
-    }
-
-    /**
-     * Record general statistics for the API key
-     *
-     * @param Request $request
-     */
-    private static function recordGeneralStatistics(Request $request): void
-    {
-        Redis::Cache()->increment("keystats_". $request->get('key'));
-        Redis::Cache()->increment("ipstats_". strtoupper(md5($request->getClientIp())));
+        // Track Developer App on Google Analytics
+        GoogleAnalytics::event(
+            'Apps',
+            $app->getApiKey(),
+            "{$app->getName()} - {$app->getUser()->getUsername()}"
+        );
     }
 }

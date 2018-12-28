@@ -53,25 +53,28 @@ class GoogleAnalytics
             'tid' => self::TRACKKING_ID,
             'v'   => self::VERSION,
             'cid' => Uuid::uuid4()->toString(),
-            'dp'  => $url,
             'z'   => mt_rand(0, 999999),
+
+            'dp'  => $url,
         ]);
     }
 
     /**
      * Record an event
      */
-    public static function event(): void
+    public static function event(string $category, string $action, string $label = '', int $value = 1): void
     {
         self::query([
             't'   => 'event',
             'tid' => self::TRACKKING_ID,
             'v'   => self::VERSION,
             'cid' => Uuid::uuid4()->toString(),
-            'ec'  => 'Test_Category',
-            'ea'  => 'Test_Action',
-            'el'  => 'Test_Label',
-            'ev'  => '10'
+            'z'   => mt_rand(0, 999999),
+
+            'ec'  => $category,
+            'ea'  => $action,
+            'el'  => $label,
+            'ev'  => $value,
         ]);
     }
 }

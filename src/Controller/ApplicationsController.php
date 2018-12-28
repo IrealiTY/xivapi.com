@@ -50,35 +50,6 @@ class ApplicationsController extends Controller
     }
 
     /**
-     * @Route("/app-stats")
-     */
-    public function stats()
-    {
-        $apps = $this->cache->keys("keystats_*");
-
-        $results = [];
-        foreach($apps as $i => $key) {
-            $id = explode('_', $key)[1] ?? false;
-            if (!$id) { continue; }
-
-            $count = $this->cache->getCount($key);
-
-            $app = $this->apps->getByKey($id);
-            $results[$count][] = [
-                $key,
-                $count,
-                $app ? $app->getApiKey() : 'no-app',
-                $app ? $app->getName() : 'no name',
-                $app ? $app->getUser()->getUsername() : 'no user'
-            ];
-        }
-
-        krsort($results);
-
-        return $this->json($results);
-    }
-
-    /**
      * @Route("/app-google")
      */
     public function googleTest(Request $request)
