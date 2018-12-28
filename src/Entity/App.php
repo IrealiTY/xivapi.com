@@ -15,8 +15,8 @@ use Doctrine\ORM\Mapping as ORM;
  *          @ORM\Index(name="level", columns={"level"}),
  *          @ORM\Index(name="api_key", columns={"api_key"}),
  *          @ORM\Index(name="api_rate_limit", columns={"api_rate_limit"}),
- *          @ORM\Index(name="restricted", columns={"restricted"}),
- *          @ORM\Index(name="default", columns={"default"})
+ *          @ORM\Index(name="restricted", columns={"is_restricted"}),
+ *          @ORM\Index(name="default", columns={"is_default"})
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\AppRepository")
@@ -82,7 +82,7 @@ class App
     private $apiRateLimit = 2;
     /**
      * @var bool
-     * @ORM\Column(type="boolean", options={"default" : 0})
+     * @ORM\Column(type="boolean", name="is_restricted", options={"default" : 0})
      */
     private $restricted = false;
     /**
