@@ -84,6 +84,7 @@ class ApplicationsController extends Controller
     public function googleTest(Request $request)
     {
         GoogleAnalytics::event();
+        return $this->json(1);
     }
     
     /**
