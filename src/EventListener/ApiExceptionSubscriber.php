@@ -71,12 +71,5 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
         // log
         AppRequest::handleException($json);
-
-        // flag to sentry if havent done so already
-        if (Redis::Cache()->get('sentry_limit_'. md5($message)) == null) {
-            // cache for 15 minutes
-            Redis::Cache()->set('sentry_limit_'. md5($message), 1, 900);
-            Sentry::install();
-        }
     }
 }

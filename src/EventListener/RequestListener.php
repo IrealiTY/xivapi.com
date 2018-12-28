@@ -7,6 +7,7 @@ use App\Service\Apps\AppRequest;
 use App\Service\Common\Environment;
 use App\Service\Common\Language;
 use App\Service\ThirdParty\GoogleAnalytics;
+use App\Service\ThirdParty\Sentry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -25,6 +26,8 @@ class RequestListener
         if (!$event->isMasterRequest()) {
             return;
         }
+
+        Sentry::install();
 
         /** @var Request $request */
         $request = $event->getRequest();
