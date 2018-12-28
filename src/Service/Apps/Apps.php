@@ -66,7 +66,7 @@ class Apps
         }
 
         // Do nothing if no app has been found (likely not using API)
-        if ($app === null) {
+        if ($app === false) {
             return;
         }
 
