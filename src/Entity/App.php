@@ -92,7 +92,7 @@ class App
     private $default = false;
     /**
      * @var array
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="array", nullable=true)
      */
     private $access = [];
     
