@@ -59,10 +59,15 @@ class Apps
         $app = $request->get('key') ? self::$manager->getByKey($request->get('key')) : false;
         
         // check if app can access this endpoint
-        if (in_array($controller, self::URL) && getenv('APP_ENV') != 'dev') {
+        if (in_array($controller, self::URL) && getenv('IS_LOCAL') == '1') {
             if ($app == false) {
                 throw new ApiRestrictedException(ApiRestrictedException::CODE, ApiRestrictedException::MESSAGE);
             }
+        }
+
+        // Do nothing if no app has been found (likely not using API)
+        if ($app === null) {
+            return;
         }
 
         // track app requests
