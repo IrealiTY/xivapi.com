@@ -81,7 +81,7 @@ class LodestonePvPTeamController extends Controller
     {
         $pvp = $this->service->get($lodestoneId);
     
-        if ($pvp->ent->isBlackListed) {
+        if ($pvp->ent->isBlackListed()) {
             throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
         }
     

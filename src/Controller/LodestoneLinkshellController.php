@@ -82,7 +82,7 @@ class LodestoneLinkshellController extends Controller
     {
         $linkshell = $this->service->get($lodestoneId);
     
-        if ($linkshell->ent->isBlackListed) {
+        if ($linkshell->ent->isBlackListed()) {
             throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
         }
     

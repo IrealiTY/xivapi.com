@@ -203,7 +203,7 @@ class LodestoneCharacterController extends Controller
     {
         $character = $this->service->get($lodestoneId);
     
-        if ($character->ent->isBlackListed) {
+        if ($character->ent->isBlackListed()) {
             throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
         }
     

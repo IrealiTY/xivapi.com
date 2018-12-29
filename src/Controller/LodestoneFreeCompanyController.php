@@ -104,7 +104,7 @@ class LodestoneFreeCompanyController extends Controller
     {
         $freecompany = $this->service->get($lodestoneId);
     
-        if ($freecompany->ent->isBlackListed) {
+        if ($freecompany->ent->isBlackListed()) {
             throw new ContentGoneException(ContentGoneException::CODE, 'Blacklisted');
         }
     
