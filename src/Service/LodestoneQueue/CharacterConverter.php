@@ -17,6 +17,10 @@ class CharacterConverter
     
     public static function handle($data)
     {
+        if ($data == null) {
+            return;
+        }
+        
         //
         // ActiveClassJob
         //

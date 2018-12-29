@@ -157,7 +157,8 @@ class UpdateSearchCommand extends Command
                 $this->io->progressFinish();
             }
         } catch (\Exception $ex) {
-            print_r($content);
+            print_r($content ?? ['no content']);
+            print_r($ex->getMessage());
             throw $ex;
         }
     

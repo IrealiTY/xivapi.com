@@ -156,6 +156,10 @@ class LodestoneData
      */
     public static function extendCharacterData($data)
     {
+        if ($data == null) {
+            return;
+        }
+        
         self::extendCharacterDataHandler('Title', $data, [
             "ID",
             "Icon",
