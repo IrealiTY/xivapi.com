@@ -85,7 +85,7 @@ class LodestoneFreeCompanyController extends Controller
         ];
     
         if ($content->FCM) {
-            $members = $this->service->getMembers($freecompany->ID);
+            $members = $this->service->getMembers($lodestoneId);
             $response->FreeCompanyMembers = $members;
             $response->Info->FreeCompanyMembers = [
                 'State'     => $members->ent->getState(),
