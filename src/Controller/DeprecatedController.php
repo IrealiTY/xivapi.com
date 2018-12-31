@@ -27,7 +27,11 @@ class DeprecatedController extends Controller
      */
     public function xivdbAnalytics(Request $request)
     {
-        $url = $request->get('route');
+        $url = trim($request->get('route'));
+        
+        if (empty($url)) {
+            return $this->json(0);
+        }
     
         GoogleAnalytics::event(
             'UA-125096878-4',
@@ -36,6 +40,8 @@ class DeprecatedController extends Controller
             $url,
             1
         );
+        
+        return $this->json(1);
     }
     
     /**
