@@ -50,15 +50,6 @@ class ApplicationsController extends Controller
     }
 
     /**
-     * @Route("/app-google")
-     */
-    public function googleTest(Request $request)
-    {
-        GoogleAnalytics::event();
-        return $this->json(1);
-    }
-    
-    /**
      * @Route("/app", name="app")
      */
     public function index()

@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\MapPosition;
+use App\Service\ThirdParty\GoogleAnalytics;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -18,6 +20,22 @@ class DeprecatedController extends Controller
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+    
+    /**
+     * @Route("/debug/xivdb")
+     */
+    public function xivdbAnalytics(Request $request)
+    {
+        $url = $request->get('route');
+    
+        GoogleAnalytics::event(
+            'UA-125096878-4',
+            'XIVDB',
+            'Route',
+            $url,
+            1
+        );
     }
     
     /**
