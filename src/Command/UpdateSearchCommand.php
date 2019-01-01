@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Service\Common\DataType;
-use App\Service\Common\Environment;
 use App\Service\Common\Language;
 use App\Service\Redis\Cache;
 use App\Service\Search\SearchContent;
@@ -17,12 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UpdateSearchCommand extends Command
 {
     use CommandHelperTrait;
-    
-    public function __construct(?string $name = null)
-    {
-        parent::__construct($name);
-    }
-    
+
     protected function configure()
     {
         $this

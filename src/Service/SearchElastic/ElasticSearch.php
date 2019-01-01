@@ -2,7 +2,6 @@
 
 namespace App\Service\SearchElastic;
 
-use App\Service\Common\Environment;
 use Elasticsearch\ClientBuilder;
 
 class ElasticSearch
@@ -33,20 +32,47 @@ class ElasticSearch
         }
     }
 
-    public function addIndex(string $index, array $mapping, array $settings = []): void
+    public function addIndex(string $index): void
     {
-        $settings = array_merge($settings, [
-            'number_of_shards'   => self::NUMBER_OF_SHARDS,
-            'number_of_replicas' => self::NUMBER_OF_REPLICAS,
-            'max_result_window'  => self::MAX_RESULT_WINDOW,
-            'index.mapping.total_fields.limit' => self::MAX_FIELDS,
-        ]);
-
         $this->client->indices()->create([
             'index' => $index,
             'body' => [
-                'settings' => $settings,
-                'mappings' => $mapping
+                'settings' => [
+                    'analysis' => ElasticMapping::ANALYSIS
+                ],
+                'mappings' => [
+                    'search' => [
+                        '_source' => [ 'enabled' => true ],
+                        'number_of_shards'   => self::NUMBER_OF_SHARDS,
+                        'number_of_replicas' => self::NUMBER_OF_REPLICAS,
+                        'max_result_window'  => self::MAX_RESULT_WINDOW,
+                        'index.mapping.total_fields.limit' => self::MAX_FIELDS,
+                        'dynamic' => true,
+                        'dynamic_templates' => [
+                            [
+                                'strings' => [
+                                    'match_mapping_type' => 'string',
+                                    'mapping' => ElasticMapping::STRING
+                                ],
+                            ],[
+                                'integers' => [
+                                    'match_mapping_type' => 'long',
+                                    'mapping' => ElasticMapping::INTEGER
+                                ],
+                            ],[
+                                'booleans' => [
+                                    'match_mapping_type' => 'boolean',
+                                    'mapping' => ElasticMapping::BOOLEAN
+                                ],
+                            ],[
+                                'texts' => [
+                                    'match_mapping_type' => 'string',
+                                    'mapping' => ElasticMapping::TEXT
+                                ]
+                            ]
+                        ],
+                    ],
+                ]
             ]
         ]);
     }
