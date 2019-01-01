@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Exception\ContentGoneException;
-use App\Service\Content\LodestoneData;
 use App\Service\Japan\Japan;
 use App\Service\Lodestone\CharacterService;
 use App\Service\Lodestone\FreeCompanyService;
@@ -163,7 +162,7 @@ class LodestoneCharacterController extends Controller
      * @Route("/Character/{lodestoneId}/Verification")
      * @Route("/character/{lodestoneId}/verification")
      */
-    public function verification($lodestoneId)
+    public function verification(Request $request, $lodestoneId)
     {
         $character = $this->service->get($lodestoneId);
     
@@ -175,23 +174,22 @@ class LodestoneCharacterController extends Controller
             throw new ContentGoneException(ContentGoneException::CODE, 'Not Added');
         }
         
-        $key = __METHOD__ . $lodestoneId;
-        if ($data = $this->service->cache->get($key)) {
+        // check if cached, this is to reduce spam
+        if ($data = $this->service->cache->get(__METHOD__ . $lodestoneId)) {
             return $this->json($data);
         }
 
         $character = (new Api())->getCharacter($lodestoneId);
-        LodestoneData::verification($character);
 
+        // setup response data
         $data = [
-            'ID'                    => $character->ID,
-            'Bio'                   => $character->Bio,
-            'VerificationToken'     => $character->VerificationToken,
-            'VerificationTokenPass' => $character->VerificationTokenPass,
+            'ID'   => $character->ID,
+            'Bio'  => $character->Bio,
+            'Pass' => stripos($character->Bio, $request->get('token')) > -1
         ];
 
         // small cache time as it's just to prevent "spam"
-        $this->service->cache->set($key, $data, 15);
+        $this->service->cache->set(__METHOD__ . $lodestoneId, $data, 15);
         return $this->json($data);
     }
 
