@@ -83,22 +83,6 @@ class LodestoneData
         return self::$cache->get($key) ?: null;
     }
     
-    /**
-     * Add verification data onto a character
-     */
-    public static function verification($data)
-    {
-        //
-        // Verification stuff, this changes once a day and can be used
-        // by developers to verify ownership of a character. Do not leak!
-        //
-        $seed = 14305;
-        $data->VerificationToken = str_ireplace('-', null, Uuid::uuid3(Uuid::NAMESPACE_DNS, $data->ID));
-        $data->VerificationToken = date('zH') + $seed . $data->VerificationToken;
-        $data->VerificationToken = 'XIV'. strtoupper(substr(sha1($data->VerificationToken), 10, -10)) .'API';
-        $data->VerificationTokenPass = stripos($data->Bio, $data->VerificationToken) !== false;
-    }
-
     public static function extendCharacterDataHandler($name, $data, $fields)
     {
         if (self::$cache === null) {
