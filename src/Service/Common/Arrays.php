@@ -370,7 +370,7 @@ class Arrays
 
         // write to file
         $fp = fopen($filename, 'w');
-        foreach ($positions as $fields) {
+        foreach ($arr as $fields) {
             fputcsv($fp, $fields);
         }
 
