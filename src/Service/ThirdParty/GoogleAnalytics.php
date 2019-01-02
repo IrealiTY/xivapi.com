@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 class GoogleAnalytics
 {
     const ENDPOINT      = 'http://www.google-analytics.com';
-    const XIVAPI_ID     = 'UA-125096878-1';
     const VERSION       = 1;
     const TIMEOUT       = 5;
 

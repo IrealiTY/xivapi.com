@@ -1,0 +1,94 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}Search Playground{% endblock %}
+
+{% block body %}
+<div class="two-pane">
+    <aside>
+        woop
+    </aside>
+    <main style="max-width: 100%;">
+
+        <h2>Search Play Testing</h2>
+
+        <div class="playground">
+            <div>
+                <div class="form-row">
+                    <label for="endpoint">Endpoint</label>
+                    <input name="endpoint" id="endpoint" placeholder="URL of API Endpoint" class="form-control" value="https://staging.xivapi.com">
+                </div>
+                <br>
+                <div class="form-row">
+                    <label for="indexes">Indexes</label>
+                    <textarea name="indexes" id="indexes" placeholder="Search Indexes" class="form-control">item,achievement,instantcontent</textarea>
+                </div>
+                <br>
+                <div class="form-row">
+                    <label for="body">Body</label>
+                    <textarea name="body" id="body" placeholder="Elastic Search Query" class="form-control" rows="20"></textarea>
+                </div>
+                <br>
+                <button class="btn btn-success" type="button">Search</button>
+            </div>
+            <div>
+                <div class="playground-response" id="playground-response"></div>
+            </div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+let query = {
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "wildcard": {
+                        "NameCombined_en": "*te*"
+                    }
+                }
+            ],
+            "filter": [
+                {
+                    "range": {
+                        "ItemSearchCategory.ID": {
+                            "gte": "1"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "from": 0,
+    "size": 50
+};
+
+$('#body').html(
+    JSON.stringify(query, null, 2)
+);
+
+$('.btn').on('click', function() {
+    let payload = {
+        indexes: $('#indexes').val().trim(),
+        body: JSON.parse($('#body').val().trim()),
+    };
+
+    $.ajax({
+        url: $('#endpoint').val().trim() + '/search',
+        type: "POST",
+        dataType: "json",
+        data: payload,
+        contentType: "application/json",
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(a,b,c) {
+            console.error(a,b,c);
+        }
+    });
+});
+</script>
+{% endblock %}

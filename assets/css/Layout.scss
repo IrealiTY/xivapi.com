@@ -127,3 +127,19 @@ footer {
     > div.flex7 { flex: 0 1 14%; }
     > div.flex8 { flex: 0 1 12.5%; }
 }
+
+.playground {
+    display: flex;
+
+    > div {
+        flex: 0 1 50%;
+        padding: 20px;
+    }
+}
+
+.playground-response {
+    border: solid 1px #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px #ddd;
+    min-height: 300px;
+}

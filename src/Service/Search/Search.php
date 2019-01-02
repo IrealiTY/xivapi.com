@@ -26,6 +26,24 @@ class Search
      */
     public function handleRequest(SearchRequest $req, SearchResponse $res)
     {
+        // if a payload exists
+        if ($req->payload) {
+            $this->handlePayloadRequest($req, $res);
+            return;
+        }
+
+        $this->handleGetRequest($req, $res);
+    }
+
+    private function handlePayloadRequest(SearchRequest $req, SearchResponse $res)
+    {
+        $res->setResults(
+            $this->search->search($req->payload->indexes, 'search', $req->payload->body) ?: []
+        );
+    }
+
+    private function handleGetRequest(SearchRequest $req, SearchResponse $res)
+    {
         //
         // Sorting
         //
@@ -43,7 +61,7 @@ class Search
                 $req->limitStart, $req->limit
             );
         }
-        
+
         //
         // Similar
         //
@@ -52,14 +70,14 @@ class Search
                 $req->stringColumn, $req->string
             );
         }
-    
+
         $this->performStringSearch($req);
         $this->performFilterSearch($req);
-        
+
         #echo $this->query->getJson();#die;
-        
+
         $query = $this->query->getQuery($req->bool);
-        
+
         try {
             $res->setResults(
                 $this->search->search($req->indexes, 'search', $query) ?: []
@@ -71,7 +89,7 @@ class Search
                 $error = $error ? $error->error->root_cause[0]->reason : $ex->getMessage();
                 throw new \Exception($error, $ex->getCode(), $ex);
             }
-            
+
             throw $ex;
         }
     }

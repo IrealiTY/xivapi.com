@@ -67,6 +67,8 @@ class SearchRequest
     public $bool = 'must';
     // similar
     public $suggest = false;
+    /** @var null|\stdClass */
+    public $payload = null;
     
     public static function defaults()
     {
@@ -82,6 +84,11 @@ class SearchRequest
      */
     public function buildFromRequest(Request $request)
     {
+        if ($json = $request->getContent()) {
+            $this->payload = $json;
+            return;
+        }
+
         $this->indexes          = $request->get('indexes',        $this->indexes);
         $this->string           = $request->get('string',         $this->string);
         $this->stringAlgo       = $request->get('string_algo',    $this->stringAlgo);

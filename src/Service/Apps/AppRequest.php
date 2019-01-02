@@ -12,6 +12,7 @@ use App\Controller\LodestoneStatisticsController;
 use App\Controller\SearchController;
 use App\Controller\XivGameContentController;
 use App\Entity\App;
+use App\Entity\User;
 use App\Exception\ApiRateLimitException;
 use App\Exception\ApiRestrictedException;
 use App\Service\Redis\Redis;
@@ -37,6 +38,8 @@ class AppRequest
 
     /** @var AppManager */
     private static $manager = null;
+    /** @var User */
+    private static $user = null;
     /** @var App */
     private static $app = null;
 
@@ -46,6 +49,14 @@ class AppRequest
     public static function setManager(AppManager $manager): void
     {
         self::$manager = $manager;
+    }
+
+    /**
+     * @param User $user
+     */
+    public static function setUser(User $user): void
+    {
+        self::$user = $user;
     }
 
     /**
@@ -72,6 +83,10 @@ class AppRequest
      */
     public static function handleAppRequestRegistration(Request $request): void
     {
+        if (self::$user) {
+            return;
+        }
+
         // grab controller related to this API request
         $controller = explode('::', $request->attributes->get('_controller'))[0];
 
@@ -94,7 +109,7 @@ class AppRequest
 
         // Track Developer App on Google Analytics (this is for XIVAPI Analytics)
         GoogleAnalytics::event(
-            GoogleAnalytics::XIVAPI_ID,
+            getenv('GOOGLE_ANALYTICS'),
             'Apps',
             $app->getApiKey(),
             "{$app->getName()} - {$app->getUser()->getUsername()}"
