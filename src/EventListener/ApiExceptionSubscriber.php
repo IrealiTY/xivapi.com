@@ -27,6 +27,10 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
+        if (getenv('SHOW_ERRORS') == '1') {
+            return null;
+        }
+        
         $ex         = $event->getException();
         $path       = $event->getRequest()->getPathInfo();
         $pathinfo   = pathinfo($path);
@@ -59,10 +63,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
                 'Env'     => constant(Environment::CONSTANT),
             ]
         ];
-    
-        if (getenv('IS_LOCAL') == '1' || $event->getRequest()->get('debug') == getenv('DEBUG_PASS')) {
-            return null;
-        }
 
         $response = new JsonResponse($json, $json['Debug']['Code']);
         $response->headers->set('Content-Type','application/json');

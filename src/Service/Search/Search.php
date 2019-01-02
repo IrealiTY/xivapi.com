@@ -27,21 +27,27 @@ class Search
     public function handleRequest(SearchRequest $req, SearchResponse $res)
     {
         // if a payload exists
-        if ($req->payload) {
-            $this->handlePayloadRequest($req, $res);
+        if ($req->body) {
+            $this->handleBodyRequest($req, $res);
             return;
         }
 
         $this->handleGetRequest($req, $res);
     }
-
-    private function handlePayloadRequest(SearchRequest $req, SearchResponse $res)
+    
+    /**
+     * Perform a body query by using the query provided in the body payload
+     */
+    private function handleBodyRequest(SearchRequest $req, SearchResponse $res)
     {
         $res->setResults(
-            $this->search->search($req->payload->indexes, 'search', $req->payload->body) ?: []
+            $this->search->search($req->indexes, 'search', $req->body) ?: []
         );
     }
-
+    
+    /**
+     * Perform a normal "GET" request by auto-building a query based on provided params
+     */
     private function handleGetRequest(SearchRequest $req, SearchResponse $res)
     {
         //
@@ -62,19 +68,10 @@ class Search
             );
         }
 
-        //
-        // Similar
-        //
-        if ($req->suggest) {
-            $this->query->addSuggestion(
-                $req->stringColumn, $req->string
-            );
-        }
-
         $this->performStringSearch($req);
         $this->performFilterSearch($req);
 
-        #echo $this->query->getJson();#die;
+        #echo $this->query->getJson(); die;
 
         $query = $this->query->getQuery($req->bool);
 

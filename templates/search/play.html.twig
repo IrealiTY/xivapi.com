@@ -15,7 +15,7 @@
             <div>
                 <div class="form-row">
                     <label for="endpoint">Endpoint</label>
-                    <input name="endpoint" id="endpoint" placeholder="URL of API Endpoint" class="form-control" value="https://staging.xivapi.com">
+                    <input name="endpoint" id="endpoint" placeholder="URL of API Endpoint" class="form-control" value="{{ app.request.getSchemeAndHttpHost() }}">
                 </div>
                 <br>
                 <div class="form-row">
@@ -28,10 +28,11 @@
                     <textarea name="body" id="body" placeholder="Elastic Search Query" class="form-control" rows="20"></textarea>
                 </div>
                 <br>
-                <button class="btn btn-success" type="button">Search</button>
+                <button class="btn btn-search-test btn-success" type="button">Search</button>
             </div>
             <div>
-                <div class="playground-response" id="playground-response"></div>
+                <label for="endpoint">Response</label>
+                <div class="playground-response" id="playground-response"><pre></pre></div>
             </div>
         </div>
 
@@ -44,10 +45,10 @@
 let query = {
     "query": {
         "bool": {
-            "should": [
+            "must": [
                 {
                     "wildcard": {
-                        "NameCombined_en": "*te*"
+                        "NameCombined_en": "*aiming*"
                     }
                 }
             ],
@@ -55,7 +56,21 @@ let query = {
                 {
                     "range": {
                         "ItemSearchCategory.ID": {
-                            "gte": "1"
+                            "gt": "1"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "LevelItem": {
+                            "gte": "100"
+                        }
+                    }
+                },
+                {
+                    "range": {
+                        "LevelItem": {
+                            "lte": "125"
                         }
                     }
                 }
@@ -63,30 +78,62 @@ let query = {
         }
     },
     "from": 0,
-    "size": 50
+    "size": 10,
+    "sort": [
+        {
+            "LevelItem": "desc"
+        }
+    ]
 };
+
+let $searchTestButton = $('.btn-search-test');
+let $searchResponseBox = $('#playground-response').find('pre');
 
 $('#body').html(
     JSON.stringify(query, null, 2)
 );
 
-$('.btn').on('click', function() {
-    let payload = {
+$searchResponseBox.text(
+    '// Response will show here'
+);
+
+$searchTestButton.on('click', function() {
+    let data = {
         indexes: $('#indexes').val().trim(),
         body: JSON.parse($('#body').val().trim()),
     };
 
+    $searchTestButton.text('Searching ...').attr("disabled", true);
+
     $.ajax({
         url: $('#endpoint').val().trim() + '/search',
         type: "POST",
+        data: JSON.stringify(data),
         dataType: "json",
-        data: payload,
         contentType: "application/json",
+        processData: false,
         success: function(response) {
             console.log(response);
+
+            $searchResponseBox.text(
+                JSON.stringify(response, null, 2)
+            );
         },
         error: function(a,b,c) {
+            if (a.responseText[0] === '{') {
+                $searchResponseBox.text(
+                    JSON.stringify(JSON.parse(a.responseText), null, 2)
+                );
+            } else {
+                $searchResponseBox.text(
+                    'Request Error: View browser console and network tab for more information.'
+                );
+            }
+
             console.error(a,b,c);
+        },
+        complete: function() {
+            $searchTestButton.text('Search').attr("disabled", false);
         }
     });
 });

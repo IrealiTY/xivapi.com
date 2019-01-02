@@ -53,7 +53,7 @@ class ElasticQuery
     /**
      * Get JSON payload that is sent to ElasticSearch
      */
-    public function getJson(string $type = 'should'): string
+    public function getJson(string $type = 'must'): string
     {
         return json_encode($this->getQuery($type), JSON_PRETTY_PRINT);
     }

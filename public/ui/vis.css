@@ -157,14 +157,22 @@ footer {
 .playground {
   display: flex; }
   .playground > div {
-    flex: 0 1 50%;
     padding: 20px; }
+    .playground > div:first-of-type {
+      flex: 0 1 40%; }
+    .playground > div:last-of-type {
+      flex: 0 1 60%; }
 
 .playground-response {
   border: solid 1px #ddd;
   border-radius: 8px;
-  box-shadow: 0 1px 5px #ddd;
-  min-height: 300px; }
+  box-shadow: 0 1px 5px #ddd; }
+  .playground-response pre {
+    margin: 0;
+    color: #aaa;
+    min-height: 200px;
+    word-break: break-all;
+    max-width: 1000px; }
 
 @media only screen and (max-width: 600px) {
   .jumbotron {

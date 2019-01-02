@@ -2,6 +2,7 @@
 
 namespace App\Service\Search;
 
+use App\Exception\InvalidSearchRequestException;
 use App\Service\Common\Language;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -65,10 +66,8 @@ class SearchRequest
     public $columns = '_,_Score,ID,Icon,Name,Url,UrlType';
     // query group
     public $bool = 'must';
-    // similar
-    public $suggest = false;
-    /** @var null|\stdClass */
-    public $payload = null;
+    /** @var null|string|array */
+    public $body = null;
     
     public static function defaults()
     {
@@ -84,11 +83,6 @@ class SearchRequest
      */
     public function buildFromRequest(Request $request)
     {
-        if ($json = $request->getContent()) {
-            $this->payload = $json;
-            return;
-        }
-
         $this->indexes          = $request->get('indexes',        $this->indexes);
         $this->string           = $request->get('string',         $this->string);
         $this->stringAlgo       = $request->get('string_algo',    $this->stringAlgo);
@@ -101,7 +95,16 @@ class SearchRequest
         $this->filters          = $request->get('filters',        $this->filters);
         $this->columns          = $request->get('columns',        $this->columns);
         $this->bool             = $request->get('bool',           $this->bool);
-        $this->suggest          = $request->get('suggest',        $this->suggest);
+        $this->body             = $request->getContent() ?: null;
+        
+        // ensure body requests is in the array format
+        if ($this->body) {
+            $this->body = json_decode($this->body, true)['body'] ?? false;
+            
+            if (!$this->body) {
+                throw new InvalidSearchRequestException();
+            }
+        }
         
         // this ensures response handler will use default search columns
         $request->request->set('columns', $this->columns);
