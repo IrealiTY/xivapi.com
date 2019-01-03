@@ -58,7 +58,7 @@ Maybe online API's are not your jam, maybe you're sick of the responses and how 
 - `vagrant plugin install vagrant-hostmanager`
 - `vagrant up`
 - Access: http://xivapi.local
-- If you have `adminer.php` in `/sysops` you can access: http://xivapi.local
+- If you have `adminer.php` in `/sysops` you can access: http://xivapi.adminer
 
 ## ElasticSearch commands
 
