@@ -57,9 +57,8 @@ Maybe online API's are not your jam, maybe you're sick of the responses and how 
 - `cd /vm`
 - `vagrant plugin install vagrant-hostmanager`
 - `vagrant up`
-- `vagrant ssh`
-- Access: http://lodestone.xivapi.local
-- If you have `adminer.php` in `/sysops` you can access: http://lodestone.xivapi.local
+- Access: http://xivapi.local
+- If you have `adminer.php` in `/sysops` you can access: http://xivapi.local
 
 ## ElasticSearch commands
 
