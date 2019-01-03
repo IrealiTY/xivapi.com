@@ -1,0 +1,48 @@
+{% extends "base.html.twig"  %}
+
+{% block doc %}
+
+    <h1>Welcome</h1>
+
+    <p>The XIVAPI provides a massive amount of FINAL FANTASY XIV game data in a JSON format via
+        a REST API. You can fetch information on all sorts of game content that has been discovered and
+        mapped in the SaintCoinach Schema. In addition it provides Character, Free Company, Linkshell, PvPTeams
+        and Lodestone information!</p>
+
+    <h2>Patreon Support!</h2>
+    <p>Beg here</p>
+    <p>
+        <a href="https://www.patreon.com/bePatron?u=13230932" target="_blank">
+            <img src="https://c5.patreon.com/external/logo/become_a_patron_button.png">
+        </a>
+    </p>
+
+    {# ENVIRONMENTS #}
+    <h2>API Environments</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Production</th>
+                <th>Staging</th>
+                <th>Local</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>https://xivapi.com</td>
+                <td>https://staging.xivapi.com</td>
+                <td>http://xivapi.local</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <small>Please use HTTPS for all queries. HTTP is not supported and could be shut off at anytime.</small>
+
+    {# API Keys #}
+
+    <p>To use the API you will need to create a developer app. This provides you with a public and private key that
+    grants access to the API. It will also provide flexiable rate-limiting and support.</p>
+
+    <p>Get started by going to the <a href="{{ path('docs_page', { page: 'API-Keys' }) }}">API Keys</a> section in the docs.</p>
+
+{% endblock %}

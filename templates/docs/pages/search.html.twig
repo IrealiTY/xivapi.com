@@ -1,0 +1,40 @@
+{% extends "base.html.twig"  %}
+
+{% block doc %}
+
+    <h1>Search</h1>
+
+    <p>XIVAPI provides the ability to quickly search all game content via ElasticSearch.
+        This search endpoint only searches game content and not: characters, free companies,
+        linkshells or pvp teams. Those have their own dedicated search endpoints as they
+        relay to Lodestone.</p>
+
+
+    <h2>Basic Search</h2>
+
+    <p class="note">A `string` or `filter` is required to search.</p>
+
+    <h3 class="route">/search</h3>
+    <p class="usage">{{ app.request.getSchemeAndHttpHost() }}/search?string=aiming</p>
+    <p>Search for something! The Search is multi-content and contains combined data,
+        this means your search request covers a vast amount of selected content
+        (which you can further extend via filters) and results are combined based on best-case matching.</p>
+
+    <h4>Common Params</h4>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="25%">Param</th>
+                <th width="75%">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>indexes</code></td>
+                <td>Search a specific series of indexes separated by commas.</td>
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock %}

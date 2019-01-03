@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -28,53 +29,50 @@ class DocumentationController extends Controller
     
     /**
      * @Route("/docs", name="docs")
-     * @Route("/docs/{filename}", name="docs_file")
+     * @Route("/docs/{page}", name="docs_page")
      */
-    public function docs(Request $request, $filename = null)
+    public function docs(Request $request, $page = null)
     {
-        $filename = ($filename ? $filename : 'Welcome');
+        $file = strtolower($page ? $page : 'Welcome');
+        $file = str_ireplace([' ','-'], '_', $file);
+
+        $response = [
+            'page' => $page,
+            'file' => $file,
+        ];
     
         // change logs
-        if (strtolower($filename) == 'costs') {
-            return $this->render('docs/docs_costs.html.twig', [
-                'vultr'        => Vultr::costs(),
-                'digitalocean' => DigitalOcean::costs(),
-                'filename'     => $filename,
-                'navigation'   => Docs::LIST
-            ]);
+        if ($file == 'costs') {
+            $response['vultr'] = Vultr::costs();
+            $response['digitalocean'] = DigitalOcean::costs();
         }
 
         // change logs
-        if (strtolower($filename) == 'changelogs') {
-            return $this->render('docs/docs_changelog.html.twig', [
-                'commits'    => GitHub::getGithubCommitHistory(),
-                'filename'   => $filename,
-                'navigation' => Docs::LIST
-            ]);
+        if ($file == 'change_logs') {
+            $response['commits'] = GitHub::getGithubCommitHistory();
         }
 
         // icon
-        if (strtolower($filename) == 'icons') {
-            if ($request->get('download')) {
-                return $this->file(
-                    new File(
-                        (new Icons())->downloadIconSet($request->get('set'))
-                    )
-                );
-            }
-
-            return $this->render('docs/docs_icons.html.twig', [
-                'images'     => (new Icons())->get($request->get('set')),
-                'set'        => $request->get('set'),
-                'filename'   => $filename,
-                'navigation' => Docs::LIST
-            ]);
+        if ($file == 'icons') {
+            $response['images'] = (new Icons())->get($request->get('set'));
         }
 
-        return $this->render('docs/docs.html.twig', [
-            'markdown'   => (new Docs($this->em))->getMarkdown($filename),
-            'filename'   => $filename,
-            'navigation' => Docs::LIST
-        ]);
+        return $this->render('docs/pages/'. $file .'.html.twig', $response);
+    }
+
+    /**
+     * @Route("/docs/download", name="docs_download")
+     */
+    public function download(Request $request)
+    {
+        if ($request->get('set')) {
+            return $this->file(
+                new File(
+                    (new Icons())->downloadIconSet($request->get('set'))
+                )
+            );
+        }
+
+        throw new NotFoundHttpException();
     }
 }

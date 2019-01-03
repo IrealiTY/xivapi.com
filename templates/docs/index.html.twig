@@ -1,0 +1,44 @@
+{% extends "base.html.twig"  %}
+{% set page = 'docs' %}
+{% block title %}{{ page }} - XIVAPI{% endblock %}
+
+{% block body %}
+    <div class="two-pane">
+        <aside>
+            <div class="sticky sticky-{{ filename }}">
+                <h3>documentation</h3>
+                <small>{{ siteVersion().version }}</small>
+
+                <a href="{{ path('docs_page', { page: 'Welcome' }) }}">Welcome</a>
+                <a href="{{ path('docs_page', { page: 'API-Keys' }) }}">API Keys</a>
+                <a href="{{ path('docs_page', { page: 'Getting-Started' }) }}">Getting Started</a>
+                <a href="{{ path('docs_page', { page: 'Common-Features' }) }}">Common Features</a>
+                <a href="{{ path('docs_page', { page: 'Third-Party' }) }}">Third-Party Tools</a>
+                <a href="{{ path('docs_page', { page: 'Open-Source' }) }}">Open Source</a>
+
+                <span>API</span>
+
+                <a href="{{ path('docs_page', { page: 'Search' }) }}">Search</a>
+                <a href="{{ path('docs_page', { page: 'Game-Content' }) }}">Game Content</a>
+                <a href="{{ path('docs_page', { page: 'Character' }) }}">Character</a>
+                <a href="{{ path('docs_page', { page: 'Free-Company' }) }}">Free Company</a>
+                <a href="{{ path('docs_page', { page: 'Linkshell' }) }}">Linkshell</a>
+                <a href="{{ path('docs_page', { page: 'PVP-Team' }) }}">PVP Team</a>
+                <a href="{{ path('docs_page', { page: 'Lodestone' }) }}">Lodestone</a>
+                <a href="{{ path('docs_page', { page: 'Market' }) }}">Market</a>
+                <a href="{{ path('docs_page', { page: 'Maps' }) }}">Maps</a>
+                <a href="{{ path('docs_page', { page: 'Patch-List' }) }}">Patch List</a>
+
+                <span>Misc</span>
+
+                {# custom #}
+                <a href="{{ path('docs_page', { page: 'Mappy-Data' }) }}">Mappy Data</a>
+                <a href="{{ path('docs_page', { page: 'Git-Logs' }) }}">Git Logs</a>
+                <a href="{{ path('docs_page', { page: 'Icons' }) }}">Icons</a>
+            </div>
+        </aside>
+        <main class="doc-page">
+        {% block doc %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
