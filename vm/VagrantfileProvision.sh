@@ -102,8 +102,25 @@ echo "- Updating db"
 php /vagrant/bin/console doctrine:schema:update --force --dump-sql
 bash /vagrant/bin/version
 
+#
+#Creating Version FIle
+#
+echo "Creating Version FIle..."
+git rev-list --all --count > ./git_version.txt
+git rev-parse HEAD >> ./git_version.txt
+echo $(date +%s) >> ./git_version.txt
+
 echo "- Testing ElasticSearch in 10 seconds ..."
 sleep 10
 curl -X GET 'http://localhost:9200'
+
+echo "Do you want to run composer install?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) composer install; break;;
+        No ) echo "FINISHED";;
+    esac
+done
+done
 
 echo "FINISHED"
